@@ -23,7 +23,7 @@
 
 
 // Datos de la ventana
-#define WINDOW_TITLE "Music and Background"
+#define WINDOW_TITLE "Red Republic Engine"
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 960
 #define TEXT_SIZE 80
