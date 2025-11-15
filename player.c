@@ -27,6 +27,8 @@ bool player_new (struct Player **player, SDL_Renderer *renderer) {
         return false;
     }
 
+    p->rect.x = 500;
+    p->rect.y = 500;
     p->keystate = SDL_GetKeyboardState(NULL);
 
 

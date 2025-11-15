@@ -35,6 +35,10 @@ bool game_new (struct Game **game) {
     if (!music_new(&g->music)) {
         return false;
     }
+    if (!enemy_new(&g->enemy, g->renderer)) {
+      return false;
+    }
+
 
     g->is_running = true;
     srand((unsigned)time(NULL));
@@ -72,6 +76,9 @@ void game_free(struct Game **game) {
         }
         if (g->bullet) {
             bullet_free(&g->bullet);
+        }
+        if (g->enemy) {
+          enemy_free(&g->enemy);
         }
         MIX_Quit();
         TTF_Quit();
@@ -155,7 +162,9 @@ void game_events(struct Game *g) {
 void game_update(struct Game *g) {
     text_update(g->text);
     player_update(g->player,g->bullet);
-    bullet_update(g->bullet);
+    enemy_update(g->enemy, g->bullet);
+    bullet_update(g->bullet, g->enemy);
+
 }
 
 void game_draw(struct Game *g) {
@@ -166,6 +175,7 @@ void game_draw(struct Game *g) {
     text_draw(g->text);
     player_draw(g->player);
     bullet_draw(g->bullet);
+    enemy_draw(g->enemy);
     // Limpia la pantalla con ese color
     // Muestra el resultado en pantalla
     SDL_RenderPresent(g->renderer);

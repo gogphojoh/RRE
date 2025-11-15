@@ -6,6 +6,7 @@
 #define MUSIC_BULLET_H
 
 #include "main.h"
+#include "enemy.h"
 
 struct BulletEntity {
     SDL_FRect rect; //Tamaño y forma de las multiples balas
@@ -13,6 +14,7 @@ struct BulletEntity {
 };
 
 struct Bullet {
+    struct Enemy *enemy;
     SDL_Renderer *renderer;
     SDL_Texture *image;
     SDL_Surface *surf;
@@ -23,9 +25,10 @@ struct Bullet {
     Uint32 next_fire_time;
 };
 bool bullet_new(struct Bullet **bullet, SDL_Renderer *renderer);
-void bullet_update(struct Bullet *b);
+void bullet_update(struct Bullet *b, struct Enemy *e);
 void bullet_draw(struct Bullet *b);
 void bullet_free(struct Bullet **bullet);
-static void spawn_bullet(struct Bullet *b);
+static void spawn_bullet(struct Bullet *b, struct Enemy *e);
+bool rects_collide(SDL_FRect *a, SDL_FRect *b);
 
 #endif //MUSIC_BULLET_H

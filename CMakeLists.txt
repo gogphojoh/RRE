@@ -42,6 +42,8 @@ add_executable(RRE main.c
         music.h
         bullet.c
         bullet.h
+        enemy.c
+        enemy.h
 )
 
 # Link SDL

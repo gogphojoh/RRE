@@ -77,5 +77,6 @@ SDL_Surface *bubble_create_text (const char *str, float size, int radius, SDL_Co
     }
     SDL_BlitSurface (surf, NULL, target_surf, &(SDL_Rect){radius,radius,surf->w, surf->h} );
     SDL_DestroySurface (surf);
+
     return target_surf;
 }

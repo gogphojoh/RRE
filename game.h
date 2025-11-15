@@ -10,12 +10,15 @@
 #include "player.h"
 #include "music.h"
 #include "bullet.h"
+#include "enemy.h"
 
 struct Game {
     struct Music *music;
     struct Text *text;
     struct Player *player;
     struct Bullet *bullet;
+    struct BulletEntity *be;
+    struct Enemy *enemy;
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *background;
