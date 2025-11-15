@@ -17,6 +17,7 @@ struct Enemy {
   bool active;
   Uint32 now;
   int spawn_time;
+  double curve;
 };
 
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer);

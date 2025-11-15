@@ -39,10 +39,10 @@ void enemy_update(struct Enemy *e, struct Bullet *b) {
   e->now = SDL_GetTicks();
   // printf("Posicion bala X: %f\n", e->dz_x);
   // printf("Posicion bala Y: %f\n", e->dz_y);
-  printf("Posicion enemigo X: %f\n", e->rect.x);
-  printf("Posicion enemigo Y: %f\n", e->rect.y);
-  printf("Anchura enemigo W: %f\n", e->rect.w);
-  printf("Altura enemigo H: %f\n", e->rect.h);
+  // printf("Posicion enemigo X: %f\n", e->rect.x);
+   printf("Posicion enemigo Y: %f\n", e->rect.y);
+  // printf("Anchura enemigo W: %f\n", e->rect.w);
+  // printf("Altura enemigo H: %f\n", e->rect.h);
   // printf("Posicion de bala X: %f\n", b->rect.x);
   // printf("Posicion de bala Y: %f\n", b->rect.y);
   //La posición exacta del enemigo es TAN ridiculamente fina, que la bala JAMÁS coincidirá exactamente en su posición. Debo darle mayor margen a la bala.
@@ -58,8 +58,9 @@ void enemy_update(struct Enemy *e, struct Bullet *b) {
     spawn_enemy(e);
   }
 
-  e->rect.x += e->x_vel;
+   e->rect.x += e->x_vel;
   e->rect.y += e->y_vel;
+  // e->rect.y = 0.01f * (e->rect.x * e->rect.x);
   //Replicar esta lógica
   if (e->rect.x + e->rect.w > WINDOW_WIDTH) {
     e->x_vel = -ENEMY_VEL;

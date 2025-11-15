@@ -5,6 +5,15 @@
 // Esta función prepara SDL, crea la ventana y el entorno para dibujar
 
 // Función principal: arranca, ejecuta y cierra el programa
+
+/*
+ *Gog, Tienes que saber que cuando se escribió este código solo dos personas sabían que hacía:
+ *Dios
+ *Y yo.
+ *Y me temo que yo no tengo ni idea de como funciona.
+ *Toma este contador para tomar las horas desperidiadas tratando de hacer funcionar a RED REPUBLIC ENGINE:
+ *0 hrs <- Por ahora.
+ */
 int main(void) {
 
     bool exit_status = EXIT_FAILURE;
