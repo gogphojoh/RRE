@@ -35,10 +35,11 @@
 #define TEXT_LIMIT_Y 880
 #define TEXT_VEL 5
 #define M_PI 3.14159265358979323846
-#define PLAYER_VEL 5
+#define PLAYER_VEL 7
+#define FOCUS_VEL 3
 #define BULLET_VEL 15
 #define MAX_BULLETS 128
 #define BULLET_DELAY 50
-#define ENEMY_VEL 3
+#define ENEMY_VEL 4
 
 #endif

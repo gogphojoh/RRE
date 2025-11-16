@@ -18,6 +18,7 @@ bool rects_collide(SDL_FRect *a, SDL_FRect *b) {
 
 
 
+
 bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
     *bullet = calloc (1, sizeof (struct Bullet));
     if (!(*bullet)) {

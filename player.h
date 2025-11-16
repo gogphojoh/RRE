@@ -14,6 +14,7 @@ struct Player {
     SDL_Texture *image;
     SDL_FRect rect;
     const bool *keystate;
+  float pv;
 };
 
 bool player_new (struct Player **player, SDL_Renderer *renderer);

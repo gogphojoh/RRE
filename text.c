@@ -84,6 +84,9 @@ void text_draw(const struct Text *t) {
 
 }
 
+
+
+
 /*if (g->text_rect.x <= 0) {
     g->backwards_x = false;
 }

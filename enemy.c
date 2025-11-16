@@ -47,7 +47,7 @@ void enemy_update(struct Enemy *e, struct Bullet *b) {
   // printf("Posicion de bala Y: %f\n", b->rect.y);
   //La posición exacta del enemigo es TAN ridiculamente fina, que la bala JAMÁS coincidirá exactamente en su posición. Debo darle mayor margen a la bala.
   //LA SOLUCIÓN PUEDE SER EL USAR LA MISMA TECNICA DEL RECTANGULO DE TEXT.C!!!
-  //!!! PENDIENTE !!!
+  //!!! Estudiar !!!
   /*
   Posicion bala X: 836.000000
   Posicion bala Y: 900.000000
@@ -58,7 +58,7 @@ void enemy_update(struct Enemy *e, struct Bullet *b) {
     spawn_enemy(e);
   }
 
-   e->rect.x += e->x_vel;
+  e->rect.x += e->x_vel;
   e->rect.y += e->y_vel;
   // e->rect.y = 0.01f * (e->rect.x * e->rect.x);
   //Replicar esta lógica

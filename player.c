@@ -30,7 +30,7 @@ bool player_new (struct Player **player, SDL_Renderer *renderer) {
     p->rect.x = 500;
     p->rect.y = 500;
     p->keystate = SDL_GetKeyboardState(NULL);
-
+    p->pv = PLAYER_VEL;
 
     // if (!SDL_SetTextureScaleMode(p->image, SDL_SCALEMODE_NEAREST)) {
     //     fprintf(stderr, "Error al establecer la modalidad de escalado de la textura: %s\n", SDL_GetError());
@@ -58,16 +58,21 @@ void player_free(struct Player **player) {
 }
 void player_update(struct Player *p, struct Bullet *b) {
     if (p->keystate[SDL_SCANCODE_LEFT]) {
-        p->rect.x -= PLAYER_VEL;
+        p->rect.x -= p->pv;
     }
     if (p->keystate[SDL_SCANCODE_RIGHT]) {
-        p->rect.x += PLAYER_VEL;
+        p->rect.x += p->pv;
     }
     if (p->keystate[SDL_SCANCODE_UP]) {
-        p->rect.y -= PLAYER_VEL;
+        p->rect.y -= p->pv;
     }
     if (p->keystate[SDL_SCANCODE_DOWN]) {
-        p->rect.y += PLAYER_VEL;
+        p->rect.y += p->pv;
+    }
+    if (p->keystate[SDL_SCANCODE_LSHIFT]) {
+      p->pv = FOCUS_VEL;
+    }else {
+      p->pv = PLAYER_VEL;
     }
     b->p_x = p->rect.x;
     b->p_y = p->rect.y;
