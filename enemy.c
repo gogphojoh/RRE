@@ -35,12 +35,12 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   e->active = true;
   return true;
 }
-void enemy_update(struct Enemy *e, struct Bullet *b) {
+void enemy_update(struct Enemy *e, struct Power *p) {
   e->now = SDL_GetTicks();
   // printf("Posicion bala X: %f\n", e->dz_x);
   // printf("Posicion bala Y: %f\n", e->dz_y);
   // printf("Posicion enemigo X: %f\n", e->rect.x);
-   printf("Posicion enemigo Y: %f\n", e->rect.y);
+  printf("Posicion enemigo Y: %f\n", e->rect.y);
   // printf("Anchura enemigo W: %f\n", e->rect.w);
   // printf("Altura enemigo H: %f\n", e->rect.h);
   // printf("Posicion de bala X: %f\n", b->rect.x);
@@ -55,11 +55,16 @@ void enemy_update(struct Enemy *e, struct Bullet *b) {
   Posicion enemigo Y: 796.000000
    */
   if (!e->active) {
+    spawn_power(p, e);
+    power_draw(p);
+    p->active = true;
     spawn_enemy(e);
   }
 
   e->rect.x += e->x_vel;
   e->rect.y += e->y_vel;
+  p->pw_x = e->rect.x;
+  p->pw_y = e->rect.y;
   // e->rect.y = 0.01f * (e->rect.x * e->rect.x);
   //Replicar esta lógica
   if (e->rect.x + e->rect.w > WINDOW_WIDTH) {

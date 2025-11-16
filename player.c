@@ -4,6 +4,12 @@
 #include "player.h"
 #include "bullet.h"
 
+bool power_collide(SDL_FRect *a, SDL_FRect *b) {
+  return (a->x < b->x + b->w &&
+          a->x + a->w > b->x &&
+          a->y < b->y + b->h &&
+          a->y + a->h > b->y);
+}
 
 bool player_new (struct Player **player, SDL_Renderer *renderer) {
     *player = calloc(1, sizeof(struct Player));
@@ -56,7 +62,7 @@ void player_free(struct Player **player) {
     }
 
 }
-void player_update(struct Player *p, struct Bullet *b) {
+void player_update(struct Player *p, struct Bullet *b, struct Power *pw) {
     if (p->keystate[SDL_SCANCODE_LEFT]) {
         p->rect.x -= p->pv;
     }
@@ -69,10 +75,14 @@ void player_update(struct Player *p, struct Bullet *b) {
     if (p->keystate[SDL_SCANCODE_DOWN]) {
         p->rect.y += p->pv;
     }
-    if (p->keystate[SDL_SCANCODE_LSHIFT]) {
+    if ((p->keystate[SDL_SCANCODE_LSHIFT ]) || p->keystate[SDL_SCANCODE_RSHIFT]) {
       p->pv = FOCUS_VEL;
     }else {
       p->pv = PLAYER_VEL;
+    }
+    if (pw->active && power_collide(&p->rect, &pw->rect)) {
+      pw->active = false;   // desactivar bala// desactivar enemigo
+      SDL_DestroyTexture(pw->image);   // destruir textura
     }
     b->p_x = p->rect.x;
     b->p_y = p->rect.y;

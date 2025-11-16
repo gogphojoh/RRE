@@ -44,6 +44,8 @@ add_executable(RRE main.c
         bullet.h
         enemy.c
         enemy.h
+        power.h
+        power.c
 )
 
 # Link SDL

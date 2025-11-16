@@ -8,36 +8,39 @@ void game_update(struct Game *g);
 void game_render_color(struct Game *g);
 
 bool game_new (struct Game **game) {
-    *game = calloc(1, sizeof(struct Game));
-    if (*game == NULL) {
-        fprintf(stderr, "Error al realizar Calloc para crear el juego.\n");
-        return false;
-    }
-    struct Game *g = *game;
+  *game = calloc(1, sizeof(struct Game));
+  if (*game == NULL) {
+    fprintf(stderr, "Error al realizar Calloc para crear el juego.\n");
+    return false;
+  }
+  struct Game *g = *game;
 
-    if (!game_init_sdl(g)) {
-        return false;
-    }
-    if (!game_load_media(g)) {
-        return false;
-    }
+  if (!game_init_sdl(g)) {
+    return false;
+  }
+  if (!game_load_media(g)) {
+    return false;
+  }
 
-    if (!text_new(&g->text, g->renderer)) {
-        return false;
-    }
+  if (!text_new(&g->text, g->renderer)) {
+    return false;
+  }
 
-    if (!player_new(&g->player, g->renderer)) {
-        return false;
-    }
-    if (!bullet_new(&g->bullet, g->renderer)) {
-        return false;
-    }
-    if (!music_new(&g->music)) {
-        return false;
-    }
-    if (!enemy_new(&g->enemy, g->renderer)) {
-      return false;
-    }
+  if (!player_new(&g->player, g->renderer)) {
+    return false;
+  }
+  if (!bullet_new(&g->bullet, g->renderer)) {
+    return false;
+  }
+  if (!music_new(&g->music)) {
+    return false;
+  }
+  if (!enemy_new(&g->enemy, g->renderer)) {
+    return false;
+  }
+  if (!power_new(&g->power,g->renderer)) {
+    return false;
+  }
 
 
     g->is_running = true;
@@ -161,8 +164,9 @@ void game_events(struct Game *g) {
 
 void game_update(struct Game *g) {
     text_update(g->text);
-    player_update(g->player,g->bullet);
-    enemy_update(g->enemy, g->bullet);
+    player_update(g->player,g->bullet, g->power);
+    power_update(g->power, g->enemy);
+    enemy_update(g->enemy, g->power);
     bullet_update(g->bullet, g->enemy);
 
 }
@@ -175,6 +179,7 @@ void game_draw(struct Game *g) {
     text_draw(g->text);
     player_draw(g->player);
     bullet_draw(g->bullet);
+    power_draw(g->power);
     enemy_draw(g->enemy);
     // Limpia la pantalla con ese color
     // Muestra el resultado en pantalla

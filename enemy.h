@@ -7,8 +7,10 @@
 
 #include "main.h"
 #include "bullet.h"
+#include "power.h"
 
 struct Enemy {
+  struct Power *power;
   SDL_Renderer *renderer;
   SDL_Texture *image;
   SDL_Surface *surf;
@@ -21,7 +23,7 @@ struct Enemy {
 };
 
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer);
-void enemy_update(struct Enemy *e, struct Bullet *b);
+void enemy_update(struct Enemy *e,struct Power *p);
 void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
 static void spawn_enemy(struct Enemy *e);
