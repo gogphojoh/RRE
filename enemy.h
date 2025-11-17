@@ -34,7 +34,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer);
 void enemy_update(struct Enemy *e,struct Power *p, struct Music *m);
 void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
-static void spawn_enemy(struct Enemy *e);
+static void spawn_enemy(struct Enemy *e, struct Power *p);
 
 #endif // RRE_ENEMY_H
 

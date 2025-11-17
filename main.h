@@ -42,5 +42,6 @@
 #define MAX_BULLETS 128
 #define BULLET_DELAY 50
 #define ENEMY_VEL 4
+#define POWER_VEL 6
 
 #endif

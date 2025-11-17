@@ -56,29 +56,25 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
    */
   if (!e->active) {
     play_sound(e,m);
-    p->active = true;
-    spawn_enemy(e);
+    spawn_enemy(e, p);
   }
 
   e->rect.x += e->x_vel;
   e->rect.y += e->y_vel;
-  if (e->active == true) {
+  if (e->active == true && p->active == false) {
     p->pw_x = e->rect.x;
     p->pw_y = e->rect.y;
   }
 
   // e->rect.y = 0.01f * (e->rect.x * e->rect.x);
-  //Replicar esta lógica
+  // Replicar esta lógica
   if (e->rect.x + e->rect.w > WINDOW_WIDTH) {
     e->x_vel = -ENEMY_VEL;
-  }
-  else if (e->rect.x < 0) {
+  } else if (e->rect.x < 0) {
     e->x_vel = ENEMY_VEL;
-  }
-  else if (e->rect.y < 0) {
+  } else if (e->rect.y < 0) {
     e->y_vel = ENEMY_VEL;
-  }
-  else if (e->rect.y + e->rect.h > WINDOW_HEIGHT) {
+  } else if (e->rect.y + e->rect.h > WINDOW_HEIGHT) {
     e->y_vel = -ENEMY_VEL;
   }
 
@@ -103,8 +99,6 @@ void enemy_free(struct Enemy **enemy) {
 }
 
 void play_sound(struct Enemy *e, struct Music *m) {
-
-
 
   e->kill = MIX_LoadAudio(m->mixer, "kill.mp3", true);
   if (!e->kill) {
@@ -133,7 +127,7 @@ void play_sound(struct Enemy *e, struct Music *m) {
   }
 }
 
-static void spawn_enemy(struct Enemy *e) {
+static void spawn_enemy(struct Enemy *e, struct Power *p) {
 
   if (e->spawn_time < e->now) {
     e->surf= IMG_Load("hada.png");

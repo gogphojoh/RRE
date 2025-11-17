@@ -83,6 +83,9 @@ void game_free(struct Game **game) {
         if (g->enemy) {
           enemy_free(&g->enemy);
         }
+      if (g->power) {
+        power_free(&g->power);
+      }
         MIX_Quit();
         TTF_Quit();
         SDL_Quit(); // Cierra SDL
@@ -164,8 +167,8 @@ void game_events(struct Game *g) {
 
 void game_update(struct Game *g) {
     text_update(g->text);
-    player_update(g->player,g->bullet, g->power);
-    power_update(g->power, g->enemy);
+    player_update(g->player,g->bullet, g->power, g->music);
+    power_update(g->power, g->enemy, g->player);
     enemy_update(g->enemy, g->power, g->music);
     bullet_update(g->bullet, g->enemy, g->power);
     music_update(g->music);
