@@ -18,7 +18,7 @@ void blit_symmetric_point (SDL_Surface *src_surf, SDL_Surface *target_surf, int 
 }
 
 SDL_Surface *bubble_create_text (const char *str, float size, int radius, SDL_Color inner_color, SDL_Color outer_color) {
-    TTF_Font *font = TTF_OpenFont("ARIAL.TTF", size);
+    TTF_Font *font = TTF_OpenFont("THBIOLINUM.TTF", size);
     if (!font) {
         fprintf(stderr, "Error al crear el texto del juego: %s\n", SDL_GetError());
         return NULL;

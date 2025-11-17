@@ -83,9 +83,9 @@ void game_free(struct Game **game) {
         if (g->enemy) {
           enemy_free(&g->enemy);
         }
-      if (g->power) {
-        power_free(&g->power);
-      }
+        if (g->power) {
+          power_free(&g->power);
+        }
         MIX_Quit();
         TTF_Quit();
         SDL_Quit(); // Cierra SDL

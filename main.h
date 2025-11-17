@@ -30,8 +30,8 @@
 #define TEXT_SIZE 80
 #define WHITE_COLOR (SDL_Color) {255,255,255,255}
 #define BLUE_COLOR (SDL_Color) {137,180,250,255}
-#define BUBBLE_RADIUS 15
-#define TEXT_STR "Prueba"
+#define BUBBLE_RADIUS 5
+#define TEXT_STR "Reimu"
 #define TEXT_LIMIT_X 1020
 #define TEXT_LIMIT_Y 880
 #define TEXT_VEL 5

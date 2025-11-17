@@ -83,11 +83,10 @@ void enemy_free(struct Enemy **enemy) {
     }
     if (e->kill) {
       MIX_DestroyAudio(e->kill);
-      e->kill = NULL;
     }
     if (e->track) {
       MIX_DestroyTrack(e->track);
-      e->track = NULL;
+
     }
 
     e->renderer = NULL;
