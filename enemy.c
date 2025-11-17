@@ -4,6 +4,8 @@
 
 #include "enemy.h"
 
+//Cuando muere el enemigo es cuando el consumo de memoria se dispara.
+
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   *enemy = calloc (1, sizeof (struct Enemy));
   if (!(*enemy)) {
@@ -37,24 +39,10 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   return true;
 }
 void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
-  // printf("Posicion bala X: %f\n", e->dz_x);
-  // printf("Posicion bala Y: %f\n", e->dz_y);
-  // printf("Posicion enemigo X: %f\n", e->rect.x);
-  // printf("Posicion enemigo Y: %f\n", e->rect.y);
-  // printf("Anchura enemigo W: %f\n", e->rect.w);
-  // printf("Altura enemigo H: %f\n", e->rect.h);
-  // printf("Posicion de bala X: %f\n", b->rect.x);
-  // printf("Posicion de bala Y: %f\n", b->rect.y);
-  //La posición exacta del enemigo es TAN ridiculamente fina, que la bala JAMÁS coincidirá exactamente en su posición. Debo darle mayor margen a la bala.
-  //LA SOLUCIÓN PUEDE SER EL USAR LA MISMA TECNICA DEL RECTANGULO DE TEXT.C!!!
+  //La solución final fue bastante parecida al del rectangulo, sin embargo, es un poco más compleja.
+
   //!!! Estudiar !!!
-  /*
-  Posicion bala X: 836.000000
-  Posicion bala Y: 900.000000
-  Posicion enemigo X: 796.000000
-  Posicion enemigo Y: 796.000000
-   */
-  if (!e->active) {
+  if (!e->active && e->play_time < e->now) {
     play_sound(e,m);
     spawn_enemy(e, p);
   }
@@ -89,6 +77,19 @@ void enemy_free(struct Enemy **enemy) {
       SDL_DestroyTexture(e->image);
       e->image = NULL;
     }
+    if (e->surf) {
+      SDL_DestroySurface(e->surf);
+      e->surf = NULL;
+    }
+    if (e->kill) {
+      MIX_DestroyAudio(e->kill);
+      e->kill = NULL;
+    }
+    if (e->track) {
+      MIX_DestroyTrack(e->track);
+      e->track = NULL;
+    }
+
     e->renderer = NULL;
     free(e);
     e = NULL;
@@ -99,20 +100,23 @@ void enemy_free(struct Enemy **enemy) {
 }
 
 void play_sound(struct Enemy *e, struct Music *m) {
+  if (e->kill ) {
+    MIX_DestroyAudio(e->kill);
+    e->kill = NULL;
+  }
+  if (e->track ) {
+    MIX_DestroyTrack(e->track);
+    e->track = NULL;
+  }
 
   e->kill = MIX_LoadAudio(m->mixer, "kill.mp3", true);
   if (!e->kill) {
     SDL_Log("Error al cargar el audio: %s", SDL_GetError());
-    MIX_DestroyMixer(e->mixer);
     return ;
   }
-
-
   e->track = MIX_CreateTrack(m->mixer);
   if (!e->track) {
     SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
-    MIX_DestroyAudio(e->kill);
-    MIX_DestroyMixer(e->mixer);
     return ;
   }
 
@@ -128,8 +132,9 @@ void play_sound(struct Enemy *e, struct Music *m) {
 }
 
 static void spawn_enemy(struct Enemy *e, struct Power *p) {
-
   if (e->spawn_time < e->now) {
+    if (e->surf) SDL_DestroySurface(e->surf);
+    if (e->image) SDL_DestroyTexture(e->image);
     e->surf= IMG_Load("hada.png");
     if (!e->surf) {
       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());

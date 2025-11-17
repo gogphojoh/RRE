@@ -124,7 +124,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p) {
               e->active = false;// desactivar enemigo
               p->active = true;
               e->image = NULL;
-              // SDL_DestroyTexture(e->image);// destruir textura
+              SDL_DestroyTexture(e->image);// destruir textura
 
             }
         }

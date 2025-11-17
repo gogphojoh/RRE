@@ -30,6 +30,7 @@ struct Power {
   bool power_sound;
   float play_time;
   Uint32 now;
+  int i;
 };
 bool power_new(struct Power **power, SDL_Renderer *renderer);
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl);

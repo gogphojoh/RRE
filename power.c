@@ -63,6 +63,18 @@ void power_free(struct Power **power) {
       SDL_DestroyTexture(p->image);
       p->image = NULL;
     }
+    if (p->surf) {
+      SDL_DestroySurface(p->surf);
+      p->surf = NULL;
+    }
+    if (p->power) {
+      MIX_DestroyAudio(p->power);
+      p->power = NULL;
+    }
+    if (p->track) {
+      MIX_DestroyTrack(p->track);
+      p->track = NULL;
+    }
     p->renderer = NULL;
     free(p);
     p = NULL;
@@ -72,11 +84,22 @@ void power_free(struct Power **power) {
   }
 }
 void spawn_power(struct Power *p, struct Enemy *e) {
+  //Posible problema de consumo excesivo de CPU
+  if (p->surf) SDL_DestroySurface(p->surf);
+  if (p->image) SDL_DestroyTexture(p->image);
   p->surf= IMG_Load("power.png");
   p->image = SDL_CreateTextureFromSurface(p->renderer, p->surf);
 }
 
 void power_sound(struct Power *p, struct Music *m) {
+  if (p->power ) {
+    MIX_DestroyAudio(p->power);
+    p->power = NULL;
+  }
+  if (p->track) {
+    MIX_DestroyTrack(p->track);
+    p->track = NULL;
+  }
   p->now = SDL_GetTicks();
   p->power = MIX_LoadAudio(m->mixer, "power.wav", true);
   if (!p->power) {
@@ -90,17 +113,18 @@ void power_sound(struct Power *p, struct Music *m) {
   if (!p->track) {
     SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
     MIX_DestroyAudio(p->power);
-    MIX_DestroyMixer(p->mixer);
+    p->power = NULL;
     return ;
   }
 
 
   MIX_SetTrackAudio(p->track, p->power);
+  //Esta condicional no se cumple siempre.
   if (p->power_sound == false) {
+    p->i++;
+    printf("Esto pasó! %d veces", p->i);
     MIX_PlayTrack(p->track, 0);
     p->power_sound = true;
-    p->play_time = (float) p->now + 1000;
-  }else if (p->power_sound == true && p->play_time < p ->now ) {
-    p->power_sound = false;
+    p->play_time = (float) p->now + 500;
   }
 }
