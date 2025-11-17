@@ -12,6 +12,8 @@ struct Music {
     MIX_Audio *background;
     MIX_Track *track;
     SDL_AudioSpec *spec;
+    const bool *keystate;
+    int *device;
 };
 
 

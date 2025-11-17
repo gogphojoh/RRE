@@ -28,17 +28,29 @@ bool power_new(struct Power **power, SDL_Renderer *renderer) {
 
 
   SDL_GetTextureSize(p->image,&p->rect.w,&p->rect.h);
+  p->active = false;
   return true;
 }
 void power_update(struct Power *p, struct Enemy *e) {
-  p->rect.x = p->pw_x;
-  p->rect.y = p->pw_y;
+  if (p->active && e->active == false && e->spawn_time < e->now) {
+    spawn_power(p, e);
+    power_draw(p,e);
+    p->pw_y += 4;
+    p->rect.y = p->pw_y;
+  }else {
+    p->rect.x = p->pw_x;
+    p->rect.y = p->pw_y;
+  }
+
+
 
 }
-void power_draw(struct Power *p) {
-  if (p->active) {
-    SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);
-  }
+void power_draw(struct Power *p, struct Enemy *e) {
+    //Establecer cooldown de hasta 1000 ms para que vuelva a ser dibujado
+    if (p->active && e->active == false ) {
+      SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);
+    }
+
 
 }
 void power_free(struct Power **power) {

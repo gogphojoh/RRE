@@ -16,6 +16,7 @@
  */
 int main(void) {
 
+
     bool exit_status = EXIT_FAILURE;
     struct Game *game = NULL;
 

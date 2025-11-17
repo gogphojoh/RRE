@@ -102,8 +102,9 @@ void bullet_free(struct Bullet **bullet) {
 }
 
 //Estudiar
-void bullet_update(struct Bullet *b, struct Enemy *e) {
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p) {
     Uint32 now = SDL_GetTicks();
+    e->now = SDL_GetTicks();
 
     if (b->keystate[SDL_SCANCODE_Z] && now >= b->next_fire_time) {
         spawn_bullet(b,e);
@@ -118,9 +119,11 @@ void bullet_update(struct Bullet *b, struct Enemy *e) {
                 b->bullets[i].active = false;
             }
             if (e->active && rects_collide(&b->bullets[i].rect, &e->rect)) {
+              e->spawn_time = e->now + 1000;
               b->bullets[i].active = false;   // desactivar bala
               e->active = false;              // desactivar enemigo
-              SDL_DestroyTexture(e->image);   // destruir textura
+              SDL_DestroyTexture(e->image);// destruir textura
+
             }
         }
 

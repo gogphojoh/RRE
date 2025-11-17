@@ -5,13 +5,29 @@
 #include "music.h"
 
 bool music_new (struct Music **music) {
+  *music = calloc(1, sizeof(struct Music));
+  if (*music == NULL) {
+    fprintf(stderr, "Error al realizar Calloc para crear la música del juego.\n");
+    return false;
+  }
+  struct Music *m = *music;
 
-    *music = calloc(1, sizeof(struct Music));
-    if (*music == NULL) {
-        fprintf(stderr, "Error al realizar Calloc para crear la música del juego.\n");
-        return false;
+
+
+  int count = 0;
+  SDL_AudioDeviceID *devices = SDL_GetAudioPlaybackDevices(&count);
+  if (!devices) {
+    fprintf(stderr, "Error al obtener la lista de dispositivos de audio: %s\n", SDL_GetError());
+  } else {
+    printf("Dispositivos de reproducción encontrados: %d\n", count);
+    for (int i = 0; i < count; ++i) {
+      /* SDL_GetAudioDeviceName acepta un SDL_AudioDeviceID en SDL3 */
+      const char *name = SDL_GetAudioDeviceName(devices[i]);
+      printf("  %d: id=%" SDL_PRIu64 "  name=%s\n", i, (unsigned long long)devices[i], name ? name : "(sin nombre)");
     }
-    struct Music *m = *music;
+    SDL_free(devices); /* SDL_GetAudioPlaybackDevices devuelve memoria que hay que liberar */
+  }
+
 
 
     // Create a mixer device (this opens an SDL_AudioDevice internally)
@@ -41,6 +57,9 @@ bool music_new (struct Music **music) {
 
     MIX_SetTrackAudio(m->track, m->background);
 
+
+    m->keystate = SDL_GetKeyboardState(NULL);
+
     return true;
 }
 void music_free(struct Music **music) {
@@ -69,7 +88,13 @@ void music_free(struct Music **music) {
 }
 
  void music_update(struct Music *m) {
+  if (m->keystate[SDL_SCANCODE_M] ) {
+    MIX_StopTrack(m->track, 0);
 
+  }else if (m->keystate[SDL_SCANCODE_S]) {
+    music_play(m);
+
+  }
 }
  void music_play(const struct Music *m) {
     if (!m) return;
@@ -77,4 +102,5 @@ void music_free(struct Music **music) {
     if (!MIX_PlayTrack(m->track, -1)) {  // -1 = loop forever
         SDL_Log("Failed to play track: %s", SDL_GetError());
     }
+
 }

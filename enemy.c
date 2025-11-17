@@ -33,14 +33,14 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   e->x_vel = ENEMY_VEL;
   e->y_vel = ENEMY_VEL;
   e->active = true;
+  e->sound_active = false;
   return true;
 }
-void enemy_update(struct Enemy *e, struct Power *p) {
-  e->now = SDL_GetTicks();
+void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
   // printf("Posicion bala X: %f\n", e->dz_x);
   // printf("Posicion bala Y: %f\n", e->dz_y);
   // printf("Posicion enemigo X: %f\n", e->rect.x);
-  printf("Posicion enemigo Y: %f\n", e->rect.y);
+  // printf("Posicion enemigo Y: %f\n", e->rect.y);
   // printf("Anchura enemigo W: %f\n", e->rect.w);
   // printf("Altura enemigo H: %f\n", e->rect.h);
   // printf("Posicion de bala X: %f\n", b->rect.x);
@@ -55,16 +55,18 @@ void enemy_update(struct Enemy *e, struct Power *p) {
   Posicion enemigo Y: 796.000000
    */
   if (!e->active) {
-    spawn_power(p, e);
-    power_draw(p);
+    play_sound(e,m);
     p->active = true;
     spawn_enemy(e);
   }
 
   e->rect.x += e->x_vel;
   e->rect.y += e->y_vel;
-  p->pw_x = e->rect.x;
-  p->pw_y = e->rect.y;
+  if (e->active == true) {
+    p->pw_x = e->rect.x;
+    p->pw_y = e->rect.y;
+  }
+
   // e->rect.y = 0.01f * (e->rect.x * e->rect.x);
   //Replicar esta lógica
   if (e->rect.x + e->rect.w > WINDOW_WIDTH) {
@@ -99,9 +101,41 @@ void enemy_free(struct Enemy **enemy) {
 
   }
 }
+
+void play_sound(struct Enemy *e, struct Music *m) {
+
+
+
+  e->kill = MIX_LoadAudio(m->mixer, "kill.mp3", true);
+  if (!e->kill) {
+    SDL_Log("Error al cargar el audio: %s", SDL_GetError());
+    MIX_DestroyMixer(e->mixer);
+    return ;
+  }
+
+
+  e->track = MIX_CreateTrack(m->mixer);
+  if (!e->track) {
+    SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
+    MIX_DestroyAudio(e->kill);
+    MIX_DestroyMixer(e->mixer);
+    return ;
+  }
+
+
+  MIX_SetTrackAudio(e->track, e->kill);
+  if (e->sound_active == false) {
+    MIX_PlayTrack(e->track, 0);
+    e->sound_active = true;
+    e->play_time = e->now + 1000;
+  }else if (e->sound_active == true && e->play_time < e->now ) {
+    e->sound_active = false;
+  }
+}
+
 static void spawn_enemy(struct Enemy *e) {
 
-  if (e->spawn_time) {
+  if (e->spawn_time < e->now) {
     e->surf= IMG_Load("hada.png");
     if (!e->surf) {
       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
@@ -110,7 +144,5 @@ static void spawn_enemy(struct Enemy *e) {
     e->image = SDL_CreateTextureFromSurface(e->renderer, e->surf);
     e->active = true;
   }
-
-  e->spawn_time = e->now + 300;
 
 }

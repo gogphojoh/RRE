@@ -166,20 +166,20 @@ void game_update(struct Game *g) {
     text_update(g->text);
     player_update(g->player,g->bullet, g->power);
     power_update(g->power, g->enemy);
-    enemy_update(g->enemy, g->power);
-    bullet_update(g->bullet, g->enemy);
-
+    enemy_update(g->enemy, g->power, g->music);
+    bullet_update(g->bullet, g->enemy, g->power);
+    music_update(g->music);
 }
 
 void game_draw(struct Game *g) {
-    //SDL_SetRenderDrawColor(g->renderer, 74, 18, 59, 255);
-    SDL_RenderClear(g->renderer);
-    // Color de la pantalla (Rojo, Verde, Azul, Opacidad)
-    SDL_RenderTexture(g->renderer,g->background,&g->src,&g->dst);
-    text_draw(g->text);
-    player_draw(g->player);
-    bullet_draw(g->bullet);
-    power_draw(g->power);
+  //SDL_SetRenderDrawColor(g->renderer, 74, 18, 59, 255);
+  SDL_RenderClear(g->renderer);
+  // Color de la pantalla (Rojo, Verde, Azul, Opacidad)
+  SDL_RenderTexture(g->renderer,g->background,&g->src,&g->dst);
+  text_draw(g->text);
+  player_draw(g->player);
+  bullet_draw(g->bullet);
+  power_draw(g->power, g->enemy);
     enemy_draw(g->enemy);
     // Limpia la pantalla con ese color
     // Muestra el resultado en pantalla
@@ -191,9 +191,9 @@ void game_draw(struct Game *g) {
 // Aquí se dibuja la pantalla
 void game_run(struct Game *g) {
     music_play(g->music);
-    if (!music_new(&g->music)) {
-        return;
-    }
+    // if (!music_new(&g->music)) {
+    //     return;
+    // }
     while (g->is_running){
         game_events(g);
         game_update(g);

@@ -81,8 +81,9 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw) {
       p->pv = PLAYER_VEL;
     }
     if (pw->active && power_collide(&p->rect, &pw->rect)) {
-      pw->active = false;   // desactivar bala// desactivar enemigo
-      SDL_DestroyTexture(pw->image);   // destruir textura
+      pw->active = false;   // desactivar power
+      SDL_DestroyTexture(pw->image);   //destruir textura
+      pw->pw_y += 4;
     }
     b->p_x = p->rect.x;
     b->p_y = p->rect.y;

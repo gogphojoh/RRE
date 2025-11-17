@@ -6,6 +6,7 @@
 #define RRE_POWER_H
 
 #include "main.h"
+#include "enemy.h"
 
 struct PowerEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
@@ -24,7 +25,7 @@ struct Power {
 };
 bool power_new(struct Power **power, SDL_Renderer *renderer);
 void power_update(struct Power *p, struct Enemy *e);
-void power_draw(struct Power *p);
+void power_draw(struct Power *p, struct Enemy *e);
 void power_free(struct Power **power);
 void spawn_power(struct Power *p, struct Enemy *e);
 bool power_collide(SDL_FRect *a, SDL_FRect *b);

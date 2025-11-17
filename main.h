@@ -18,7 +18,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_mixer/SDL_mixer.h>
 // Indicamos que usaremos la parte de video de SDL (para mostrar ventanas)
-#define SDL_FLAGS SDL_INIT_VIDEO
+#define SDL_FLAGS (SDL_INIT_VIDEO | SDL_INIT_AUDIO)
+
 //#define MIX_FLAGS MIX_INIT_OGG
 
 
