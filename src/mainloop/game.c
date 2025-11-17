@@ -128,13 +128,13 @@ void game_events(struct Game *g) {
                 case SDL_SCANCODE_BACKSPACE:
                         if (g->r == 4) {
                             SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"chancho.png");
+                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/chancho.png");
                             g->src = (SDL_FRect) {0,0,2851,2390};
                             g->dst = (SDL_FRect) {250,150,713,598 };
                         }
                         else {
                             SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"C_Logo.png");
+                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/C_Logo.png");
                             g->src = (SDL_FRect) {0,0,360,405};
                             g->dst = (SDL_FRect) {450,250,360,405 };
                         }
@@ -142,12 +142,12 @@ void game_events(struct Game *g) {
                 case SDL_SCANCODE_RETURN:
                         if (g->r == 4) {
                             SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"chancho.png");
+                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/chancho.png");
                             g->src = (SDL_FRect) {0,0,2851,2390};
                             g->dst = (SDL_FRect) {250,150,713,598 };
                         }else {
                             SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"Simple_DirectMedia_Layer,_Logo.svg");
+                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/Simple_DirectMedia_Layer,_Logo.svg");
                             g->src= (SDL_FRect){0,0,738, 405};
                             g->dst= (SDL_FRect) {250,250,731,405};
                         }

@@ -38,7 +38,7 @@ bool music_new (struct Music **music) {
     }
 
 
-    m->background = MIX_LoadAudio(m->mixer, "china.mp3", true);
+    m->background = MIX_LoadAudio(m->mixer, "music/bgm/china.mp3", true);
     if (!m->background) {
         SDL_Log("Error al cargar el audio: %s", SDL_GetError());
         MIX_DestroyMixer(m->mixer);

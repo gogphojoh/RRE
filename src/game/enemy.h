@@ -5,7 +5,7 @@
 #ifndef RRE_ENEMY_H
 #define RRE_ENEMY_H
 
-#include "main.h"
+#include "../mainloop/main.h"
 #include "bullet.h"
 #include "power.h"
 #include "music.h"

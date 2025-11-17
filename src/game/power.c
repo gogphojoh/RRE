@@ -15,7 +15,7 @@ bool power_new(struct Power **power, SDL_Renderer *renderer) {
     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
     return false;
   }
-  p->surf= IMG_Load("power.png");
+  p->surf= IMG_Load("assets/objects/power.png");
   if (!p->surf) {
     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
     return false;
@@ -69,11 +69,9 @@ void power_free(struct Power **power) {
     }
     if (p->power) {
       MIX_DestroyAudio(p->power);
-      p->power = NULL;
     }
     if (p->track) {
       MIX_DestroyTrack(p->track);
-      p->track = NULL;
     }
     p->renderer = NULL;
     free(p);
@@ -87,7 +85,7 @@ void spawn_power(struct Power *p, struct Enemy *e) {
   //Posible problema de consumo excesivo de CPU
   if (p->surf) SDL_DestroySurface(p->surf);
   if (p->image) SDL_DestroyTexture(p->image);
-  p->surf= IMG_Load("power.png");
+  p->surf= IMG_Load("assets/objects/power.png");
   p->image = SDL_CreateTextureFromSurface(p->renderer, p->surf);
 }
 
@@ -101,7 +99,7 @@ void power_sound(struct Power *p, struct Music *m) {
     p->track = NULL;
   }
   p->now = SDL_GetTicks();
-  p->power = MIX_LoadAudio(m->mixer, "power.wav", true);
+  p->power = MIX_LoadAudio(m->mixer, "music/sfx/power.wav", true);
   if (!p->power) {
     SDL_Log("Error al cargar el audio: %s", SDL_GetError());
     MIX_DestroyMixer(p->mixer);

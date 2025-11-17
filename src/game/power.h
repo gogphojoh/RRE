@@ -5,7 +5,7 @@
 #ifndef RRE_POWER_H
 #define RRE_POWER_H
 
-#include "main.h"
+#include "../mainloop/main.h"
 #include "enemy.h"
 #include "player.h"
 #include "music.h"

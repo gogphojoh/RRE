@@ -35,7 +35,7 @@ bool game_init_sdl(struct Game *g) {
     }
 
 
-    SDL_Surface *icon_surf =  (IMG_Load("Logo.png"));
+    SDL_Surface *icon_surf =  (IMG_Load("assets/logo/Logo.png"));
     if (!icon_surf) {
         fprintf(stderr, "Error cargando el icono de la pantalla: %s\n", SDL_GetError());
         return false;

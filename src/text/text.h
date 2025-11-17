@@ -5,7 +5,7 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include "main.h"
+#include "../mainloop/main.h"
 
 struct Text {
     SDL_Renderer *renderer;

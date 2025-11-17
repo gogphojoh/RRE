@@ -22,7 +22,7 @@ bool player_new (struct Player **player, SDL_Renderer *renderer) {
 
     p->renderer = renderer;
 
-    p->image = IMG_LoadTexture(p->renderer, "marisa.png");
+    p->image = IMG_LoadTexture(p->renderer, "assets/sprites/marisa.png");
     if (!p->image) {
         fprintf(stderr, "Error al crear la imagen del jugador: %s\n", SDL_GetError());
         return false;

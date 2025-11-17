@@ -6,12 +6,12 @@
 #define GAME_H
 
 #include "main.h"
-#include "text.h"
-#include "player.h"
-#include "music.h"
-#include "bullet.h"
-#include "enemy.h"
-#include "power.h"
+#include "../text/text.h"
+#include "../game/player.h"
+#include "../game/music.h"
+#include "../game/bullet.h"
+#include "../game/enemy.h"
+#include "../game/power.h"
 
 struct Game {
     struct Music *music;

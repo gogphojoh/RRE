@@ -33,7 +33,7 @@ bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
         fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
         return false;
     }
-    b->surf= IMG_Load("bullet.png");
+    b->surf= IMG_Load("assets/objects/bullet.png");
     if (!b->surf) {
         fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
         return false;

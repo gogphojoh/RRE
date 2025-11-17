@@ -5,7 +5,7 @@
 #ifndef MUSIC_MUSIC_H
 #define MUSIC_MUSIC_H
 
-#include "main.h"
+#include "../mainloop/main.h"
 
 struct Music {
     MIX_Mixer *mixer;

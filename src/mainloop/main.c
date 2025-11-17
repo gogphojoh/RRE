@@ -12,7 +12,7 @@
  *Y yo.
  *Y me temo que yo no tengo ni idea de como funciona.
  *Toma este contador para tomar las horas desperidiadas tratando de hacer funcionar a RED REPUBLIC ENGINE:
- *25 hrs <- Por ahora.
+ *28 hrs <- Por ahora.
  */
 int main(void) {
 

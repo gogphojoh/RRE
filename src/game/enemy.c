@@ -19,7 +19,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
     return false;
   }
-  e->surf= IMG_Load("hada.png");
+  e->surf= IMG_Load("assets/sprites/hada.png");
   if (!e->surf) {
     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
     return false;
@@ -108,7 +108,7 @@ void play_sound(struct Enemy *e, struct Music *m) {
     e->track = NULL;
   }
 
-  e->kill = MIX_LoadAudio(m->mixer, "kill.mp3", true);
+  e->kill = MIX_LoadAudio(m->mixer, "music/sfx/kill.mp3", true);
   if (!e->kill) {
     SDL_Log("Error al cargar el audio: %s", SDL_GetError());
     return ;
@@ -134,7 +134,7 @@ static void spawn_enemy(struct Enemy *e, struct Power *p) {
   if (e->spawn_time < e->now) {
     if (e->surf) SDL_DestroySurface(e->surf);
     if (e->image) SDL_DestroyTexture(e->image);
-    e->surf= IMG_Load("hada.png");
+    e->surf= IMG_Load("assets/sprites/hada.png");
     if (!e->surf) {
       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
       return ;

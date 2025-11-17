@@ -5,7 +5,7 @@
 #ifndef MUSIC_BULLET_H
 #define MUSIC_BULLET_H
 
-#include "main.h"
+#include "../mainloop/main.h"
 #include "enemy.h"
 
 struct BulletEntity {

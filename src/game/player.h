@@ -5,7 +5,7 @@
 #ifndef PLAYER_PLAYER_H
 #define PLAYER_PLAYER_H
 
-#include "main.h"
+#include "../mainloop/main.h"
 #include "bullet.h"
 
 struct Player {
