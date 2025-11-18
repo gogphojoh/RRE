@@ -23,12 +23,14 @@ struct Power {
   SDL_FRect rect; // for width/height reference
   float pw_x, pw_y;
   bool active;
+  bool follow;
   struct PowerEntity bullets[MAX_BULLETS];
   MIX_Mixer *mixer;
   MIX_Audio *power;
   MIX_Track *track;//piscina de balas
   bool power_sound;
   float play_time;
+  float ascention;
   Uint32 now;
   int i;
 };

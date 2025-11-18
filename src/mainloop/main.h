@@ -40,8 +40,10 @@
 #define FOCUS_VEL 3
 #define BULLET_VEL 15
 #define MAX_BULLETS 128
+#define MAX_ENEMIES 128
+#define SCREEN_ENEMIES 6;
 #define BULLET_DELAY 50
 #define ENEMY_VEL 4
-#define POWER_VEL 6
+#define POWER_VEL 3
 
 #endif

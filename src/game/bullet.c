@@ -118,11 +118,12 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p) {
             if (b->bullets[i].rect.y + b->bullets[i].rect.h < 0) {
                 b->bullets[i].active = false;
             }
-            if (e->active && rects_collide(&b->bullets[i].rect, &e->rect)) {
+            if (e->enemies[i].active && rects_collide(&b->bullets[i].rect, &e->enemies[i].rect)) {
               e->spawn_time = e->now + 1000;
               b->bullets[i].active = false;   // desactivar bala
-              e->active = false;// desactivar enemigo
+              e->enemies[i].active = false;// desactivar enemigo
               p->active = true;
+              p->ascention = e->now + 500;
               e->image = NULL;
               SDL_DestroyTexture(e->image);// destruir textura
 

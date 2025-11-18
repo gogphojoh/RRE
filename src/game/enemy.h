@@ -10,15 +10,24 @@
 #include "power.h"
 #include "music.h"
 
+struct EnemyEntity {
+  SDL_FRect rect; //Tamaño y forma de las multiples balas
+  MIX_Mixer *mixer;
+  MIX_Audio *kill;
+  MIX_Track *track;
+  bool active; //Define si una bala ya fue usada
+};
+
 struct Enemy {
   struct Power *power;
   SDL_Renderer *renderer;
   SDL_Texture *image;
   SDL_Surface *surf;
   SDL_FRect rect;
-  MIX_Mixer *mixer;
-  MIX_Audio *kill;
-  MIX_Track *track;
+  struct EnemyEntity enemies[MAX_ENEMIES];
+  int spacing;
+  int quantity;
+  Uint32 next_enemy;
   float x_vel, y_vel;
   bool active;
   bool sound_active;

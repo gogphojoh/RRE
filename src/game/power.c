@@ -32,13 +32,50 @@ bool power_new(struct Power **power, SDL_Renderer *renderer) {
   return true;
 }
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
-  if (p->active && p->rect.y + p->rect.h < WINDOW_HEIGHT) {
+  //Conseguir que el Power suba brevemente
+
+
+  if (p->active && p->rect.y + p->rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->ascention ) {
+    printf("estoy bajando. \n");
     spawn_power(p, e);
     power_draw(p,e);
     p->pw_y += POWER_VEL;
     p->rect.y = p->pw_y;
-  }else if (p->active && p->rect.y + p->rect.h >= WINDOW_HEIGHT) {
+
+  } else  if (p->active && p->ascention > e->now ) {
+    printf("Estoy levitando \n");
+    //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
+    //Gracis a la condicional superior.
+    spawn_power(p, e);
+    power_draw(p,e);
+    p->pw_y -= POWER_VEL;
+    p->rect.y = p->pw_y;
+  }
+  else if (p->active && p->rect.y + p->rect.h >= WINDOW_HEIGHT) {
     p->active = false;
+  }
+  if ((p->active && (p->rect.y + p->rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
+    printf("Seguimiento al jugador activado");
+      p->follow = true;
+    //Hacer una transición suave
+  }
+  if (p->follow) {
+    if (p->rect.x < pl->rect.x ) {
+      p->rect.x +=10;
+    }
+    else if (p->rect.x > pl->rect.x) {
+      p->rect.x -=10;
+    } else if (p->rect.x == pl->rect.x) {
+
+    }
+    if (p->rect.y < pl->rect.y ) {
+      p->rect.y +=10;
+    }
+    else if (p->rect.y > pl->rect.y) {
+      p->rect.y -=10;
+    }
+    p->pw_x = p->rect.x;
+    p->pw_y = p->rect.y;
   }
   else if (!p->active){
     p->rect.x = p->pw_x;
