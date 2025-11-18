@@ -6,6 +6,12 @@
 
 //Cuando muere el enemigo es cuando el consumo de memoria se dispara.
 
+//!Tareas pendientes:
+/*
+ *Los enemigos ahora mismo están completamente idos. Todos mueren a la vez o ninguno muere. Sin contar que adicionalmente el efecto de sonido de estos mismos se repite en bucle,
+ *creando un efecto similar al de un latido.
+ */
+
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   *enemy = calloc (1, sizeof (struct Enemy));
   if (!(*enemy)) {
