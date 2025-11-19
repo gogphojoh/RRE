@@ -44,11 +44,12 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     e->enemies[i].rect.w = e->rect.w;
     e->enemies[i].rect.h = e->rect.h;
     e->enemies[i].active = true;
+    e->enemies[i].x_vel = ENEMY_VEL;
+    e->enemies[i].y_vel = ENEMY_VEL;
   }
   // e->rect.x = 100;
   // e->rect.y = 100;
-    e->x_vel = ENEMY_VEL;
-    e->y_vel = ENEMY_VEL;
+
   // e->active = true;
   // e->sound_active = false;
   return true;
@@ -61,14 +62,10 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
   for (int i = 0; i < e->quantity; i++) {
 
     if (!e->enemies[i].active && e->play_time < e->now) {
-      play_sound(e,m);
-      spawn_enemy(e, p);
+
+      // spawn_enemy(e, p);
     }
 
-    if (e->enemies[i].active) {
-      e->enemies[i].rect.x += e->x_vel;
-      e->enemies[i].rect.y += e->y_vel;
-    }
 
 
     if (e->enemies[i].active == true && p->active == false) {
@@ -77,13 +74,16 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
     }
 
     if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
-      e->x_vel = -ENEMY_VEL;
+      e->enemies[i].x_vel = -ENEMY_VEL;
     } else if (e->enemies[i].rect.x < 0) {
-      e->x_vel = ENEMY_VEL;
+      e->enemies[i].x_vel = ENEMY_VEL;
     } else if (e->enemies[i].rect.y < 0) {
-      e->y_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;
     } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
-      e->y_vel = -ENEMY_VEL;
+      e->enemies[i].y_vel = -ENEMY_VEL;
+    } else  if (e->enemies[i].active) {
+      e->enemies[i].rect.x += e->x_vel + i*3;
+      e->enemies[i].rect.y += e->y_vel + i*3;
     }
   }
 
@@ -96,7 +96,10 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 }
 void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
-    SDL_RenderTexture(e->renderer, e->image, NULL, &e->enemies[i].rect);
+    if (e->enemies[i].active) {
+      SDL_RenderTexture(e->renderer, e->image, NULL, &e->enemies[i].rect);
+    }
+
   }
 
 }
@@ -112,11 +115,11 @@ void enemy_free(struct Enemy **enemy) {
       e->surf = NULL;
     }
     for (int i = 0; i < e->quantity; i++) {
-      if (e->enemies[i].kill) {
-        MIX_DestroyAudio(e->enemies[i].kill);
+      if (e->kill) {
+        MIX_DestroyAudio(e->kill);
       }
-      if (e->enemies[i].track) {
-        MIX_DestroyTrack(e->enemies[i].track);
+      if (e->track) {
+        MIX_DestroyTrack(e->track);
 
       }
     }
@@ -133,39 +136,39 @@ void enemy_free(struct Enemy **enemy) {
 
 void play_sound(struct Enemy *e, struct Music *m) {
 
-  for (int i = 0; i < e->quantity; i++) {
-      if (e->enemies[i].kill ) {
-    MIX_DestroyAudio(e->enemies[i].kill);
-    e->enemies[i].kill = NULL;
+      if (e->kill ) {
+    MIX_DestroyAudio(e->kill);
+    e->kill = NULL;
   }
-  if (e->enemies[i].track ) {
-    MIX_DestroyTrack(e->enemies[i].track);
-    e->enemies[i].track = NULL;
+  if (e->track ) {
+    MIX_DestroyTrack(e->track);
+    e->track = NULL;
   }
 
-  e->enemies[i].kill = MIX_LoadAudio(m->mixer, "music/sfx/kill.mp3", true);
-  if (!e->enemies[i].kill) {
+  e->kill = MIX_LoadAudio(m->mixer, "music/sfx/kill.mp3", true);
+  if (!e->kill) {
     SDL_Log("Error al cargar el audio: %s", SDL_GetError());
     return ;
   }
-  e->enemies[i].track = MIX_CreateTrack(m->mixer);
-  if (!e->enemies[i].track) {
+  e->track = MIX_CreateTrack(m->mixer);
+  if (!e->track) {
     SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
     return ;
   }
 
 
-  MIX_SetTrackAudio(e->enemies[i].track, e->enemies[i].kill);
-  if (e->sound_active == false) {
-    MIX_PlayTrack(e->enemies[i].track, 0);
-    e->sound_active = true;
-    e->play_time = e->now + 1000;
-  }else if (e->sound_active == true && e->play_time < e->now ) {
-    e->sound_active = false;
-  }
+  MIX_SetTrackAudio(e->track, e->kill);
+    MIX_PlayTrack(e->track, 0);
+  // if (e->sound_active == false) {
+  //
+  //   e->sound_active = true;
+  //   e->play_time = e->now + 1000;
+  // }else if (e->sound_active == true && e->play_time < e->now ) {
+  //   e->sound_active = false;
+  // }
   }
 
-}
+
 
 static void spawn_enemy(struct Enemy *e, struct Power *p) {
 

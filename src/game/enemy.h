@@ -12,13 +12,15 @@
 
 struct EnemyEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
-  MIX_Mixer *mixer;
-  MIX_Audio *kill;
-  MIX_Track *track;
+  float x_vel, y_vel;
+
   bool active; //Define si una bala ya fue usada
 };
 
 struct Enemy {
+  MIX_Mixer *mixer;
+  MIX_Audio *kill;
+  MIX_Track *track;
   struct Power *power;
   SDL_Renderer *renderer;
   SDL_Texture *image;
