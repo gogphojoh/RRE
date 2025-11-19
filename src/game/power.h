@@ -13,6 +13,8 @@
 struct PowerEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
   float pw_x, pw_y;
+  bool up;
+  float ascention;
   bool active; //Define si una bala ya fue usada
 };
 
@@ -31,7 +33,7 @@ struct Power {
   MIX_Track *track;//piscina de balas
   bool power_sound;
   float play_time;
-  float ascention;
+  ///float ascention;
   Uint32 now;
   int i;
 };

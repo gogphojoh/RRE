@@ -81,15 +81,15 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
       p->pv = PLAYER_VEL;
     }
     for (int i = 0; i < e->quantity; i++)
-    if (pw->pows[i].active && power_collide(&p->rect, &pw->rect)) {
+    if (pw->pows[i].active && power_collide(&p->rect, &pw->pows[i].rect)) {
       if (pw->power_sound == true ) {
         pw->power_sound = false;
       }
       power_sound(pw, m);
       pw->pows[i].active = false;// desactivar power
       pw->follow = false;
-      SDL_DestroyTexture(pw->image);
-      pw->image = NULL;
+      // SDL_DestroyTexture(pw->image);
+      // pw->image = NULL;
     }
     b->p_x = p->rect.x;
     b->p_y = p->rect.y;

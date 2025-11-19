@@ -29,10 +29,11 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
   }
 
 
-  SDL_GetTextureSize(p->image,&p->rect.w,&p->rect.h);
+
   for (int i = 0; i < e->quantity; i++) {
     p->pows[i].active = false;
-
+    //Tienes que definir todos los parametros, sobre todo si son objetos de arrays que se dibujan varias veces.
+    SDL_GetTextureSize(p->image,&p->pows[i].rect.w,&p->pows[i].rect.h);
   }
 
   return true;
@@ -41,17 +42,19 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
   //Conseguir que el Power suba brevemente
 
   for (int i = 0; i < e->quantity; i++) {
-    if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->ascention ) {
+
+    if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->pows[i].ascention ) {
       printf("estoy bajando. \n");
+      p->pows[i].up = false;
       spawn_power(p, e);
       power_draw(p,e);
       p->pows[i].pw_y += POWER_VEL;
       p->pows[i].rect.y = p->pows[i].pw_y;
 
-    } else  if (p->pows[i].active && p->ascention > e->now ) {
+    } else if (p->pows[i].active && p->pows[i].ascention > e->now && p->pows[i].up == true) {
       printf("Estoy levitando \n");
       //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
-      //Gracis a la condicional superior.
+      //Gracias a la condicional superior.
       spawn_power(p, e);
       power_draw(p,e);
       p->pows[i].pw_y -= POWER_VEL;
@@ -78,7 +81,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
         p->pows[i].rect.y +=10;
       }
       else if (p->pows[i].rect.y > pl->rect.y) {
-        p->rect.y -=10;
+        p->pows[i].rect.y -=10;
       }
       p->pows[i].pw_x = p->pows[i].rect.x;
       p->pows[i].pw_y = p->pows[i].rect.y;
@@ -86,6 +89,8 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
     else if (!p->pows[i].active){
       p->pows[i].rect.x = p->pows[i].pw_x;
       p->pows[i].rect.y = p->pows[i].pw_y;
+      printf("Esta es mi posición X: %f \n", p->pows[i].rect.x);
+      printf("Esta es mi posición Y: %f \n", p->pows[i].rect.y);
     }
   }
 
@@ -97,7 +102,7 @@ void power_draw(struct Power *p, struct Enemy *e) {
     //Establecer cooldown de hasta 1000 ms para que vuelva a ser dibujado
     for (int i = 0; i < e->quantity; i++) {
       if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h <= WINDOW_HEIGHT) {
-        SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);
+        SDL_RenderTexture(p->renderer, p->image, NULL, &p->pows[i].rect);
       }
     }
 
