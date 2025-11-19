@@ -124,7 +124,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
               // e->spawn_time = e->now + 1000;
               b->bullets[i].active = false;   // desactivar bala
               e->enemies[j].active = false;// desactivar enemigo
-              p->active = true;
+              p->pows[i].active = true;
               p->ascention = e->now + 500;
               play_sound(e,m);
               // e->image = NULL;

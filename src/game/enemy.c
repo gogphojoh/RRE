@@ -10,6 +10,8 @@
 /*
  *Los enemigos ahora mismo están completamente idos. Todos mueren a la vez o ninguno muere. Sin contar que adicionalmente el efecto de sonido de estos mismos se repite en bucle,
  *creando un efecto similar al de un latido.
+ *
+ *Resuelto
  */
 
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
@@ -61,16 +63,16 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
   for (int i = 0; i < e->quantity; i++) {
 
-    if (!e->enemies[i].active && e->play_time < e->now) {
+    // if (!e->enemies[i].active && e->play_time < e->now) {
+    //
+    //   // spawn_enemy(e, p);
+    // }
 
-      // spawn_enemy(e, p);
-    }
 
 
-
-    if (e->enemies[i].active == true && p->active == false) {
-      p->pw_x = e->enemies[i].rect.x;
-      p->pw_y = e->enemies[i].rect.y;
+    if (e->enemies[i].active == true && p->pows[i].active == false) {
+      p->pows[i].pw_x = e->enemies[i].rect.x;
+      p->pows[i].pw_y = e->enemies[i].rect.y;
     }
 
     if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {

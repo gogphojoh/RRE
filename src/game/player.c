@@ -62,7 +62,7 @@ void player_free(struct Player **player) {
     }
 
 }
-void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m) {
+void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e) {
     if (p->keystate[SDL_SCANCODE_LEFT]) {
         p->rect.x -= p->pv;
     }
@@ -80,12 +80,13 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
     }else {
       p->pv = PLAYER_VEL;
     }
-    if (pw->active && power_collide(&p->rect, &pw->rect)) {
+    for (int i = 0; i < e->quantity; i++)
+    if (pw->pows[i].active && power_collide(&p->rect, &pw->rect)) {
       if (pw->power_sound == true ) {
         pw->power_sound = false;
       }
       power_sound(pw, m);
-      pw->active = false;// desactivar power
+      pw->pows[i].active = false;// desactivar power
       pw->follow = false;
       SDL_DestroyTexture(pw->image);
       pw->image = NULL;

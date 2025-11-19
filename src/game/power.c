@@ -3,7 +3,9 @@
 //
 #include "power.h"
 
-bool power_new(struct Power **power, SDL_Renderer *renderer) {
+//Problemas con el seguimiento al jugador y con el dibujado de posiciones distintas.
+
+bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
   *power = calloc (1, sizeof (struct Power));
   if (!(*power)) {
     fprintf(stderr,"Error al guardar en la memoria la bala: %s", SDL_GetError());
@@ -28,68 +30,77 @@ bool power_new(struct Power **power, SDL_Renderer *renderer) {
 
 
   SDL_GetTextureSize(p->image,&p->rect.w,&p->rect.h);
-  p->active = false;
+  for (int i = 0; i < e->quantity; i++) {
+    p->pows[i].active = false;
+
+  }
+
   return true;
 }
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
   //Conseguir que el Power suba brevemente
 
+  for (int i = 0; i < e->quantity; i++) {
+    if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->ascention ) {
+      printf("estoy bajando. \n");
+      spawn_power(p, e);
+      power_draw(p,e);
+      p->pows[i].pw_y += POWER_VEL;
+      p->pows[i].rect.y = p->pows[i].pw_y;
 
-  if (p->active && p->rect.y + p->rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->ascention ) {
-    printf("estoy bajando. \n");
-    spawn_power(p, e);
-    power_draw(p,e);
-    p->pw_y += POWER_VEL;
-    p->rect.y = p->pw_y;
-
-  } else  if (p->active && p->ascention > e->now ) {
-    printf("Estoy levitando \n");
-    //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
-    //Gracis a la condicional superior.
-    spawn_power(p, e);
-    power_draw(p,e);
-    p->pw_y -= POWER_VEL;
-    p->rect.y = p->pw_y;
-  }
-  else if (p->active && p->rect.y + p->rect.h >= WINDOW_HEIGHT) {
-    p->active = false;
-  }
-  if ((p->active && (p->rect.y + p->rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
-    printf("Seguimiento al jugador activado");
+    } else  if (p->pows[i].active && p->ascention > e->now ) {
+      printf("Estoy levitando \n");
+      //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
+      //Gracis a la condicional superior.
+      spawn_power(p, e);
+      power_draw(p,e);
+      p->pows[i].pw_y -= POWER_VEL;
+      p->pows[i].rect.y = p->pows[i].pw_y;
+    }
+    else if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h >= WINDOW_HEIGHT) {
+      p->pows[i].active = false;
+    }
+    if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
+      printf("Seguimiento al jugador activado");
       p->follow = true;
-    //Hacer una transición suave
-  }
-  if (p->follow) {
-    if (p->rect.x < pl->rect.x ) {
-      p->rect.x +=10;
+      //Hacer una transición suave
     }
-    else if (p->rect.x > pl->rect.x) {
-      p->rect.x -=10;
-    } else if (p->rect.x == pl->rect.x) {
+    if (p->follow) {
+      if (p->pows[i].rect.x < pl->rect.x ) {
+        p->pows[i].rect.x +=10;
+      }
+      else if (p->pows[i].rect.x > pl->rect.x) {
+        p->pows[i].rect.x -=10;
+      } else if (p->pows[i].rect.x == pl->rect.x) {
 
+      }
+      if (p->pows[i].rect.y < pl->rect.y ) {
+        p->pows[i].rect.y +=10;
+      }
+      else if (p->pows[i].rect.y > pl->rect.y) {
+        p->rect.y -=10;
+      }
+      p->pows[i].pw_x = p->pows[i].rect.x;
+      p->pows[i].pw_y = p->pows[i].rect.y;
     }
-    if (p->rect.y < pl->rect.y ) {
-      p->rect.y +=10;
+    else if (!p->pows[i].active){
+      p->pows[i].rect.x = p->pows[i].pw_x;
+      p->pows[i].rect.y = p->pows[i].pw_y;
     }
-    else if (p->rect.y > pl->rect.y) {
-      p->rect.y -=10;
-    }
-    p->pw_x = p->rect.x;
-    p->pw_y = p->rect.y;
   }
-  else if (!p->active){
-    p->rect.x = p->pw_x;
-    p->rect.y = p->pw_y;
-  }
+
 
 
 
 }
 void power_draw(struct Power *p, struct Enemy *e) {
     //Establecer cooldown de hasta 1000 ms para que vuelva a ser dibujado
-    if (p->active && p->rect.y + p->rect.h <= WINDOW_HEIGHT) {
-      SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);
+    for (int i = 0; i < e->quantity; i++) {
+      if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h <= WINDOW_HEIGHT) {
+        SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);
+      }
     }
+
 
 
 }
