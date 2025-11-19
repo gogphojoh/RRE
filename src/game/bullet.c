@@ -102,7 +102,7 @@ void bullet_free(struct Bullet **bullet) {
 }
 
 //Estudiar
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p) {
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m) {
     Uint32 now = SDL_GetTicks();
     e->now = SDL_GetTicks();
 
@@ -118,6 +118,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p) {
             if (b->bullets[i].rect.y + b->bullets[i].rect.h < 0) {
                 b->bullets[i].active = false;
             }
+<<<<<<< Updated upstream
             if (e->active && rects_collide(&b->bullets[i].rect, &e->rect)) {
               e->spawn_time = e->now + 1000;
               b->bullets[i].active = false;   // desactivar bala
@@ -125,8 +126,29 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p) {
               p->active = true;
               e->image = NULL;
               SDL_DestroyTexture(e->image);// destruir textura
+=======
+>>>>>>> Stashed changes
 
-            }
+           for (int j = 0; j < e->quantity; j++) {
+             if (!e->enemies[j].active) continue;
+             if (rects_collide(&b->bullets[i].rect, &e->enemies[j].rect)) {
+               // e->spawn_time = e->now + 1000;
+               // e->play_time = e->now + 100;
+               // printf("tiempo de espera : %d", e->spawn_time);
+               // printf("tiempo actual : %d", e->now);
+               b->bullets[i].active = false;   // desactivar bala
+               e->enemies[j].active = false;// desactivar enemigo
+                 play_sound(e,m, j);
+
+
+                 // spawn_enemy(e, j);
+               p->active = true;
+               p->ascention = e->now + 500;
+               // e->image = NULL;
+               // SDL_DestroyTexture(e->image);// destruir textura
+
+             }
+           }
         }
 
 

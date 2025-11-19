@@ -38,7 +38,7 @@ bool game_new (struct Game **game) {
   if (!enemy_new(&g->enemy, g->renderer)) {
     return false;
   }
-  if (!power_new(&g->power,g->renderer)) {
+  if (!power_new(&g->power,g->renderer, g->enemy)) {
     return false;
   }
 
@@ -170,7 +170,7 @@ void game_update(struct Game *g) {
     player_update(g->player,g->bullet, g->power, g->music);
     power_update(g->power, g->enemy, g->player);
     enemy_update(g->enemy, g->power, g->music);
-    bullet_update(g->bullet, g->enemy, g->power);
+    bullet_update(g->bullet, g->enemy, g->power, g->music);
     music_update(g->music);
 }
 

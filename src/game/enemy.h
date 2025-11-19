@@ -10,6 +10,15 @@
 #include "power.h"
 #include "music.h"
 
+<<<<<<< Updated upstream
+=======
+struct EnemyEntity {
+  SDL_FRect rect; //Tamaño y forma de las multiples balas
+  float x_vel, y_vel;
+  bool active; //Define si una bala ya fue usada
+};
+
+>>>>>>> Stashed changes
 struct Enemy {
   struct Power *power;
   SDL_Renderer *renderer;
@@ -19,6 +28,13 @@ struct Enemy {
   MIX_Mixer *mixer;
   MIX_Audio *kill;
   MIX_Track *track;
+<<<<<<< Updated upstream
+=======
+  struct EnemyEntity enemies[MAX_ENEMIES];
+  int spacing;
+  int quantity;
+  Uint32 next_enemy;
+>>>>>>> Stashed changes
   float x_vel, y_vel;
   bool active;
   bool sound_active;
@@ -29,12 +45,12 @@ struct Enemy {
 
 };
 
-void play_sound(struct Enemy *e, struct Music *m);
+void play_sound(struct Enemy *e, struct Music *m, int index);
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer);
 void enemy_update(struct Enemy *e,struct Power *p, struct Music *m);
 void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
-static void spawn_enemy(struct Enemy *e, struct Power *p);
+void spawn_enemy(struct Enemy *e, int index);
 
 #endif // RRE_ENEMY_H
 

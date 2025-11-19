@@ -3,7 +3,7 @@
 //
 #include "power.h"
 
-bool power_new(struct Power **power, SDL_Renderer *renderer) {
+bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
   *power = calloc (1, sizeof (struct Power));
   if (!(*power)) {
     fprintf(stderr,"Error al guardar en la memoria la bala: %s", SDL_GetError());
@@ -28,18 +28,69 @@ bool power_new(struct Power **power, SDL_Renderer *renderer) {
 
 
   SDL_GetTextureSize(p->image,&p->rect.w,&p->rect.h);
-  p->active = false;
+  p->quantity = e->quantity;
+  for (int i; i < p->quantity; i++) {
+    p->pows[i].active = false;
+  }
+
   return true;
 }
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
+<<<<<<< Updated upstream
   if (p->active && p->rect.y + p->rect.h < WINDOW_HEIGHT) {
+=======
+  //Conseguir que el Power suba brevemente
+
+
+  if (p->active && p->rect.y + p->rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->ascention ) {
+    //printf("estoy bajando. \n");
+>>>>>>> Stashed changes
     spawn_power(p, e);
     power_draw(p,e);
     p->pw_y += POWER_VEL;
     p->rect.y = p->pw_y;
+<<<<<<< Updated upstream
   }else if (p->active && p->rect.y + p->rect.h >= WINDOW_HEIGHT) {
     p->active = false;
   }
+=======
+
+  } else  if (p->active && p->ascention > e->now ) {
+    //printf("Estoy levitando \n");
+    //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
+    //Gracis a la condicional superior.
+    spawn_power(p, e);
+    power_draw(p,e);
+    p->pw_y -= POWER_VEL;
+    p->rect.y = p->pw_y;
+  }
+  else if (p->active && p->rect.y + p->rect.h >= WINDOW_HEIGHT) {
+    p->active = false;
+  }
+  if ((p->active && (p->rect.y + p->rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
+    //printf("Seguimiento al jugador activado");
+      p->follow = true;
+    //Hacer una transición suave
+  }
+  if (p->follow) {
+    if (p->rect.x < pl->rect.x ) {
+      p->rect.x +=10;
+    }
+    else if (p->rect.x > pl->rect.x) {
+      p->rect.x -=10;
+    } else if (p->rect.x == pl->rect.x) {
+
+    }
+    if (p->rect.y < pl->rect.y ) {
+      p->rect.y +=10;
+    }
+    else if (p->rect.y > pl->rect.y) {
+      p->rect.y -=10;
+    }
+    p->pw_x = p->rect.x;
+    p->pw_y = p->rect.y;
+  }
+>>>>>>> Stashed changes
   else if (!p->active){
     p->rect.x = p->pw_x;
     p->rect.y = p->pw_y;
@@ -120,7 +171,7 @@ void power_sound(struct Power *p, struct Music *m) {
   //Esta condicional no se cumple siempre.
   if (p->power_sound == false) {
     p->i++;
-    printf("Esto pasó! %d veces", p->i);
+    //printf("Esto pasó! %d veces", p->i);
     MIX_PlayTrack(p->track, 0);
     p->power_sound = true;
     p->play_time = (float) p->now + 500;

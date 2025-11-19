@@ -42,9 +42,35 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
   //La solución final fue bastante parecida al del rectangulo, sin embargo, es un poco más compleja.
 
   //!!! Estudiar !!!
+<<<<<<< Updated upstream
   if (!e->active && e->play_time < e->now) {
     play_sound(e,m);
     spawn_enemy(e, p);
+=======
+
+
+
+  for (int i = 0; i < e->quantity; i++) {
+
+
+    if (e->enemies[i].active == true && p->active == false) {
+      p->pw_x = e->enemies[i].rect.x;
+      p->pw_y = e->enemies[i].rect.y;
+    }
+
+    if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
+      e->x_vel = -ENEMY_VEL;
+    } else if (e->enemies[i].rect.x < 0) {
+      e->x_vel = ENEMY_VEL;
+    } else if (e->enemies[i].rect.y < 0) {
+      e->y_vel = ENEMY_VEL;
+    } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
+      e->y_vel = -ENEMY_VEL;
+    } else if (e->enemies[i].active) {
+      e->enemies[i].rect.x += e->x_vel + (i);
+      e->enemies[i].rect.y += e->y_vel + (i);
+    }
+>>>>>>> Stashed changes
   }
 
   e->rect.x += e->x_vel;
@@ -68,7 +94,18 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
 }
 void enemy_draw(struct Enemy *e) {
+<<<<<<< Updated upstream
   SDL_RenderTexture(e->renderer, e->image, NULL, &e->rect);
+=======
+  for (int i = 0; i < e->quantity; i++) {
+    if (e->enemies[i].active) {
+      SDL_RenderTexture(e->renderer, e->image, NULL, &e->enemies[i].rect);
+
+    }
+
+  }
+
+>>>>>>> Stashed changes
 }
 void enemy_free(struct Enemy **enemy) {
   if (*enemy) {
@@ -81,8 +118,19 @@ void enemy_free(struct Enemy **enemy) {
       SDL_DestroySurface(e->surf);
       e->surf = NULL;
     }
+<<<<<<< Updated upstream
     if (e->kill) {
       MIX_DestroyAudio(e->kill);
+=======
+    for (int i = 0; i < e->quantity; i++) {
+      if (e->kill) {
+        MIX_DestroyAudio(e->kill);
+      }
+      if (e->track) {
+        MIX_DestroyTrack(e->track);
+
+      }
+>>>>>>> Stashed changes
     }
     if (e->track) {
       MIX_DestroyTrack(e->track);
@@ -98,8 +146,16 @@ void enemy_free(struct Enemy **enemy) {
   }
 }
 
+<<<<<<< Updated upstream
 void play_sound(struct Enemy *e, struct Music *m) {
   if (e->kill ) {
+=======
+void play_sound(struct Enemy *e, struct Music *m, int index) {
+  //Trabajar en esto!!!!!!!!!!!
+
+    printf("Esto pasó %d veces", index);
+    if (e->kill ) {
+>>>>>>> Stashed changes
     MIX_DestroyAudio(e->kill);
     e->kill = NULL;
   }
@@ -118,8 +174,12 @@ void play_sound(struct Enemy *e, struct Music *m) {
     SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
     return ;
   }
+  MIX_SetTrackAudio(e->track, e->kill);
+  MIX_PlayTrack(e->track, 0);
+  printf("me estoy reproduciendo %d\n", index);
 
 
+<<<<<<< Updated upstream
   MIX_SetTrackAudio(e->track, e->kill);
   if (e->sound_active == false) {
     MIX_PlayTrack(e->track, 0);
@@ -142,5 +202,39 @@ static void spawn_enemy(struct Enemy *e, struct Power *p) {
     e->image = SDL_CreateTextureFromSurface(e->renderer, e->surf);
     e->active = true;
   }
+=======
+    // if (e->sound_active == false) {
+    //
+    //   e->sound_active = true;
+    //   // e->play_time = e->now + 0;
+
+
+    // }else if (e->sound_active == true && e->play_time < e->now ) {
+    //   e->sound_active = false;
+    // }
+
+
+}
+
+void spawn_enemy(struct Enemy *e, int index) {
+  printf("Esto está pasando");
+
+  // for (int i = 0; i < e->quantity; i++) {
+  //     if (e->surf) SDL_DestroySurface(e->surf);
+  //     if (e->image) SDL_DestroyTexture(e->image);
+  //     e->surf= IMG_Load("assets/sprites/hada.png");
+  //     if (!e->surf) {
+  //       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+  //       return ;
+  //     }
+  //     e->image = SDL_CreateTextureFromSurface(e->renderer, e->surf);
+        e->enemies[index].active = true;
+
+        // enemy_draw(e);
+
+  //
+  // }
+
+>>>>>>> Stashed changes
 
 }

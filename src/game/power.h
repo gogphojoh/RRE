@@ -12,6 +12,7 @@
 
 struct PowerEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
+  float pw_x, pw_y;
   bool active; //Define si una bala ya fue usada
 };
 
@@ -23,16 +24,26 @@ struct Power {
   SDL_FRect rect; // for width/height reference
   float pw_x, pw_y;
   bool active;
+<<<<<<< Updated upstream
   struct PowerEntity bullets[MAX_BULLETS];
+=======
+  bool follow;
+  struct PowerEntity pows[MAX_BULLETS];
+>>>>>>> Stashed changes
   MIX_Mixer *mixer;
   MIX_Audio *power;
   MIX_Track *track;//piscina de balas
   bool power_sound;
   float play_time;
+<<<<<<< Updated upstream
+=======
+  float ascention;
+  int quantity;
+>>>>>>> Stashed changes
   Uint32 now;
   int i;
 };
-bool power_new(struct Power **power, SDL_Renderer *renderer);
+bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e);
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl);
 void power_draw(struct Power *p, struct Enemy *e);
 void power_free(struct Power **power);
