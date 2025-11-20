@@ -62,7 +62,7 @@ void player_free(struct Player **player) {
     }
 
 }
-void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e) {
+void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e, struct Point *po) {
     if (p->keystate[SDL_SCANCODE_LEFT]) {
         p->rect.x -= p->pv;
     }
@@ -80,19 +80,34 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
     }else {
       p->pv = PLAYER_VEL;
     }
-    for (int i = 0; i < e->quantity; i++)
-    if (pw->pows[i].active && power_collide(&p->rect, &pw->pows[i].rect)) {
-      if (pw->power_sound == true ) {
-        pw->power_sound = false;
+    for (int i = 0; i < e->quantity; i++) {
+      if (pw->pows[i].active && power_collide(&p->rect, &pw->pows[i].rect)) {
+        if (pw->power_sound == true ) {
+          pw->power_sound = false;
+        }
+        power_sound(pw, m);
+        pw->pows[i].active = false;// desactivar power
+        pw->pows[i].follow = false;
+        // SDL_DestroyTexture(pw->image);
+        // pw->image = NULL;
       }
-      power_sound(pw, m);
-      pw->pows[i].active = false;// desactivar power
-      pw->pows[i].follow = false;
-      // SDL_DestroyTexture(pw->image);
-      // pw->image = NULL;
+      b->p_x = p->rect.x;
+      b->p_y = p->rect.y;
+
+      if (po->points[i].active && power_collide(&p->rect, &po->points[i].rect)) {
+        if (po->point_sound == true ) {
+          po->point_sound = false;
+        }
+        point_sound(po, m);
+        po->points[i].active = false;// desactivar power
+        po->points[i].follow = false;
+        // SDL_DestroyTexture(pw->image);
+        // pw->image = NULL;
+      }
+      b->p_x = p->rect.x;
+      b->p_y = p->rect.y;
     }
-    b->p_x = p->rect.x;
-    b->p_y = p->rect.y;
+
 }
 void player_draw(const struct Player *p) {
     SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);

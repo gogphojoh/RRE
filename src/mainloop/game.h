@@ -12,6 +12,8 @@
 #include "../game/bullet.h"
 #include "../game/enemy.h"
 #include "../game/power.h"
+#include "../game/enemyp.h"
+#include "../game/point.h"
 
 struct Game {
     struct Music *music;
@@ -21,6 +23,8 @@ struct Game {
     struct BulletEntity *be;
     struct Enemy *enemy;
     struct Power *power;
+    struct Enemyp *enemyp;
+    struct Point *point;
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *background;

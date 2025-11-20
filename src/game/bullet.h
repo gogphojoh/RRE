@@ -7,6 +7,7 @@
 
 #include "../mainloop/main.h"
 #include "enemy.h"
+#include "enemyp.h"
 
 struct BulletEntity {
     SDL_FRect rect; //Tamaño y forma de las multiples balas
@@ -15,6 +16,7 @@ struct BulletEntity {
 
 struct Bullet {
     struct Enemy *enemy;
+    struct Enemyp *enemyp;
     SDL_Renderer *renderer;
     SDL_Texture *image;
     SDL_Surface *surf;
@@ -25,7 +27,7 @@ struct Bullet {
     Uint32 next_fire_time;
 };
 bool bullet_new(struct Bullet **bullet, SDL_Renderer *renderer);
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m);
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Enemyp *ep, struct Point *point);
 void bullet_draw(struct Bullet *b);
 void bullet_free(struct Bullet **bullet);
 static void spawn_bullet(struct Bullet *b, struct Enemy *e);

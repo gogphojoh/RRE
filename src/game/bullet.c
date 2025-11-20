@@ -102,7 +102,7 @@ void bullet_free(struct Bullet **bullet) {
 }
 
 //Estudiar
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m) {
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Enemyp *ep, struct Point *po) {
     Uint32 now = SDL_GetTicks();
     e->now = SDL_GetTicks();
 
@@ -136,6 +136,30 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
           }
 
         }
+
+      if (b->bullets[i].active) {
+        b->bullets[i].rect.y -= BULLET_VEL;
+        if (b->bullets[i].rect.y + b->bullets[i].rect.h < 0) {
+          b->bullets[i].active = false;
+        }
+        for (int j = 0; j < ep->quantity; j++) {
+          if (!ep->enemiesp[j].active) continue;
+          if (ep->enemiesp[j].active && rects_collide(&b->bullets[i].rect, &ep->enemiesp[j].rect)) {
+            // e->spawn_time = e->now + 1000;
+            b->bullets[i].active = false;   // desactivar bala
+            ep->enemiesp[j].active = false;// desactivar enemigo
+            //La activación del power debe coincidir con el del enemigo
+            po->points[j].active = true;
+            po->points[j].up = true;
+            po->points[j].ascention = e->now + 500;
+            play_sound(e,m);
+            // e->image = NULL;
+            // SDL_DestroyTexture(e->image);// destruir textura
+
+          }
+        }
+
+      }
 
 
     }
