@@ -44,7 +44,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
   for (int i = 0; i < e->quantity; i++) {
 
     if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->pows[i].ascention ) {
-      printf("estoy bajando. \n");
+      // printf("estoy bajando. \n");
       p->pows[i].up = false;
       spawn_power(p, e);
       power_draw(p,e);
@@ -52,7 +52,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
       p->pows[i].rect.y = p->pows[i].pw_y;
 
     } else if (p->pows[i].active && p->pows[i].ascention > e->now && p->pows[i].up == true) {
-      printf("Estoy levitando \n");
+      // printf("Estoy levitando \n");
       //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
       //Gracias a la condicional superior.
       spawn_power(p, e);
@@ -65,10 +65,10 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
     }
     if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
       printf("Seguimiento al jugador activado");
-      p->follow = true;
+      p->pows[i].follow = true;
       //Hacer una transición suave
     }
-    if (p->follow) {
+    if (p->pows[i].follow) {
       if (p->pows[i].rect.x < pl->rect.x ) {
         p->pows[i].rect.x +=10;
       }
@@ -89,8 +89,8 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
     else if (!p->pows[i].active){
       p->pows[i].rect.x = p->pows[i].pw_x;
       p->pows[i].rect.y = p->pows[i].pw_y;
-      printf("Esta es mi posición X: %f \n", p->pows[i].rect.x);
-      printf("Esta es mi posición Y: %f \n", p->pows[i].rect.y);
+      // printf("Esta es mi posición X: %f \n", p->pows[i].rect.x);
+      // printf("Esta es mi posición Y: %f \n", p->pows[i].rect.y);
     }
   }
 

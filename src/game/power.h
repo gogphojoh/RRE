@@ -16,6 +16,7 @@ struct PowerEntity {
   bool up;
   float ascention;
   bool active; //Define si una bala ya fue usada
+  bool follow;
 };
 
 struct Power {

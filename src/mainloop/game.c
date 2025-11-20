@@ -123,34 +123,34 @@ void game_events(struct Game *g) {
                         g->is_running = false;
                         break;
                 case SDL_SCANCODE_SPACE:
-                        game_render_color(g);
+                        // game_render_color(g);
                         break;
                 case SDL_SCANCODE_BACKSPACE:
-                        if (g->r == 4) {
-                            SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/chancho.png");
-                            g->src = (SDL_FRect) {0,0,2851,2390};
-                            g->dst = (SDL_FRect) {250,150,713,598 };
-                        }
-                        else {
-                            SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/C_Logo.png");
-                            g->src = (SDL_FRect) {0,0,360,405};
-                            g->dst = (SDL_FRect) {450,250,360,405 };
-                        }
+                        // if (g->r == 4) {
+                        //     SDL_DestroyTexture(g->background);
+                        //     g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/chancho.png");
+                        //     g->src = (SDL_FRect) {0,0,2851,2390};
+                        //     g->dst = (SDL_FRect) {250,150,713,598 };
+                        // }
+                        // else {
+                        //     SDL_DestroyTexture(g->background);
+                        //     g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/C_Logo.png");
+                        //     g->src = (SDL_FRect) {0,0,360,405};
+                        //     g->dst = (SDL_FRect) {450,250,360,405 };
+                        // }
                         break;
                 case SDL_SCANCODE_RETURN:
-                        if (g->r == 4) {
-                            SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/chancho.png");
-                            g->src = (SDL_FRect) {0,0,2851,2390};
-                            g->dst = (SDL_FRect) {250,150,713,598 };
-                        }else {
-                            SDL_DestroyTexture(g->background);
-                            g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/Simple_DirectMedia_Layer,_Logo.svg");
-                            g->src= (SDL_FRect){0,0,738, 405};
-                            g->dst= (SDL_FRect) {250,250,731,405};
-                        }
+                        // if (g->r == 4) {
+                        //     SDL_DestroyTexture(g->background);
+                        //     g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/chancho.png");
+                        //     g->src = (SDL_FRect) {0,0,2851,2390};
+                        //     g->dst = (SDL_FRect) {250,150,713,598 };
+                        // }else {
+                        //     SDL_DestroyTexture(g->background);
+                        //     g->background = IMG_LoadTexture(g->renderer,"assets/backgrounds/Simple_DirectMedia_Layer,_Logo.svg");
+                        //     g->src= (SDL_FRect){0,0,738, 405};
+                        //     g->dst= (SDL_FRect) {250,250,731,405};
+                        // }
                         break;
                 default:
                         //SDL_DestroyTexture(g->background);
@@ -179,6 +179,7 @@ void game_draw(struct Game *g) {
   SDL_RenderClear(g->renderer);
   // Color de la pantalla (Rojo, Verde, Azul, Opacidad)
   SDL_RenderTexture(g->renderer,g->background,&g->src,&g->dst);
+  SDL_RenderTexture(g->renderer,g->playzone,&g->src2,&g->dst2);
   text_draw(g->text);
   player_draw(g->player);
   bullet_draw(g->bullet);

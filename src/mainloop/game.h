@@ -24,10 +24,13 @@ struct Game {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *background;
+    SDL_Texture *playzone;
     SDL_Event event;
     bool is_running;
     SDL_FRect src;
     SDL_FRect dst;
+    SDL_FRect src2;
+    SDL_FRect dst2;
 
     int r;
 };
