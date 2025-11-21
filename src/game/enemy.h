@@ -13,25 +13,29 @@
 struct EnemyEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
   float x_vel, y_vel;
-
-  bool active; //Define si una bala ya fue usada
+  SDL_Texture *image;
+  SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
+  bool active; //Define si un enemigo ya fue vencido
+  // MIX_Mixer *mixer;
+  // MIX_Audio *kill;
+  // MIX_Track *track;
+  const char *sprite; //<- Usar esta variable como forma dinámica de cambiar los sprites
 };
 
 struct Enemy {
   MIX_Mixer *mixer;
   MIX_Audio *kill;
   MIX_Track *track;
-  struct Power *power;
-  SDL_Renderer *renderer;
-  SDL_Texture *image;
-  SDL_Surface *surf;
-  SDL_FRect rect;
+  int type; // <- Y usar esto como switch
+  // SDL_FRect rect;
+  struct Power *power; // <- no es necesario tocar apartir de esto pues es universal
   struct EnemyEntity enemies[MAX_ENEMIES];
+  SDL_Renderer *renderer;
   int spacing;
   int quantity;
   Uint32 next_enemy;
-  float x_vel, y_vel;
-  bool active;
+  //float x_vel, y_vel;
+  //bool active;
   bool sound_active;
   float play_time;
   Uint32 now;

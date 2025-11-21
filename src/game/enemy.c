@@ -27,28 +27,48 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
     return false;
   }
-  e->surf= IMG_Load("assets/sprites/hada.png");
-  if (!e->surf) {
-    fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
-    return false;
-  }
-  e->image = SDL_CreateTextureFromSurface(e->renderer, e->surf);
-  if (!e->image) {
-    fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
-    return false;
-  }
-  SDL_GetTextureSize(e->image,&e->rect.w,&e->rect.h);
   e->quantity = SCREEN_ENEMIES;
   for (int i = 0; i < e->quantity; i++) {
-    e->spacing += 10;
-    e->enemies[i].rect.x = 100 + e->spacing;
-    e->enemies[i].rect.y = 100;
-    e->enemies[i].rect.w = e->rect.w;
-    e->enemies[i].rect.h = e->rect.h;
-    e->enemies[i].active = true;
-    e->enemies[i].x_vel = ENEMY_VEL;
-    e->enemies[i].y_vel = ENEMY_VEL;
+    if (e->type % 2 == 0) {
+      e->type = 1;
+    } else {
+      e->type += 1;
+    }
+    switch (e->type) {
+    case 1:
+      e->enemies[i].sprite = "assets/sprites/hada.png";
+      break;
+    case 2:
+      e->enemies[i].sprite = "assets/sprites/point.png";
+      break;
+    default:
+      e->enemies[i].sprite = "assets/objects/bullet.png";
+    }
+
+    e->enemies[i].surf= IMG_Load(e->enemies[i].sprite);
+    if (!e->enemies[i].surf) {
+      fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+      return false;
+    }
+    e->enemies[i].image = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf);
+    if (!e->enemies[i].image) {
+      fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
+      return false;
+    }
+    SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
+
+
+      e->spacing += 10;
+      e->enemies[i].rect.x = 100 + e->spacing;
+      e->enemies[i].rect.y = 100;
+      e->enemies[i].rect.w = e->enemies[i].rect.w;
+      e->enemies[i].rect.h = e->enemies[i].rect.h;
+      e->enemies[i].active = true;
+      e->enemies[i].x_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;
+
   }
+
   // e->rect.x = 100;
   // e->rect.y = 100;
 
@@ -84,8 +104,8 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
     } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
       e->enemies[i].y_vel = -ENEMY_VEL;
     } else  if (e->enemies[i].active) {
-      e->enemies[i].rect.x += e->x_vel + i*3;
-      e->enemies[i].rect.y += e->y_vel + i*3;
+      e->enemies[i].rect.x += e->enemies[i].x_vel + i*3;
+      e->enemies[i].rect.y += e->enemies[i].y_vel + i*3;
     }
   }
 
@@ -99,7 +119,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
     if (e->enemies[i].active) {
-      SDL_RenderTexture(e->renderer, e->image, NULL, &e->enemies[i].rect);
+      SDL_RenderTexture(e->renderer, e->enemies[i].image, NULL, &e->enemies[i].rect);
     }
 
   }
@@ -108,23 +128,26 @@ void enemy_draw(struct Enemy *e) {
 void enemy_free(struct Enemy **enemy) {
   if (*enemy) {
     struct Enemy *e = *enemy;
-    if (e->image) {
-      SDL_DestroyTexture(e->image);
-      e->image = NULL;
-    }
-    if (e->surf) {
-      SDL_DestroySurface(e->surf);
-      e->surf = NULL;
-    }
     for (int i = 0; i < e->quantity; i++) {
-      if (e->kill) {
-        MIX_DestroyAudio(e->kill);
+      if (e->enemies[i].image) {
+        SDL_DestroyTexture(e->enemies[i].image);
+        e->enemies[i].image = NULL;
       }
-      if (e->track) {
-        MIX_DestroyTrack(e->track);
+      if (e->enemies[i].surf) {
+        SDL_DestroySurface(e->enemies[i].surf);
+        e->enemies[i].surf = NULL;
+      }
+      for (int i = 0; i < e->quantity; i++) {
+        if (e->kill) {
+          MIX_DestroyAudio(e->kill);
+        }
+        if (e->track) {
+          MIX_DestroyTrack(e->track);
 
+        }
       }
     }
+
 
 
     e->renderer = NULL;
@@ -138,7 +161,7 @@ void enemy_free(struct Enemy **enemy) {
 
 void play_sound(struct Enemy *e, struct Music *m) {
 
-      if (e->kill ) {
+  if (e->kill ) {
     MIX_DestroyAudio(e->kill);
     e->kill = NULL;
   }
@@ -174,16 +197,16 @@ void play_sound(struct Enemy *e, struct Music *m) {
 
 static void spawn_enemy(struct Enemy *e, struct Power *p) {
 
-  if (e->spawn_time < e->now) {
-    if (e->surf) SDL_DestroySurface(e->surf);
-    if (e->image) SDL_DestroyTexture(e->image);
-    e->surf= IMG_Load("assets/sprites/hada.png");
-    if (!e->surf) {
-      fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
-      return ;
-    }
-    e->image = SDL_CreateTextureFromSurface(e->renderer, e->surf);
-    e->active = true;
-  }
+  // if (e->spawn_time < e->now) {
+  //   if (e->surf) SDL_DestroySurface(e->surf);
+  //   if (e->image) SDL_DestroyTexture(e->image);
+  //   e->surf= IMG_Load("assets/sprites/hada.png");
+  //   if (!e->surf) {
+  //     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+  //     return ;
+  //   }
+  //   e->image = SDL_CreateTextureFromSurface(e->renderer, e->surf);
+  //   e->active = true;
+  // }
 
 }

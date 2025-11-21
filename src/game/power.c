@@ -168,7 +168,7 @@ void power_sound(struct Power *p, struct Music *m) {
     return ;
   }
 
-
+//Revisar como volver independiente esta sección para cada objeto
   MIX_SetTrackAudio(p->track, p->power);
   //Esta condicional no se cumple siempre.
   if (p->power_sound == false) {

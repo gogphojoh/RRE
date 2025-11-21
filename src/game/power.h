@@ -12,6 +12,8 @@
 
 struct PowerEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
+  SDL_Texture *image;
+  SDL_Surface *surf;
   float pw_x, pw_y;
   bool up;
   float ascention;
@@ -22,9 +24,7 @@ struct PowerEntity {
 struct Power {
   struct Enemy *enemy;
   SDL_Renderer *renderer;
-  SDL_Texture *image;
-  SDL_Surface *surf;
-  SDL_FRect rect; // for width/height reference
+  //SDL_FRect rect; // for width/height reference
   float pw_x, pw_y;
   bool active;
   bool follow;

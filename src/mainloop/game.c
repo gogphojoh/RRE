@@ -175,7 +175,7 @@ void game_update(struct Game *g) {
     point_update(g->point, g->enemy, g->player);
     power_update(g->power, g->enemy, g->player);
     enemy_update(g->enemy, g->power, g->music);
-    enemyp_update(g->enemyp, g->power, g->music, g->point);
+    // enemyp_update(g->enemyp, g->power, g->music, g->point);
     bullet_update(g->bullet, g->enemy, g->power, g->music, g->enemyp,g->point);
     music_update(g->music);
 }
@@ -191,7 +191,7 @@ void game_draw(struct Game *g) {
   bullet_draw(g->bullet);
   power_draw(g->power, g->enemy);
   point_draw(g->point, g->enemy);
-  enemyp_draw(g->enemyp);
+  // enemyp_draw(g->enemyp);
     enemy_draw(g->enemy);
     // Limpia la pantalla con ese color
     // Muestra el resultado en pantalla
