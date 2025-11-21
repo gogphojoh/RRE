@@ -29,17 +29,48 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   }
   e->quantity = SCREEN_ENEMIES;
   for (int i = 0; i < e->quantity; i++) {
-    if (e->type % 2 == 0) {
-      e->type = 1;
-    } else {
-      e->type += 1;
+    printf ("Es mi iteración %d", i);
+    switch (i) {
+    case 6:
+      e->enemies[i].type = 5; //Jefe
+      break;
+    case 5:
+      e->enemies[i].type = 4; //Mid-jefe
+      break;
+    case 4:
+      e->enemies[i].type = 3; //Enemigo fuerte
+      break;
+    case 3:
+      e->enemies[i].type = 2; //hada azul
+      break;
+    default:
+      e->enemies[i].type = 1; //hada roja
+      break;
     }
-    switch (e->type) {
+    // if (i % 5 == 0) {
+    //   e->enemies[i].type = 4;
+    // }else if (i % 3 == 0) {
+    //   e->enemies[i].type = 3;
+    // } else if (i % 2 == 0 ) {
+    //   e->enemies[i].type = 2;
+    // } else {
+    //   e->enemies[i].type = 1;
+    // }
+    switch (e->enemies[i].type) {
     case 1:
       e->enemies[i].sprite = "assets/sprites/hada.png";
       break;
     case 2:
       e->enemies[i].sprite = "assets/sprites/point.png";
+      break;
+    case 3:
+      e->enemies[i].sprite = "assets/sprites/hard-fairy.png";
+      break;
+    case 4:
+      e->enemies[i].sprite = "assets/sprites/aki.png";
+      break;
+    case 5:
+      e->enemies[i].sprite = "assets/sprites/hina.png";
       break;
     default:
       e->enemies[i].sprite = "assets/objects/bullet.png";
@@ -58,14 +89,25 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
 
 
-      e->spacing += 10;
+      e->spacing += 70;
       e->enemies[i].rect.x = 100 + e->spacing;
       e->enemies[i].rect.y = 100;
       e->enemies[i].rect.w = e->enemies[i].rect.w;
       e->enemies[i].rect.h = e->enemies[i].rect.h;
       e->enemies[i].active = true;
-      e->enemies[i].x_vel = ENEMY_VEL;
-      e->enemies[i].y_vel = ENEMY_VEL;
+    if (e->enemies[i].type == 5) {
+      e->enemies[i].health = 2000;
+    }
+      else if (e->enemies[i].type == 4) {
+        e->enemies[i].health = 1000;
+      }else if (e->enemies[i].type == 3) {
+        e->enemies[i].health = 100;
+      } else {
+        e->enemies[i].health = 1;
+      }
+
+      // e->enemies[i].x_vel = ENEMY_VEL;
+      // e->enemies[i].y_vel = ENEMY_VEL;
 
   }
 
@@ -94,19 +136,19 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       p->pows[i].pw_x = e->enemies[i].rect.x;
       p->pows[i].pw_y = e->enemies[i].rect.y;
     }
-
-    if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
-      e->enemies[i].x_vel = -ENEMY_VEL;
-    } else if (e->enemies[i].rect.x < 0) {
-      e->enemies[i].x_vel = ENEMY_VEL;
-    } else if (e->enemies[i].rect.y < 0) {
-      e->enemies[i].y_vel = ENEMY_VEL;
-    } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
-      e->enemies[i].y_vel = -ENEMY_VEL;
-    } else  if (e->enemies[i].active) {
-      e->enemies[i].rect.x += e->enemies[i].x_vel + i*3;
-      e->enemies[i].rect.y += e->enemies[i].y_vel + i*3;
-    }
+    //
+    // if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
+    //   e->enemies[i].x_vel = -ENEMY_VEL;
+    // } else if (e->enemies[i].rect.x < 0) {
+    //   e->enemies[i].x_vel = ENEMY_VEL;
+    // } else if (e->enemies[i].rect.y < 0) {
+    //   e->enemies[i].y_vel = ENEMY_VEL;
+    // } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
+    //   e->enemies[i].y_vel = -ENEMY_VEL;
+    // } else  if (e->enemies[i].active) {
+    //   e->enemies[i].rect.x += e->enemies[i].x_vel + i*3;
+    //   e->enemies[i].rect.y += e->enemies[i].y_vel + i*3;
+    // }
   }
 
 
@@ -118,7 +160,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 }
 void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
-    if (e->enemies[i].active) {
+    if (e->enemies[i].active && e->enemies[i].health > 0) {
       SDL_RenderTexture(e->renderer, e->enemies[i].image, NULL, &e->enemies[i].rect);
     }
 

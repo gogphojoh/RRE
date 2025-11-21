@@ -22,20 +22,21 @@ struct PowerEntity {
   float ascention;
   bool active; //Define si una bala ya fue usada
   bool follow;
+
+  MIX_Track *track;
+  MIX_Audio *power;
+  bool power_sound;
 };
 
 struct Power {
   struct Enemy *enemy;
   SDL_Renderer *renderer;
+  MIX_Mixer *mixer;
   //SDL_FRect rect; // for width/height reference
   float pw_x, pw_y;
-  bool active;
+  // bool active;
   bool follow;
   struct PowerEntity pows[MAX_BULLETS];
-  MIX_Mixer *mixer;
-  MIX_Track *track;//piscina de balas
-  MIX_Audio *power;
-  bool power_sound;
   float play_time;
   ///float ascention;
   Uint32 now;

@@ -15,6 +15,8 @@ struct EnemyEntity {
   float x_vel, y_vel;
   SDL_Texture *image;
   SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
+  int health;
+  int type;
   bool active; //Define si un enemigo ya fue vencido
   // MIX_Mixer *mixer;
   // MIX_Audio *kill;
@@ -26,7 +28,7 @@ struct Enemy {
   MIX_Mixer *mixer;
   MIX_Audio *kill;
   MIX_Track *track;
-  int type; // <- Y usar esto como switch
+  // <- Y usar esto como switch
   // SDL_FRect rect;
   struct Power *power; // <- no es necesario tocar apartir de esto pues es universal
   struct EnemyEntity enemies[MAX_ENEMIES];

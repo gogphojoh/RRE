@@ -12,8 +12,6 @@
 #include "../game/bullet.h"
 #include "../game/enemy.h"
 #include "../game/power.h"
-#include "../game/enemyp.h"
-#include "../game/point.h"
 
 struct Game {
     struct Music *music;

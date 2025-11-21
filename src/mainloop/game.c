@@ -41,12 +41,6 @@ bool game_new (struct Game **game) {
   if (!power_new(&g->power,g->renderer, g->enemy)) {
     return false;
   }
-  if (!enemyp_new(&g->enemyp, g->renderer)) {
-    return false;
-  }
-  if (!point_new(&g->point, g->renderer, g->enemyp)) {
-    return false;
-  }
     g->is_running = true;
     srand((unsigned)time(NULL));
 
@@ -171,12 +165,10 @@ void game_events(struct Game *g) {
 
 void game_update(struct Game *g) {
     text_update(g->text);
-    player_update(g->player,g->bullet, g->power, g->music, g->enemy, g->point);
-    point_update(g->point, g->enemy, g->player);
+    player_update(g->player,g->bullet, g->power, g->music, g->enemy);
     power_update(g->power, g->enemy, g->player);
     enemy_update(g->enemy, g->power, g->music);
-    // enemyp_update(g->enemyp, g->power, g->music, g->point);
-    bullet_update(g->bullet, g->enemy, g->power, g->music, g->enemyp,g->point);
+    bullet_update(g->bullet, g->enemy, g->power, g->music);
     music_update(g->music);
 }
 
@@ -190,8 +182,6 @@ void game_draw(struct Game *g) {
   player_draw(g->player);
   bullet_draw(g->bullet);
   power_draw(g->power, g->enemy);
-  point_draw(g->point, g->enemy);
-  // enemyp_draw(g->enemyp);
     enemy_draw(g->enemy);
     // Limpia la pantalla con ese color
     // Muestra el resultado en pantalla

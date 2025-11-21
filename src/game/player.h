@@ -7,7 +7,7 @@
 
 #include "../mainloop/main.h"
 #include "bullet.h"
-#include "point.h"
+
 
 struct Player {
     struct Bullet *bullet;
@@ -20,7 +20,7 @@ struct Player {
 
 bool player_new (struct Player **player, SDL_Renderer *renderer);
 void player_free(struct Player **player);
-void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e, struct Point *po);
+void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e);
 void player_draw(const struct Player *p);
 
 #endif //PLAYER_PLAYER_H
