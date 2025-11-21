@@ -17,23 +17,44 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
     fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
     return false;
   }
-  p->surf= IMG_Load("assets/objects/power.png");
-  if (!p->surf) {
-    fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
-    return false;
-  }
-  p->image = SDL_CreateTextureFromSurface(p->renderer, p->surf);
-  if (!p->image) {
-    fprintf(stderr,"Error al crear la imagen: %s", SDL_GetError());
-    return false;
-  }
-
-
 
   for (int i = 0; i < e->quantity; i++) {
-    p->pows[i].active = false;
-    //Tienes que definir todos los parametros, sobre todo si son objetos de arrays que se dibujan varias veces.
-    SDL_GetTextureSize(p->image,&p->pows[i].rect.w,&p->pows[i].rect.h);
+    //Por algún motivo este ternario lo soluciona todo???
+    //Al parecer p->pows[i].type se estaba estableciendo mal y fue el culpable todo este condenado tiempo
+
+    p->pows[i].type = (i%2 == 0) ? 1:2;
+    switch (p->pows[i].type) {
+    case 1 :
+      p->pows[i].object = "assets/objects/power.png";
+      break;
+    case 2:
+      p->pows[i].object = "assets/objects/points.png";
+      break;
+    default:
+      p->pows[i].object = "assets/objects/bullets.png";
+
+    }
+
+    // p->pows[i].object = "assets/objects/points.png";
+    p->pows[i].surf= IMG_Load(p->pows[i].object);
+    if (!p->pows[i].surf) {
+      fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+      return false;
+    }
+    p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
+    if (!p->pows[i].image) {
+      fprintf(stderr,"Error al crear la imagen: %s", SDL_GetError());
+      return false;
+    }
+
+
+
+    for (int i = 0; i < e->quantity; i++) {
+      p->pows[i].active = false;
+      //Tienes que definir todos los parametros, sobre todo si son objetos de arrays que se dibujan varias veces.
+      SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
+    }
+
   }
 
   return true;
@@ -102,29 +123,31 @@ void power_draw(struct Power *p, struct Enemy *e) {
     //Establecer cooldown de hasta 1000 ms para que vuelva a ser dibujado
     for (int i = 0; i < e->quantity; i++) {
       if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h <= WINDOW_HEIGHT) {
-        SDL_RenderTexture(p->renderer, p->image, NULL, &p->pows[i].rect);
+        SDL_RenderTexture(p->renderer, p->pows[i].image, NULL, &p->pows[i].rect);
       }
     }
 
 
 
 }
-void power_free(struct Power **power) {
+void power_free(struct Power **power, struct Enemy *e) {
   if (*power) {
     struct Power *p = *power;
-    if (p->image) {
-      SDL_DestroyTexture(p->image);
-      p->image = NULL;
-    }
-    if (p->surf) {
-      SDL_DestroySurface(p->surf);
-      p->surf = NULL;
-    }
-    if (p->power) {
-      MIX_DestroyAudio(p->power);
-    }
-    if (p->track) {
-      MIX_DestroyTrack(p->track);
+    for (int i = 0; i < e->quantity; i++ ) {
+      if (p->pows[i].image) {
+        SDL_DestroyTexture(p->pows[i].image);
+        p->pows[i].image = NULL;
+      }
+      if (p->pows[i].surf) {
+        SDL_DestroySurface(p->pows[i].surf);
+        p->pows[i].surf = NULL;
+      }
+      if (p->power) {
+        MIX_DestroyAudio(p->power);
+      }
+      if (p->track) {
+        MIX_DestroyTrack(p->track);
+      }
     }
     p->renderer = NULL;
     free(p);
@@ -136,13 +159,28 @@ void power_free(struct Power **power) {
 }
 void spawn_power(struct Power *p, struct Enemy *e) {
   //Posible problema de consumo excesivo de CPU
-  if (p->surf) SDL_DestroySurface(p->surf);
-  if (p->image) SDL_DestroyTexture(p->image);
-  p->surf= IMG_Load("assets/objects/power.png");
-  p->image = SDL_CreateTextureFromSurface(p->renderer, p->surf);
+  for (int i = 0; i < e->quantity; i++ ) {
+    // if (p->pows[i].surf) SDL_DestroySurface(p->pows[i].surf);
+    // if (p->pows[i].image) SDL_DestroyTexture(p->pows[i].image);
+    switch (p->pows[i].type) {
+    case 1:
+      p->pows[i].object = "assets/objects/power.png";
+      break;
+    case 2:
+      p->pows[i].object = "assets/objects/points.png";
+      break;
+    default:
+      p->pows[i].object = "assets/objects/bullet.png";
+      break;
+    }
+    p->pows[i].surf= IMG_Load(p->pows[i].object);
+    p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
+  }
+
 }
 
-void power_sound(struct Power *p, struct Music *m) {
+//La reproducción de audio solo carga uno de los sonidos, o bien, rompe tus timpanos.
+void power_sound(struct Power *p, struct Music *m, struct Enemy *e) {
   if (p->power ) {
     MIX_DestroyAudio(p->power);
     p->power = NULL;
@@ -152,30 +190,47 @@ void power_sound(struct Power *p, struct Music *m) {
     p->track = NULL;
   }
   p->now = SDL_GetTicks();
-  p->power = MIX_LoadAudio(m->mixer, "music/sfx/power.wav", true);
-  if (!p->power) {
-    SDL_Log("Error al cargar el audio: %s", SDL_GetError());
-    MIX_DestroyMixer(p->mixer);
-    return ;
-  }
+  for (int i = 0; i < e->quantity; i++) {
+    switch (p->pows[i].type) {
+    case 1:
+      p->pows[i].music = "music/sfx/power.wav";
+      break;
+    case 2:
+      p->pows[i].music = "music/sfx/point.wav";
+      break;
+    case 3:
+      p->pows[i].music = "music/sfx/bullet.wav";
+
+    }
 
 
-  p->track = MIX_CreateTrack(m->mixer);
-  if (!p->track) {
-    SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
-    MIX_DestroyAudio(p->power);
-    p->power = NULL;
-    return ;
+    p->power = MIX_LoadAudio(m->mixer, p->pows[i].music, true);
+    if (!p->power) {
+      SDL_Log("Error al cargar el audio: %s", SDL_GetError());
+      MIX_DestroyMixer(p->mixer);
+      return ;
+    }
+
+
+    p->track = MIX_CreateTrack(m->mixer);
+    if (!p->track) {
+      SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
+      MIX_DestroyAudio(p->power);
+      p->power = NULL;
+      return ;
+    }
+
+    //Revisar como volver independiente esta sección para cada objeto
+    MIX_SetTrackAudio(p->track, p->power);
+    //Esta condicional no se cumple siempre.
+    if (p->power_sound == false) {
+      p->i++;
+      printf("Esto pasó! %d veces", p->i);
+      MIX_PlayTrack(p->track, 0);
+      p->power_sound = true;
+      p->play_time = (float) p->now + 100;
+    }
+
   }
 
-//Revisar como volver independiente esta sección para cada objeto
-  MIX_SetTrackAudio(p->track, p->power);
-  //Esta condicional no se cumple siempre.
-  if (p->power_sound == false) {
-    p->i++;
-    printf("Esto pasó! %d veces", p->i);
-    MIX_PlayTrack(p->track, 0);
-    p->power_sound = true;
-    p->play_time = (float) p->now + 500;
-  }
 }

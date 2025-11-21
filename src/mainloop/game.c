@@ -88,7 +88,7 @@ void game_free(struct Game **game) {
           enemy_free(&g->enemy);
         }
         if (g->power) {
-          power_free(&g->power);
+          power_free(&g->power, g->enemy);
         }
         MIX_Quit();
         TTF_Quit();

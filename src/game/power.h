@@ -14,8 +14,11 @@ struct PowerEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
   SDL_Texture *image;
   SDL_Surface *surf;
+  int type;
   float pw_x, pw_y;
   bool up;
+  const char *object;
+  const char *music;
   float ascention;
   bool active; //Define si una bala ya fue usada
   bool follow;
@@ -30,8 +33,8 @@ struct Power {
   bool follow;
   struct PowerEntity pows[MAX_BULLETS];
   MIX_Mixer *mixer;
-  MIX_Audio *power;
   MIX_Track *track;//piscina de balas
+  MIX_Audio *power;
   bool power_sound;
   float play_time;
   ///float ascention;
@@ -41,10 +44,10 @@ struct Power {
 bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e);
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl);
 void power_draw(struct Power *p, struct Enemy *e);
-void power_free(struct Power **power);
+void power_free(struct Power **power, struct Enemy *e);
 void spawn_power(struct Power *p, struct Enemy *e);
 bool power_collide(SDL_FRect *a, SDL_FRect *b);
-void power_sound(struct Power *p, struct Music *m);
+void power_sound(struct Power *p, struct Music *m, struct Enemy *e);
 
 
 #endif // RRE_POWER_H

@@ -85,7 +85,7 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
         if (pw->power_sound == true ) {
           pw->power_sound = false;
         }
-        power_sound(pw, m);
+        power_sound(pw, m,e);
         pw->pows[i].active = false;// desactivar power
         pw->pows[i].follow = false;
         // SDL_DestroyTexture(pw->image);
