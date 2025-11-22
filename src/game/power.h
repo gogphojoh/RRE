@@ -29,6 +29,7 @@ struct PowerEntity {
 };
 
 struct Power {
+  int count;
   struct Enemy *enemy;
   SDL_Renderer *renderer;
   MIX_Mixer *mixer;

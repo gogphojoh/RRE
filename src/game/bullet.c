@@ -68,7 +68,7 @@ static void spawn_bullet(struct Bullet *b, struct Enemy *e) {
     if (first == -1 || second == -1) return;
 
     // Bala derecha
-    b->bullets[first].rect.x = b->p_x + 6;
+    b->bullets[first].rect.x = b->p_x + 12;
     b->bullets[first].rect.y = b->p_y;
     b->bullets[first].rect.w = b->rect.w;
     b->bullets[first].rect.h = b->rect.h;
@@ -130,7 +130,9 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
                 e->enemies[j].active = false;
                 p->pows[j].active = true;
                 p->pows[j].up = true;
+                p->pows[j].type = e->enemies[j].type; //El enemigo y el pow ya coinciden
                 p->pows[j].ascention = e->now + 500; //La activación del power debe coincidir con el del enemigo
+                p->count = j;
                 play_sound(e,m);
               }
 
