@@ -130,9 +130,9 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
                 e->enemies[j].active = false;
                 p->pows[j].active = true;
                 p->pows[j].up = true;
-                p->pows[j].type = e->enemies[j].type; //El enemigo y el pow ya coinciden
+                p->pows[j].type = e->enemies[j].type; //El enemigo y el pow ya coinciden -- Solo para la generación del power up, el sonido aun sigue fuera de lugar.
                 p->pows[j].ascention = e->now + 500; //La activación del power debe coincidir con el del enemigo
-                p->count = j;
+                p->appear = j;
                 play_sound(e,m);
               }
 

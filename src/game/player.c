@@ -85,6 +85,7 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
         if (pw->pows[i].power_sound == true ) {
           pw->pows[i].power_sound = false;
         }
+        pw->grab = i;
         power_sound(pw, m,e);
         pw->pows[i].active = false;// desactivar power
         pw->pows[i].follow = false;

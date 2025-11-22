@@ -11,8 +11,8 @@
  *Dios
  *Y yo.
  *Y me temo que yo no tengo ni idea de como funciona.
- *Toma este contador para tomar las horas desperidiadas tratando de hacer funcionar a RED REPUBLIC ENGINE:
- *38 hrs <- Por ahora.
+ *Toma este contador para tomar las horas desperdiciadas tratando de hacer funcionar a RED REPUBLIC ENGINE:
+ *40 hrs <- Por ahora.
  */
 int main(void) {
 

@@ -161,76 +161,80 @@ void power_free(struct Power **power, struct Enemy *e) {
 }
 void spawn_power(struct Power *p, struct Enemy *e) {
   //Posible problema de consumo excesivo de CPU
-    if (p->pows[p->count].surf) SDL_DestroySurface(p->pows[p->count].surf);
-    if (p->pows[p->count].image) SDL_DestroyTexture(p->pows[p->count].image);
-    switch (p->pows[p->count].type) {
+  //El contador de bullet al registrar el impacto, identifica el tipo del enemigo, appear toma el valor y lo ejecuta para hacer aparecer un power up que coincida.
+    if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
+    if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
+
+    switch (p->pows[p->appear].type) {
     case 1:
-      p->pows[p->count].object = "assets/objects/power.png";
+      p->pows[p->appear].object = "assets/objects/power.png";
       break;
     case 2:
-      p->pows[p->count].object = "assets/objects/points.png";
+      p->pows[p->appear].object = "assets/objects/points.png";
       break;
     default:
-      p->pows[p->count].object = "assets/objects/points.png";
+      p->pows[p->appear].object = "assets/objects/points.png";
       break;
     }
-    p->pows[p->count].surf= IMG_Load(p->pows[p->count].object);
-    p->pows[p->count].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[p->count].surf);
+    p->pows[p->appear].surf= IMG_Load(p->pows[p->appear].object);
+    p->pows[p->appear].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[p->appear].surf);
 
 
 }
 
 //Cuando se cargan todos los audios, rompen los timpanos por que el mismo audio se reproduce una cantidad infinita de veces, lo que hace que te dañen los timpanos
 void power_sound(struct Power *p, struct Music *m, struct Enemy *e) {
-
+  //El contador de player se encarga de registrar que power up se tomó, y esta funcion lo aprovecha para reproducir el sonido
   p->now = SDL_GetTicks();
-    if (p->pows[p->count].power ) {
-      MIX_DestroyAudio(p->pows[p->count].power);
-      p->pows[p->count].power = NULL;
+    if (p->pows[p->grab].power ) {
+      MIX_DestroyAudio(p->pows[p->grab].power);
+      p->pows[p->grab].power = NULL;
     }
-    if (p->pows[p->count].track) {
-      MIX_DestroyTrack(p->pows[p->count].track);
-      p->pows[p->count].track = NULL;
+    if (p->pows[p->grab].track) {
+      MIX_DestroyTrack(p->pows[p->grab].track);
+      p->pows[p->grab].track = NULL;
     }
-    switch (p->pows[p->count].type) {
+    switch (p->pows[p->grab].type) {
     case 1:
-      p->pows[p->count].music = "music/sfx/power.mp3";
+      p->pows[p->grab].music = "music/sfx/power.mp3";
       break;
     case 2:
-      p->pows[p->count].music = "music/sfx/point.mp3";
+      p->pows[p->grab].music = "music/sfx/point.mp3";
       break;
     default:
-      p->pows[p->count].music = "music/sfx/point.mp3";
+      p->pows[p->grab].music = "music/sfx/point.mp3";
       break;
 
     }
 
 
-    p->pows[p->count].power = MIX_LoadAudio(m->mixer, p->pows[p->count].music, true);
-    if (!p->pows[p->count].power) {
+    p->pows[p->grab].power = MIX_LoadAudio(m->mixer, p->pows[p->grab].music, true);
+    if (!p->pows[p->grab].power) {
       SDL_Log("Error al cargar el audio: %s", SDL_GetError());
       MIX_DestroyMixer(p->mixer);
       return ;
     }
 
 
-    p->pows[p->count].track = MIX_CreateTrack(m->mixer);
-    if (!p->pows[p->count].track) {
+    p->pows[p->grab].track = MIX_CreateTrack(m->mixer);
+    if (!p->pows[p->grab].track) {
       SDL_Log("Error al cargar la música en el canal de sonido: %s", SDL_GetError());
-      MIX_DestroyAudio(p->pows[p->count].power);
-      p->pows[p->count].power = NULL;
+      MIX_DestroyAudio(p->pows[p->grab].power);
+      p->pows[p->grab].power = NULL;
       return ;
     }
 
     //Revisar como volver independiente esta sección para cada objeto
-    MIX_SetTrackAudio(p->pows[p->count].track, p->pows[p->count].power);
+    MIX_SetTrackAudio(p->pows[p->grab].track, p->pows[p->grab].power);
+  MIX_PlayTrack(p->pows[p->grab].track, 0);
+
     //Esta condicional no se cumple siempre.
     //El problema podría deberse a que el comprobante de sonido es universal y no un objeto como habría de esperar.
-    if (p->pows[p->count].power_sound == false) {
+    if (p->pows[p->grab].power_sound == false) {
       p->i++;
       printf("Esto pasó! %d veces", p->i);
-      MIX_PlayTrack(p->pows[p->count].track, 0);
-      p->pows[p->count].power_sound = true;
+
+      p->pows[p->grab].power_sound = true;
       p->play_time = (float) p->now + 50;
     }
 
