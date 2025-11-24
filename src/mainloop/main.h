@@ -39,6 +39,7 @@
 #define PLAYER_VEL 7
 #define FOCUS_VEL 3
 #define BULLET_VEL 15
+#define ENEMY_BULLET_VEL 5
 #define MAX_BULLETS 128
 #define MAX_ENEMIES 128
 #define SCREEN_ENEMIES 7;

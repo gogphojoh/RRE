@@ -168,7 +168,7 @@ void game_update(struct Game *g) {
     player_update(g->player,g->bullet, g->power, g->music, g->enemy);
     power_update(g->power, g->enemy, g->player);
     enemy_update(g->enemy, g->power, g->music);
-    bullet_update(g->bullet, g->enemy, g->power, g->music);
+    bullet_update(g->bullet, g->enemy, g->power, g->music, g->player);
     music_update(g->music);
 }
 

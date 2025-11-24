@@ -15,6 +15,7 @@ struct EnemyEntity {
   float x_vel, y_vel;
   SDL_Texture *image;
   SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
+  float fire_rate;
   int health;
   int type;
   bool active; //Define si un enemigo ya fue vencido
