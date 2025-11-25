@@ -197,14 +197,18 @@ void power_sound(struct Power *p, struct Music *m, struct Enemy *e, struct Text 
     switch (p->pows[p->grab].type) {
     case 1:
       p->pows[p->grab].music = "music/sfx/power.mp3";
+      t->power_count += 1;
+      tpower_update(t);
       break;
     case 2:
       p->pows[p->grab].music = "music/sfx/point.mp3";
         t->score = t->score + 100;
+        score_update(t);
       break;
     default:
       p->pows[p->grab].music = "music/sfx/point.mp3";
       t->score = t->score + 100;
+      score_update(t);
       break;
 
     }

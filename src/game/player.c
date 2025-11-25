@@ -106,8 +106,10 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
   }
   if (!p->active & !p->sound_played){
     player_death(p,m);
+    t->lives -= 1;
+    live_update(t);
   }
-  if (!p->active &&  now >= p->spawn) {
+  if (!p->active &&  now >= p->spawn && t->lives > 0) {
     p->active = true;
   }
 

@@ -33,6 +33,7 @@
 #define BLACK_COLOR (SDL_Color) {0,0,0,0}
 #define BUBBLE_RADIUS 2
 #define TEXT_STR "NORMAL"
+#define TEXT_AMOUNT 9
 #define TEXT_VEL 5
 #define M_PI 3.14159265358979323846
 #define PLAYER_VEL 7

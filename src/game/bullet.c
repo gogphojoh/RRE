@@ -101,6 +101,12 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
         b->next_fire_time = now + BULLET_DELAY;
       }
 
+      if (b->keystate[SDL_SCANCODE_X] && now >= b->next_fire_time && pl->active) {
+        b->bullets[i].btype = 1;
+        player_bullets(b);
+        b->next_fire_time = now + BULLET_DELAY;
+      }
+
       //Tengo que aplicar un nuevo array de balas especifico para los enemigos.
       if (e->enemies[i].active && !b->ebullets[i].active) {
         b->index = i;
