@@ -7,12 +7,22 @@
 
 #include "../mainloop/main.h"
 
+struct TextEntity {
+  SDL_Texture *image;
+  SDL_FRect rect;
+  SDL_Surface *surf;
+  const char *text;
+};
+
 struct Text {
     SDL_Renderer *renderer;
-    SDL_Texture *image;
-    SDL_FRect rect;
+    // SDL_Texture *image;
+    // SDL_FRect rect;
+  const char *text_num[64];
+  struct TextEntity text[16];
     float x_vel;
     float y_vel;
+    double score;
 };
 
 bool text_new (struct Text **text, SDL_Renderer *renderer);

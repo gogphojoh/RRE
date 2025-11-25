@@ -40,7 +40,7 @@ struct Bullet {
     Uint32 next_fire_time;
 };
 bool bullet_new(struct Bullet **bullet, SDL_Renderer *renderer);
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl);
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t);
 void bullet_draw(struct Bullet *b);
 void bullet_free(struct Bullet **bullet);
 void player_bullets (struct Bullet *b);

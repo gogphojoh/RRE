@@ -84,7 +84,7 @@ void bullet_free(struct Bullet **bullet) {
 }
 
 //Estudiar
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl) {
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t) {
     Uint32 now = SDL_GetTicks();
     e->now = SDL_GetTicks();
 
@@ -115,7 +115,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
         }
 
         if (pl->active && rects_collide(&b->ebullets[i].rect, &pl->rect) && now > pl->invulnerability ) {
-          // e->spawn_time = e->now + 1000;
+          //e->spawn_time = e->now + 1000;
           b->ebullets[i].active = false;   // desactivar bala
           pl->active = false;// desactivar al jugador
           pl->spawn = now + 1000;
@@ -183,7 +183,7 @@ void bullet_draw (struct Bullet *b) {
 
         }
         if (b->ebullets[i].active) {
-          printf ("He sido dibujado %d veces", i);
+          //printf ("He sido dibujado %d veces", i);
           SDL_RenderTexture(b->renderer, b->ebullets[i].image, NULL, &b->ebullets[i].rect);
 
         }
@@ -230,7 +230,7 @@ void player_bullets (struct Bullet *b) {
 }
 
 void enemy_bullet (struct Bullet *b, struct Enemy *e) {
-  printf("Disparo del enemigo %d registrado! \n", b->index);
+  //printf("Disparo del enemigo %d registrado! \n", b->index);
   b->ebullets[b->index].rect.x = e->enemies[b->index].rect.x;
   b->ebullets[b->index].rect.y =  e->enemies[b->index].rect.y;
   b->ebullets[b->index].rect.w = b->ebullets[b->index].rect.w;

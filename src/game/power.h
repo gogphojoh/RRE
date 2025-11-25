@@ -50,7 +50,7 @@ void power_draw(struct Power *p, struct Enemy *e);
 void power_free(struct Power **power, struct Enemy *e);
 void spawn_power(struct Power *p, struct Enemy *e);
 bool power_collide(SDL_FRect *a, SDL_FRect *b);
-void power_sound(struct Power *p, struct Music *m, struct Enemy *e);
+void power_sound(struct Power *p, struct Music *m, struct Enemy *e, struct Text *t);
 
 
 #endif // RRE_POWER_H

@@ -63,7 +63,7 @@ void player_free(struct Player **player) {
     }
 
 }
-void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e) {
+void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e, struct Text *t) {
   Uint32 now = SDL_GetTicks();
 
   if (p->active) {
@@ -91,7 +91,7 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
           pw->pows[i].power_sound = false;
         }
         pw->grab = i;
-        power_sound(pw, m,e);
+        power_sound(pw, m,e,t);
         pw->pows[i].active = false;// desactivar power
         pw->pows[i].follow = false;
         // SDL_DestroyTexture(pw->image);

@@ -87,7 +87,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
       p->pows[i].active = false;
     }
     if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
-      printf("Seguimiento al jugador activado");
+      //printf("Seguimiento al jugador activado");
       p->pows[i].follow = true;
       //Hacer una transición suave
     }
@@ -183,7 +183,7 @@ void spawn_power(struct Power *p, struct Enemy *e) {
 }
 
 //Cuando se cargan todos los audios, rompen los timpanos por que el mismo audio se reproduce una cantidad infinita de veces, lo que hace que te dañen los timpanos
-void power_sound(struct Power *p, struct Music *m, struct Enemy *e) {
+void power_sound(struct Power *p, struct Music *m, struct Enemy *e, struct Text *t) {
   //El contador de player se encarga de registrar que power up se tomó, y esta funcion lo aprovecha para reproducir el sonido
   p->now = SDL_GetTicks();
     if (p->pows[p->grab].power ) {
@@ -200,9 +200,11 @@ void power_sound(struct Power *p, struct Music *m, struct Enemy *e) {
       break;
     case 2:
       p->pows[p->grab].music = "music/sfx/point.mp3";
+        t->score = t->score + 100;
       break;
     default:
       p->pows[p->grab].music = "music/sfx/point.mp3";
+      t->score = t->score + 100;
       break;
 
     }
@@ -232,7 +234,7 @@ void power_sound(struct Power *p, struct Music *m, struct Enemy *e) {
     //El problema podría deberse a que el comprobante de sonido es universal y no un objeto como habría de esperar.
     if (p->pows[p->grab].power_sound == false) {
       p->i++;
-      printf("Esto pasó! %d veces", p->i);
+      //printf("Esto pasó! %d veces", p->i);
 
       p->pows[p->grab].power_sound = true;
       p->play_time = (float) p->now + 50;
