@@ -63,7 +63,7 @@ void player_free(struct Player **player) {
     }
 
 }
-void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e, struct Text *t) {
+void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e, struct Text *t, struct Bomb *bo) {
   Uint32 now = SDL_GetTicks();
 
   if (p->active) {
@@ -82,7 +82,10 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
     }
     if ((p->keystate[SDL_SCANCODE_LSHIFT ]) || p->keystate[SDL_SCANCODE_RSHIFT]) {
       p->pv = FOCUS_VEL;
-    }else {
+    }else if (bo->active) {
+      p->pv = BOMB_VEL;
+    }
+    else{
       p->pv = PLAYER_VEL;
     }
     for (int i = 0; i < e->quantity; i++) {

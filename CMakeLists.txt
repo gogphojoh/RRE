@@ -39,6 +39,8 @@ add_executable(RRE src/mainloop/main.c
         src/game/enemy.h
         src/game/power.h
         src/game/power.c
+        src/game/bomb.c
+        src/game/bomb.h
 )
 
 # Link SDL

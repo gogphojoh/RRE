@@ -162,6 +162,8 @@ void power_free(struct Power **power, struct Enemy *e) {
 void spawn_power(struct Power *p, struct Enemy *e) {
   //Posible problema de consumo excesivo de CPU
   //El contador de bullet al registrar el impacto, identifica el tipo del enemigo, appear toma el valor y lo ejecuta para hacer aparecer un power up que coincida.
+
+  //Al usar una bomba los power ups se dibujan incorrectamente y se dibujan como points, sin embargo, siguen funcionando la lógica para aumentar los power y su sonido se reproduce.
     if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
     if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
 

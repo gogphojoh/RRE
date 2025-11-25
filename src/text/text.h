@@ -22,6 +22,7 @@ struct Text {
   const char *text_hiscore[64];
   const char *player[64];
   const char *power[64];
+  const char *bomb[64];
   struct TextEntity text[16];
   float x_vel;
   float y_vel;
@@ -29,6 +30,7 @@ struct Text {
   int hi_score;
   int lives;
   int power_count;
+  int bomb_count;
 };
 
 bool text_new (struct Text **text, SDL_Renderer *renderer);
@@ -38,5 +40,5 @@ void text_draw(const struct Text *t);
 void score_update(struct Text *t);
 void live_update(struct Text *t);
 void tpower_update(struct Text *t);
-
+void tbomb_update(struct Text *t);
 #endif //MOVING_TEXT_TEXT_H

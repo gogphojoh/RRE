@@ -84,7 +84,7 @@ void bullet_free(struct Bullet **bullet) {
 }
 
 //Estudiar
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t) {
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t, struct Bomb *bo) {
     Uint32 now = SDL_GetTicks();
     e->now = SDL_GetTicks();
 
@@ -101,11 +101,6 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
         b->next_fire_time = now + BULLET_DELAY;
       }
 
-      if (b->keystate[SDL_SCANCODE_X] && now >= b->next_fire_time && pl->active) {
-        b->bullets[i].btype = 1;
-        player_bullets(b);
-        b->next_fire_time = now + BULLET_DELAY;
-      }
 
       //Tengo que aplicar un nuevo array de balas especifico para los enemigos.
       if (e->enemies[i].active && !b->ebullets[i].active) {
@@ -129,6 +124,11 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
           //Agregar sonido de muerte
 
 
+        }
+
+        if (bo->active && rects_collide(&b->ebullets[i].rect, &bo->rect) ) {
+          //e->spawn_time = e->now + 1000;
+          b->ebullets[i].active = false;   // desactivar bala
         }
 
 

@@ -33,17 +33,19 @@
 #define BLACK_COLOR (SDL_Color) {0,0,0,0}
 #define BUBBLE_RADIUS 2
 #define TEXT_STR "NORMAL"
-#define TEXT_AMOUNT 9
+#define TEXT_AMOUNT 11
 #define TEXT_VEL 5
 #define M_PI 3.14159265358979323846
 #define PLAYER_VEL 7
 #define FOCUS_VEL 3
+#define BOMB_VEL 2
 #define BULLET_VEL 15
 #define ENEMY_BULLET_VEL 5
 #define MAX_BULLETS 128
 #define MAX_ENEMIES 128
 #define SCREEN_ENEMIES 7;
 #define BULLET_DELAY 50
+#define BOMB_DURATION 5000
 #define ENEMY_VEL 4
 #define POWER_VEL 3
 

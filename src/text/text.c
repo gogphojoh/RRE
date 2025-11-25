@@ -18,14 +18,16 @@ bool text_new (struct Text **text, SDL_Renderer *renderer) {
 
 
 
-      t->score = 0;
-      t->hi_score = 200;
-      t->lives = 3;
-      t->power_count = 0;
-      sprintf(t->text_num, "%d", t->score);
-      sprintf(t->text_hiscore, "%d", t->hi_score);
-      sprintf(t->player, "%d", t->lives);
-      sprintf(t->power, "%d", t->power_count);
+    t->score = 0;
+    t->hi_score = 200;
+    t->lives = 3;
+    t->power_count = 0;
+    t->bomb_count = 3;
+    sprintf(t->text_num, "%d", t->score);
+    sprintf(t->text_hiscore, "%d", t->hi_score);
+    sprintf(t->player, "%d", t->lives);
+    sprintf(t->power, "%d", t->power_count);
+    sprintf(t->bomb, "%d", t->bomb_count);
 
 
 
@@ -75,6 +77,16 @@ bool text_new (struct Text **text, SDL_Renderer *renderer) {
       t->text[i].surf = bubble_create_text(t->power, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
       t->text[i].rect.x = 1100;
       t->text[i].rect.y = 300;
+      break;
+    case 9:
+      t->text[i].surf = bubble_create_text("Bomb", TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+      t->text[i].rect.x = 880;
+      t->text[i].rect.y = 350;
+      break;
+    case 10:
+      t->text[i].surf = bubble_create_text(t->bomb, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+      t->text[i].rect.x = 1100;
+      t->text[i].rect.y = 350;
       break;
     default:
       t->text[i].surf = NULL;
@@ -208,6 +220,21 @@ void tpower_update(struct Text *t) {
   if (t->text[i].surf) SDL_DestroySurface(t->text[i].surf);
   if (t->text[i].image) SDL_DestroyTexture(t->text[i].image);
   t->text[i].surf = bubble_create_text(t->power, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+  t->text[i].rect.x = t->text[i].rect.x;
+  t->text[i].rect.y = t->text[i].rect.y;
+  t->text[i].rect.w = (float)t->text[i].surf->w;
+  t->text[i].rect.h = (float)t->text[i].surf->h;
+  t->text[i].image = SDL_CreateTextureFromSurface(t->renderer, t->text[i].surf);
+  SDL_DestroySurface (t->text[i].surf);
+  t->text[i].surf = NULL;
+}
+
+void tbomb_update(struct Text *t) {
+  sprintf(t->bomb, "%d", t->bomb_count);
+  int i = 10;
+  if (t->text[i].surf) SDL_DestroySurface(t->text[i].surf);
+  if (t->text[i].image) SDL_DestroyTexture(t->text[i].image);
+  t->text[i].surf = bubble_create_text(t->bomb, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
   t->text[i].rect.x = t->text[i].rect.x;
   t->text[i].rect.y = t->text[i].rect.y;
   t->text[i].rect.w = (float)t->text[i].surf->w;
