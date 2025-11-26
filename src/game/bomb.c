@@ -112,9 +112,12 @@ void bomb_update(struct Bomb *b, struct Enemy *e, struct Power *p, struct Music 
                 e->enemies[j].active = false;
                 p->pows[j].active = true;
                 p->pows[j].up = true;
-                p->pows[j].type = e->enemies[j].type; //El enemigo y el pow ya coinciden -- Solo para la generación del power up, el sonido aun sigue fuera de lugar.
+                p->pows[j].type = e->enemies[j].type ; //El enemigo y el pow ya coinciden -- Solo para la generación del power up, el sonido aun sigue fuera de lugar.
+                printf("Tipo de power: %d \n", p->pows[j].type);
+                printf("Tipo de enemigo: %d \n", e->enemies[j].type);
                 p->pows[j].ascention = e->now + 500; //La activación del power debe coincidir con el del enemigo
-                p->appear = j;
+                p->appear = p->pows[j].type;
+                spawn_power(p, e);
                 play_sound(e,m);
               }
 

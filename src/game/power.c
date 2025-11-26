@@ -23,21 +23,29 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
     //Por algún motivo este ternario lo soluciona todo???
     //Al parecer p->pows[i].type se estaba estableciendo mal y fue el culpable todo este condenado tiempo
-    p->pows[i].type = 1;
-    p->pows[i].type = (i%2 == 0) ? 1:2;
-    // switch (p->pows[i].type) {
-    // case 1 :
-    //   p->pows[i].object = "assets/objects/power.png";
-    //   break;
-    // case 2:
-    //   p->pows[i].object = "assets/objects/points.png";
-    //   break;
-    // default:
-    //   p->pows[i].object = "assets/objects/bullets.png";
-    //
-    // }
+    //LMAO, La puta bomba al ser tan rapida matando, obliga a los power ups a usar su valor base, que en este caso eran puros 1.
+    p->pows[i].type = i +1;
 
-    p->pows[i].object = "assets/objects/points.png";
+    //HE TENIDO UNA IDEA ADICIONAL
+    //Empezar a contabilizar apartir de 0 para tomar los colores y apariencias de los power ups
+
+    // p->pows[i].type = (i%2 == 0) ? 1:2;
+    switch (p->pows[i].type) {
+    case 1 :
+      p->pows[i].object = "assets/objects/power.png";
+      break;
+    case 2:
+      p->pows[i].object = "assets/objects/power.png";
+      break;
+    case 3:
+      p->pows[i].object = "assets/objects/power.png";
+      break;
+    default:
+      p->pows[i].object = "assets/objects/points.png";
+
+    }
+
+    //p->pows[i].object = "assets/objects/points.png";
     p->pows[i].surf= IMG_Load(p->pows[i].object);
     if (!p->pows[i].surf) {
       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
@@ -166,6 +174,8 @@ void spawn_power(struct Power *p, struct Enemy *e) {
   //Al usar una bomba los power ups se dibujan incorrectamente y se dibujan como points, sin embargo, siguen funcionando la lógica para aumentar los power y su sonido se reproduce.
     if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
     if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
+
+    printf("Estoy spawneando al enemigo %d  \n", p->appear);
 
     switch (p->pows[p->appear].type) {
     case 1:

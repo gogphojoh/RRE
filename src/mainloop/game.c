@@ -169,8 +169,9 @@ void game_events(struct Game *g) {
 void game_update(struct Game *g) {
     text_update(g->text);
     player_update(g->player,g->bullet, g->power, g->music, g->enemy, g->text, g->bomb);
-    power_update(g->power, g->enemy, g->player);
+
     enemy_update(g->enemy, g->power, g->music);
+    power_update(g->power, g->enemy, g->player);
     bomb_update(g->bomb, g->enemy, g->power, g->music, g->bullet, g->player, g->text);
     bullet_update(g->bullet, g->enemy, g->power, g->music, g->player, g->text,g->bomb);
     music_update(g->music);
