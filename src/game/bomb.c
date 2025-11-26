@@ -103,6 +103,10 @@ void bomb_update(struct Bomb *b, struct Enemy *e, struct Power *p, struct Music 
             //lógica de impacto en el enemigo
             if (e->enemies[j].active && bomb_collide(&b->rect, &e->enemies[j].rect)) {
               // e->spawn_time = e->now + 1000;
+              //Por algún motivo el matar enemigos usando la bomba provoca que todo salga mal. Vuelve loco al código provocando que los tipos de
+              //power ups se dibujen incorrectamente, aunque sus tipos funcionen perfectamente. //La activación del power debe coincidir con el del enemigo
+              //Al morir varios enemigos de golpe, tengo que ser capaz de identificar una forma de que no se sobreescriban entre ellos.
+              //Es necesario crear una cola de espera para cada enemigo asesinado.
               e->enemies[j].health -= b->hit;// desactivar enemigo
               if (e->enemies[j].health < 1) {
                 e->enemies[j].active = false;
