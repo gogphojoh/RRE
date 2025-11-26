@@ -69,22 +69,22 @@ bool text_new (struct Text **text, SDL_Renderer *renderer) {
       t->text[i].rect.y = 250;
       break;
     case 7:
-      t->text[i].surf = bubble_create_text("Power", TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+      t->text[i].surf = bubble_create_text("Bomb", TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
       t->text[i].rect.x = 880;
       t->text[i].rect.y = 300;
       break;
     case 8:
-      t->text[i].surf = bubble_create_text(t->power, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+      t->text[i].surf = bubble_create_text(t->bomb, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
       t->text[i].rect.x = 1100;
       t->text[i].rect.y = 300;
       break;
     case 9:
-      t->text[i].surf = bubble_create_text("Bomb", TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+      t->text[i].surf = bubble_create_text("Power", TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
       t->text[i].rect.x = 880;
       t->text[i].rect.y = 350;
       break;
     case 10:
-      t->text[i].surf = bubble_create_text(t->bomb, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
+      t->text[i].surf = bubble_create_text(t->power, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
       t->text[i].rect.x = 1100;
       t->text[i].rect.y = 350;
       break;
@@ -216,7 +216,7 @@ void live_update(struct Text *t) {
 
 void tpower_update(struct Text *t) {
   sprintf(t->power, "%d", t->power_count);
-  int i = 8;
+  int i = 10;
   if (t->text[i].surf) SDL_DestroySurface(t->text[i].surf);
   if (t->text[i].image) SDL_DestroyTexture(t->text[i].image);
   t->text[i].surf = bubble_create_text(t->power, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
@@ -231,7 +231,7 @@ void tpower_update(struct Text *t) {
 
 void tbomb_update(struct Text *t) {
   sprintf(t->bomb, "%d", t->bomb_count);
-  int i = 10;
+  int i = 8;
   if (t->text[i].surf) SDL_DestroySurface(t->text[i].surf);
   if (t->text[i].image) SDL_DestroyTexture(t->text[i].image);
   t->text[i].surf = bubble_create_text(t->bomb, TEXT_SIZE, BUBBLE_RADIUS, WHITE_COLOR, BLACK_COLOR);
