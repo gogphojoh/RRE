@@ -22,19 +22,20 @@ bool player_new (struct Player **player, SDL_Renderer *renderer) {
 
     p->renderer = renderer;
 
-    p->image = IMG_LoadTexture(p->renderer, "assets/sprites/marisa.png");
+    p->image = IMG_LoadTexture(p->renderer, "assets/sprites/marisa_idle.png");
     if (!p->image) {
         fprintf(stderr, "Error al crear la imagen del jugador: %s\n", SDL_GetError());
         return false;
     }
 
-    if (!SDL_GetTextureSize(p->image,&p->rect.w,&p->rect.h)) {
-        fprintf(stderr, "Error al obtener las medidas de la imagen: %s\n", SDL_GetError());
-        return false;
-    }
+    // if (!SDL_GetTextureSize(p->image,&p->rect.w,&p->rect.h)) {
+    //     fprintf(stderr, "Error al obtener las medidas de la imagen: %s\n", SDL_GetError());
+    //     return false;
+    // }
 
-    p->rect.x = 500;
-    p->rect.y = 500;
+    p->src = (SDL_FRect){0,0,26,44};
+    p->rect = (SDL_FRect) {500,500,26,44};
+
     p->keystate = SDL_GetKeyboardState(NULL);
     p->pv = PLAYER_VEL;
     p->active = true;
@@ -66,7 +67,16 @@ void player_free(struct Player **player) {
 void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct Music *m, struct Enemy *e, struct Text *t, struct Bomb *bo) {
   Uint32 now = SDL_GetTicks();
 
+
+
+
   if (p->active) {
+    if (now > p->frame_time) {
+      //De momento el switch parece ser la cosa más potable por ahora.
+      animation_update(p);
+      p->frame_time = now + 96;
+    }
+
     p->sound_played = false;
     if (p->keystate[SDL_SCANCODE_LEFT]) {
       p->rect.x -= p->pv;
@@ -119,7 +129,7 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
 }
 void player_draw(const struct Player *p) {
   if (p->active) {
-    SDL_RenderTexture(p->renderer, p->image, NULL, &p->rect);
+    SDL_RenderTexture(p->renderer, p->image, &p->src, &p->rect);
   }
 
 
@@ -152,4 +162,40 @@ void player_death (struct Player *p, struct Music *m) {
   MIX_SetTrackAudio(p->track, p->death);
   MIX_PlayTrack(p->track, 0);
   p->sound_played = true;
+}
+
+void animation_update (struct Player *p) {
+  p->frame_count += 1;
+  if (p->frame_count > 8) {
+    p->frame_count = 1;
+  }
+  switch (p->frame_count) {
+  case 1:
+    p->src = (SDL_FRect){0,0,26,44};
+    break;
+  case 2:
+    p->src = (SDL_FRect){32,0,26,44};
+    break;
+  case 3:
+    p->src = (SDL_FRect){64,0,26,44};
+    break;
+  case 4:
+    p->src = (SDL_FRect){96,0,26,44};
+    break;
+  case 5:
+    p->src = (SDL_FRect){128,0,26,44};
+    break;
+  case 6:
+    p->src = (SDL_FRect){160,0,26,44};
+    break;
+  case 7:
+    p->src = (SDL_FRect){192,0,26,44};
+    break;
+  case 8:
+    p->src = (SDL_FRect){224,0,26,44};
+    break;
+  default:
+    p->src = (SDL_FRect){0,0,26,44};
+    break;
+  }
 }
