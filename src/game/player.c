@@ -22,7 +22,7 @@ bool player_new (struct Player **player, SDL_Renderer *renderer) {
 
     p->renderer = renderer;
 
-    p->image = IMG_LoadTexture(p->renderer, "assets/sprites/marisa_idle.png");
+    p->image = IMG_LoadTexture(p->renderer, "assets/sprites/marisa_sheet.png");
     if (!p->image) {
         fprintf(stderr, "Error al crear la imagen del jugador: %s\n", SDL_GetError());
         return false;
@@ -71,9 +71,15 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
 
 
   if (p->active) {
-    if (now > p->frame_time) {
+    if (now > p->frame_time && !p->keystate[SDL_SCANCODE_LEFT] && !p->keystate[SDL_SCANCODE_RIGHT]) {
       //De momento el switch parece ser la cosa más potable por ahora.
       animation_update(p);
+      p->frame_time = now + 96;
+    } else if (now > p->frame_time && p->keystate[SDL_SCANCODE_LEFT]) {
+      animation_left_update(p);
+      p->frame_time = now + 96;
+    }else if (now > p->frame_time && p->keystate[SDL_SCANCODE_RIGHT]) {
+      animation_right_update(p);
       p->frame_time = now + 96;
     }
 
@@ -170,6 +176,7 @@ void animation_update (struct Player *p) {
     p->frame_count = 1;
   }
   switch (p->frame_count) {
+    //48 pixeles de altura.
   case 1:
     p->src = (SDL_FRect){0,0,26,44};
     break;
@@ -196,6 +203,82 @@ void animation_update (struct Player *p) {
     break;
   default:
     p->src = (SDL_FRect){0,0,26,44};
+    break;
+  }
+
+
+}
+
+void animation_left_update (struct Player *p) {
+  p->frame_count += 1;
+  if (p->frame_count > 8) {
+    p->frame_count = 4;
+  }
+  switch (p->frame_count) {
+    //48 pixeles de altura.
+  case 1:
+    p->src = (SDL_FRect){0,48,26,44};
+    break;
+  case 2:
+    p->src = (SDL_FRect){32,48,26,44};
+    break;
+  case 3:
+    p->src = (SDL_FRect){64,48,26,44};
+    break;
+  case 4:
+    p->src = (SDL_FRect){96,48,26,44};
+    break;
+  case 5:
+    p->src = (SDL_FRect){128,48,26,44};
+    break;
+  case 6:
+    p->src = (SDL_FRect){160,48,26,44};
+    break;
+  case 7:
+    p->src = (SDL_FRect){192,48,26,44};
+    break;
+  case 8:
+    p->src = (SDL_FRect){224,48,26,44};
+    break;
+  default:
+    p->src = (SDL_FRect){0,48,26,44};
+    break;
+  }
+}
+
+void animation_right_update (struct Player *p) {
+  p->frame_count += 1;
+  if (p->frame_count > 8) {
+    p->frame_count = 4;
+  }
+  switch (p->frame_count) {
+    //48 pixeles de altura.
+  case 1:
+    p->src = (SDL_FRect){0,95,26,44};
+    break;
+  case 2:
+    p->src = (SDL_FRect){32,95,26,44};
+    break;
+  case 3:
+    p->src = (SDL_FRect){64,95,26,44};
+    break;
+  case 4:
+    p->src = (SDL_FRect){96,95,26,44};
+    break;
+  case 5:
+    p->src = (SDL_FRect){128,95,26,44};
+    break;
+  case 6:
+    p->src = (SDL_FRect){160,95,26,44};
+    break;
+  case 7:
+    p->src = (SDL_FRect){192,95,26,44};
+    break;
+  case 8:
+    p->src = (SDL_FRect){224,95,26,44};
+    break;
+  default:
+    p->src = (SDL_FRect){0,95,26,44};
     break;
   }
 }

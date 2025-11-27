@@ -36,5 +36,7 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
 void player_draw(const struct Player *p);
 void player_death (struct Player *p, struct Music *m);
 void animation_update(struct Player *p);
+void animation_left_update (struct Player *p);
+void animation_right_update (struct Player *p);
 
 #endif //PLAYER_PLAYER_H
