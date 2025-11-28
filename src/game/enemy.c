@@ -15,6 +15,7 @@
  */
 
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
+
   *enemy = calloc (1, sizeof (struct Enemy));
   if (!(*enemy)) {
     fprintf(stderr,"Error al guardar en la memoria la enemigo: %s", SDL_GetError());
@@ -70,7 +71,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].sprite = "assets/sprites/aki.png";
       break;
     case 5:
-      e->enemies[i].sprite = "assets/sprites/hina.png";
+      e->enemies[i].sprite = "assets/sprites/hina_sheet.png";
       break;
     default:
       e->enemies[i].sprite = "assets/objects/bullet.png";
@@ -86,7 +87,14 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
       return false;
     }
-    SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
+
+    if (e->enemies[i].type == 5 ) {
+      e->enemies[i].src = (SDL_FRect){0,0,30,58};
+      e->enemies[i].rect = (SDL_FRect) {0,0,30,58};
+    }else {
+      SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
+      e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
+    }
 
 
       e->spacing += 70;
@@ -119,9 +127,13 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   return true;
 }
 void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
+  Uint32 now = SDL_GetTicks();
+
   //La solución final fue bastante parecida al del rectangulo, sin embargo, es un poco más compleja.
 
   //!!! Estudiar !!!
+
+
 
   for (int i = 0; i < e->quantity; i++) {
 
@@ -130,7 +142,11 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
     //   // spawn_enemy(e, p);
     // }
 
-
+    if (e->enemies[i].type == 5 && now > e->enemies[i].frame_time) {
+      e->current_enemy = i;
+      hina_update(e);
+      e->enemies[i].frame_time = now + 96;
+    }
 
     if (e->enemies[i].active == true && p->pows[i].active == false) {
       p->pows[i].pw_x = e->enemies[i].rect.x;
@@ -161,7 +177,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
     if (e->enemies[i].active && e->enemies[i].health > 0) {
-      SDL_RenderTexture(e->renderer, e->enemies[i].image, NULL, &e->enemies[i].rect);
+      SDL_RenderTexture(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect);
     }
 
   }
@@ -234,6 +250,48 @@ void play_sound(struct Enemy *e, struct Music *m) {
   //   e->sound_active = false;
   // }
   }
+
+void hina_update(struct Enemy *e) {
+
+  e->enemies[e->current_enemy].frame_count += 1;
+  //Hina = 30 de anchura. 58 de altura
+  if (e->enemies[e->current_enemy].frame_count > 9) {
+    e->enemies[e->current_enemy].frame_count = 2;
+  }
+  switch (e->enemies[e->current_enemy].frame_count) {
+    //48 pixeles de altura.
+  case 1:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,0,30,58};
+    break;
+  case 2:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,64,30,58};
+    break;
+  case 3:
+    e->enemies[e->current_enemy].src = (SDL_FRect){64,64,30,58};
+    break;
+  case 4:
+    e->enemies[e->current_enemy].src = (SDL_FRect){128,64,30,58};
+    break;
+  case 5:
+    e->enemies[e->current_enemy].src = (SDL_FRect){192,64,30,58};
+    break;
+  case 6:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,128,30,58};
+    break;
+  case 7:
+    e->enemies[e->current_enemy].src = (SDL_FRect){64,128,30,58};
+    break;
+  case 8:
+    e->enemies[e->current_enemy].src = (SDL_FRect){128,128,30,58};
+    break;
+  case 9:
+    e->enemies[e->current_enemy].src = (SDL_FRect){192,128,30,58};
+    break;
+  default:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,0,30,58};
+    break;
+  }
+}
 
 
 

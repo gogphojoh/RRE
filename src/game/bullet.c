@@ -33,7 +33,7 @@ bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
     for (int i = 0; i < MAX_BULLETS; i++) {
 
       //Iteración de balas del jugador
-      b->bullets[i].surf= IMG_Load("assets/objects/bullet.png");
+      b->bullets[i].surf= IMG_Load("assets/objects/bullet_sheet.png");
       if (!b->bullets[i].surf) {
         fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
         return false;
@@ -45,6 +45,9 @@ bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
       }
 
       SDL_GetTextureSize(b->bullets[i].image,&b->rect.w,&b->rect.h);
+      printf("Esta es la anchura %f, y la altura: %f \n", b->rect.w,b->rect.h);
+      b->bullets[i].src = (SDL_FRect){0,114,16,32};
+      b->rect = (SDL_FRect) {0,0,16,32};
 
       //Iteración de enemigos
 
@@ -146,6 +149,11 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
             //lógica de impacto en el enemigo
             if (e->enemies[j].active && rects_collide(&b->bullets[i].rect, &e->enemies[j].rect)) {
               // e->spawn_time = e->now + 1000;
+              // if (b->bullets[i].active = true) {
+              //   b->current_bullet = i;
+              //   bullet_animation(b);
+              //   b->bullets[i].frame_time = now + 96;
+              // }
               b->bullets[i].active = false;   // desactivar bala
               e->enemies[j].health -= 10;// desactivar enemigo
               if (e->enemies[j].health < 1) {
@@ -185,7 +193,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
 void bullet_draw (struct Bullet *b) {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (b->bullets[i].active) {
-            SDL_RenderTexture(b->renderer, b->bullets[i].image, NULL, &b->bullets[i].rect);
+            SDL_RenderTexture(b->renderer, b->bullets[i].image, &b->bullets[i].src, &b->bullets[i].rect);
 
         }
         if (b->ebullets[i].active) {
@@ -232,6 +240,32 @@ void player_bullets (struct Bullet *b) {
   b->bullets[first].hit = 10;
 
   //Acá recién se crea un dato válido para la bala
+
+}
+
+void bullet_animation (struct Bullet *b) {
+   b->bullets[b->current_bullet].frame_count += 1;
+  //Hina = 30 de anchura. 58 de altura
+  for (int i = 0; i < 5; i++) {
+    switch (b->bullets[b->current_bullet].frame_count) {
+      //48 pixeles de altura.
+    case 1:
+      b->bullets[b->current_bullet].src = (SDL_FRect){0,114,16,32};
+      break;
+    case 2:
+      b->bullets[b->current_bullet].src = (SDL_FRect){0,80,16,32};
+      break;
+    case 3:
+      b->bullets[b->current_bullet].src = (SDL_FRect){0,48,16,32};
+      break;
+    case 4:
+      b->bullets[b->current_bullet].src = (SDL_FRect){0,16,16,32};
+      break;
+    default:
+      b->bullets[b->current_bullet].src = (SDL_FRect){0,0,16,32};
+      break;
+    }
+  }
 
 }
 

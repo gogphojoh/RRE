@@ -12,12 +12,15 @@
 
 struct EnemyEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
+  SDL_FRect src;
   float x_vel, y_vel;
   SDL_Texture *image;
   SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
   float fire_rate;
   int health;
   int type;
+  int frame_count;
+  int frame_time;
   bool active; //Define si un enemigo ya fue vencido
   // MIX_Mixer *mixer;
   // MIX_Audio *kill;
@@ -26,6 +29,7 @@ struct EnemyEntity {
 };
 
 struct Enemy {
+  int current_enemy;
   MIX_Mixer *mixer;
   MIX_Audio *kill;
   MIX_Track *track;
@@ -53,6 +57,7 @@ void enemy_update(struct Enemy *e,struct Power *p, struct Music *m);
 void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
 static void spawn_enemy(struct Enemy *e, struct Power *p);
+void hina_update(struct Enemy *e);
 
 #endif // RRE_ENEMY_H
 
