@@ -45,7 +45,7 @@ struct Power {
   int i;
 };
 bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e);
-void power_update(struct Power *p, struct Enemy *e, struct Player *pl);
+void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bomb *b);
 void power_draw(struct Power *p, struct Enemy *e);
 void power_free(struct Power **power, struct Enemy *e);
 void spawn_power(struct Power *p, struct Enemy *e);

@@ -29,6 +29,11 @@ struct EnemyEntity {
 };
 
 struct Enemy {
+  double angle;
+  SDL_FlipMode flip;
+  const SDL_FPoint *center;
+  const SDL_FRect *dstrect;
+  const SDL_FRect *srcrect;
   int current_enemy;
   MIX_Mixer *mixer;
   MIX_Audio *kill;
@@ -58,6 +63,7 @@ void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
 static void spawn_enemy(struct Enemy *e, struct Power *p);
 void hina_update(struct Enemy *e);
-
+void aki_update(struct Enemy *e);
+void aki_left_update(struct Enemy *e);
 #endif // RRE_ENEMY_H
 

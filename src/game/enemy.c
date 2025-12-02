@@ -68,7 +68,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].sprite = "assets/sprites/hard-fairy.png";
       break;
     case 4:
-      e->enemies[i].sprite = "assets/sprites/aki.png";
+      e->enemies[i].sprite = "assets/sprites/aki_sheet.png";
       break;
     case 5:
       e->enemies[i].sprite = "assets/sprites/hina_sheet.png";
@@ -87,10 +87,14 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
       return false;
     }
-
+    //Transformar a switch
     if (e->enemies[i].type == 5 ) {
       e->enemies[i].src = (SDL_FRect){0,0,30,58};
       e->enemies[i].rect = (SDL_FRect) {0,0,30,58};
+    }   else if (e->enemies[i].type == 4 ) {
+      //39 w 57 h
+      e->enemies[i].src = (SDL_FRect){0,0,39,57};
+      e->enemies[i].rect = (SDL_FRect) {0,0,39,57};
     }else {
       SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
       e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
@@ -103,6 +107,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].rect.w = e->enemies[i].rect.w;
       e->enemies[i].rect.h = e->enemies[i].rect.h;
       e->enemies[i].active = true;
+
+    //transformar en switch
     if (e->enemies[i].type == 5) {
       e->enemies[i].health = 2000;
     }
@@ -113,9 +119,14 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       } else {
         e->enemies[i].health = 1;
       }
+      // e->dstrect = &e->enemies[i].rect;
+      // e->srcrect = &e->enemies[i].src;
+      e->angle = 180;
+      e->flip = SDL_FLIP_VERTICAL;
 
-      // e->enemies[i].x_vel = ENEMY_VEL;
-      // e->enemies[i].y_vel = ENEMY_VEL;
+      //Esta es la lógica para mover a los enemigos en la pantalla
+      e->enemies[i].x_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;
 
   }
 
@@ -129,6 +140,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
   Uint32 now = SDL_GetTicks();
 
+
   //La solución final fue bastante parecida al del rectangulo, sin embargo, es un poco más compleja.
 
   //!!! Estudiar !!!
@@ -136,6 +148,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
 
   for (int i = 0; i < e->quantity; i++) {
+
 
     // if (!e->enemies[i].active && e->play_time < e->now) {
     //
@@ -148,23 +161,40 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       e->enemies[i].frame_time = now + 96;
     }
 
+    if (e->enemies[i].type == 4 && now > e->enemies[i].frame_time && e->enemies[i].x_vel == 0) {
+      e->current_enemy = i;
+      aki_update(e);
+      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
+    } else if (e->enemies[i].type == 4 && now > e->enemies[i].frame_time && e->enemies[i].x_vel != 0) {
+      e->current_enemy = i;
+      aki_left_update(e);
+      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
+    }
+
     if (e->enemies[i].active == true && p->pows[i].active == false) {
       p->pows[i].pw_x = e->enemies[i].rect.x;
       p->pows[i].pw_y = e->enemies[i].rect.y;
     }
-    //
-    // if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
-    //   e->enemies[i].x_vel = -ENEMY_VEL;
-    // } else if (e->enemies[i].rect.x < 0) {
-    //   e->enemies[i].x_vel = ENEMY_VEL;
-    // } else if (e->enemies[i].rect.y < 0) {
-    //   e->enemies[i].y_vel = ENEMY_VEL;
-    // } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
-    //   e->enemies[i].y_vel = -ENEMY_VEL;
-    // } else  if (e->enemies[i].active) {
-    //   e->enemies[i].rect.x += e->enemies[i].x_vel + i*3;
-    //   e->enemies[i].rect.y += e->enemies[i].y_vel + i*3;
-    // }
+
+    //Y esta es la responsable de encargarse de que vayan dando tumbos por la pantalla
+    e->enemies[i].rect.x += e->enemies[i].x_vel;
+    e->enemies[i].rect.y += e->enemies[i].y_vel;
+
+    if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
+        e->enemies[i].x_vel = -ENEMY_VEL;
+    }
+    else if (e->enemies[i].rect.x < 0) {
+        e->enemies[i].x_vel = ENEMY_VEL;
+    }
+
+    if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
+        e->enemies[i].y_vel = -ENEMY_VEL;
+    }
+    else if (e->enemies[i].rect.y < 0) {
+        e->enemies[i].y_vel = ENEMY_VEL;
+    }
+
+
   }
 
 
@@ -176,10 +206,13 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 }
 void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
-    if (e->enemies[i].active && e->enemies[i].health > 0) {
+    if (e->enemies[i].active && e->enemies[i].health > 0 && e->enemies[i].x_vel >= 0) {
       SDL_RenderTexture(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect);
+      //SDL_RenderTextureRotated(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect, e->angle, e->center, e->flip);
     }
-
+    if (e->enemies[i].active && e->enemies[i].health > 0 && e->enemies[i].x_vel < 0) {
+      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect, e->angle, e->center, e->flip);
+    }
   }
 
 }
@@ -293,6 +326,58 @@ void hina_update(struct Enemy *e) {
   }
 }
 
+void aki_update(struct Enemy *e) {
+  //39 w 57 h
+  e->enemies[e->current_enemy].frame_count += 1;
+  //Hina = 30 de anchura. 58 de altura
+  if (e->enemies[e->current_enemy].frame_count > 4) {
+    e->enemies[e->current_enemy].frame_count = 1;
+  }
+  switch (e->enemies[e->current_enemy].frame_count) {
+  case 1:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,0,39,57};
+    break;
+  case 2:
+    e->enemies[e->current_enemy].src = (SDL_FRect){64,0,39,57};
+    break;
+  case 3:
+    e->enemies[e->current_enemy].src = (SDL_FRect){128,0,39,57};
+    break;
+  case 4:
+    e->enemies[e->current_enemy].src = (SDL_FRect){192,0,39,57};
+    break;
+  default:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,0,39,57};
+    break;
+  }
+}
+
+void aki_left_update(struct Enemy *e) {
+  //39 w 57 h
+  e->enemies[e->current_enemy].frame_count += 1;
+  //Hina = 30 de anchura. 58 de altura
+  if (e->enemies[e->current_enemy].frame_count > 4) {
+    e->enemies[e->current_enemy].frame_count = 4;
+  }
+  switch (e->enemies[e->current_enemy].frame_count) {
+  case 1:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,64,39,57};
+    break;
+  case 2:
+    e->enemies[e->current_enemy].src = (SDL_FRect){64,64,39,57};
+    break;
+  case 3:
+    e->enemies[e->current_enemy].src = (SDL_FRect){128,64,39,57};
+    break;
+  case 4:
+    e->enemies[e->current_enemy].src = (SDL_FRect){192,64,39,57};
+    break;
+  default:
+    e->enemies[e->current_enemy].src = (SDL_FRect){0,64,39,57};
+    break;
+  }
+}
+
 
 
 static void spawn_enemy(struct Enemy *e, struct Power *p) {
@@ -310,3 +395,16 @@ static void spawn_enemy(struct Enemy *e, struct Power *p) {
   // }
 
 }
+
+// if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
+//   e->enemies[i].x_vel = -ENEMY_VEL;
+// } else if (e->enemies[i].rect.x < 0) {
+//   e->enemies[i].x_vel = ENEMY_VEL;
+// } else if (e->enemies[i].rect.y < 0) {
+//   e->enemies[i].y_vel = ENEMY_VEL;
+// } else if (e->enemies[i].rect.y + e->enemies[i].rect.h > WINDOW_HEIGHT) {
+//   e->enemies[i].y_vel = -ENEMY_VEL;
+// } else  if (e->enemies[i].active) {
+//   e->enemies[i].rect.x += e->enemies[i].x_vel + i*3;
+//   e->enemies[i].rect.y += e->enemies[i].y_vel + i*3;
+// }

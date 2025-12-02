@@ -32,7 +32,6 @@ struct EnemyBulletEntity {
 
 struct Bullet {
     struct Enemy *enemy;
-    struct Enemyp *enemyp;
     SDL_Renderer *renderer;
     SDL_FRect rect; // for width/height reference
     const bool *keystate;

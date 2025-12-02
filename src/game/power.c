@@ -69,7 +69,7 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
 
   return true;
 }
-void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
+void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bomb *b) {
   //Conseguir que el Power suba brevemente
 
   for (int i = 0; i < e->quantity; i++) {
@@ -94,7 +94,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl) {
     else if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h >= WINDOW_HEIGHT) {
       p->pows[i].active = false;
     }
-    if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))) {
+    if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) || b->active == true) {
       //printf("Seguimiento al jugador activado");
       p->pows[i].follow = true;
       //Hacer una transición suave
