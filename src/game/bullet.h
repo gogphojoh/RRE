@@ -19,6 +19,7 @@ struct BulletEntity {
     int frame_count;
     int frame_time;
     bool active; //Define si una bala ya fue usada
+    bool impact;
 };
 
 struct EnemyBulletEntity {
@@ -31,6 +32,7 @@ struct EnemyBulletEntity {
 };
 
 struct Bullet {
+
     struct Enemy *enemy;
     SDL_Renderer *renderer;
     SDL_FRect rect; // for width/height reference
@@ -39,6 +41,8 @@ struct Bullet {
     int index;
     int bcount;
     int current_bullet;
+    int onscreen;
+    int imp_bullets[MAX_BULLETS];
     struct BulletEntity bullets[MAX_BULLETS]; //piscina de balas
     struct EnemyBulletEntity ebullets[MAX_BULLETS];
     Uint32 next_fire_time;

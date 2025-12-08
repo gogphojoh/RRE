@@ -95,7 +95,11 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
 
     for (int i = 0; i < MAX_BULLETS; i++) {
       b->bcount = i;
-
+      if (b->bullets[i].impact && now > b->bullets[i].frame_time) {
+        b->current_bullet = i;
+        bullet_animation(b);
+        b->bullets[i].frame_time = now + 6;
+      }
 
 
       if (b->keystate[SDL_SCANCODE_Z] && now >= b->next_fire_time && pl->active) {
@@ -137,7 +141,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
 
       }
 
-        if (b->bullets[i].active) {
+        if (b->bullets[i].active && !b->bullets[i].impact) {
             b->bullets[i].rect.y -= BULLET_VEL;
             if (b->bullets[i].rect.y + b->bullets[i].rect.h < 0) {
                 b->bullets[i].active = false;
@@ -154,7 +158,8 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
               //   bullet_animation(b);
               //   b->bullets[i].frame_time = now + 96;
               // }
-              b->bullets[i].active = false;   // desactivar bala
+                // desactivar bala
+              b->bullets[i].impact = true;
               e->enemies[j].health -= 10;// desactivar enemigo
               if (e->enemies[j].health < 1) {
                 e->enemies[j].active = false;
@@ -174,7 +179,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
 
         }
 
-      if (b->bullets[i].active) {
+      if (b->bullets[i].active && !b->bullets[i].impact) {
         b->bullets[i].rect.y -= BULLET_VEL;
         if (b->bullets[i].rect.y + b->bullets[i].rect.h < 0) {
           b->bullets[i].active = false;
@@ -229,6 +234,7 @@ void player_bullets (struct Bullet *b) {
   b->bullets[first].rect.h = b->rect.h;
   b->bullets[first].active = true;
   b->bullets[first].hit = 10;
+  b->bullets[first].src = (SDL_FRect){0,114,16,32};
 
 
   // Bala izquierda
@@ -237,7 +243,8 @@ void player_bullets (struct Bullet *b) {
   b->bullets[second].rect.w = b->rect.w;
   b->bullets[second].rect.h = b->rect.h;
   b->bullets[second].active = true;
-  b->bullets[first].hit = 10;
+  b->bullets[second].hit = 10;
+  b->bullets[second].src = (SDL_FRect){0,114,16,32};
 
   //Acá recién se crea un dato válido para la bala
 
@@ -245,6 +252,11 @@ void player_bullets (struct Bullet *b) {
 
 void bullet_animation (struct Bullet *b) {
    b->bullets[b->current_bullet].frame_count += 1;
+   if (b->bullets[b->current_bullet].frame_count > 4) {
+     b->bullets[b->current_bullet].active = false;
+     b->bullets[b->current_bullet].impact = false;
+     b->bullets[b->current_bullet].frame_count = 0;
+   }
   //Hina = 30 de anchura. 58 de altura
     switch (b->bullets[b->current_bullet].frame_count) {
       //48 pixeles de altura.
