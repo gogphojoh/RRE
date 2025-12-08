@@ -41,7 +41,7 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
       p->pows[i].object = "assets/objects/power.png";
       break;
     default:
-      p->pows[i].object = "assets/objects/points.png";
+      p->pows[i].object = "assets/objects/coin.png";
 
     }
 
@@ -63,6 +63,8 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
       p->pows[i].active = false;
       //Tienes que definir todos los parametros, sobre todo si son objetos de arrays que se dibujan varias veces.
       SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
+      p->pows[i].rect.w = p->pows[i].rect.w * 2;
+      p->pows[i].rect.h = p->pows[i].rect.h * 1.93;
     }
 
   }
@@ -182,10 +184,10 @@ void spawn_power(struct Power *p, struct Enemy *e) {
       p->pows[p->appear].object = "assets/objects/power.png";
       break;
     case 2:
-      p->pows[p->appear].object = "assets/objects/points.png";
+      p->pows[p->appear].object = "assets/objects/coin.png";
       break;
     default:
-      p->pows[p->appear].object = "assets/objects/points.png";
+      p->pows[p->appear].object = "assets/objects/coin.png";
       break;
     }
     p->pows[p->appear].surf= IMG_Load(p->pows[p->appear].object);

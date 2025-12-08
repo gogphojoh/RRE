@@ -75,7 +75,7 @@ void bomb_update(struct Bomb *b, struct Enemy *e, struct Power *p, struct Music 
 
 
 
-      if (b->keystate[SDL_SCANCODE_X] && !b->active && t->bomb_count > 0) {
+      if (b->keystate[SDL_SCANCODE_X] && !b->active && t->bomb_count > 0 && pl->active) {
         player_bombs(b, bu);
         bomb_sound(b, m);
         pl->invulnerability = now + 5000;

@@ -246,7 +246,6 @@ void player_bullets (struct Bullet *b) {
 void bullet_animation (struct Bullet *b) {
    b->bullets[b->current_bullet].frame_count += 1;
   //Hina = 30 de anchura. 58 de altura
-  for (int i = 0; i < 5; i++) {
     switch (b->bullets[b->current_bullet].frame_count) {
       //48 pixeles de altura.
     case 1:
@@ -265,7 +264,7 @@ void bullet_animation (struct Bullet *b) {
       b->bullets[b->current_bullet].src = (SDL_FRect){0,0,16,32};
       break;
     }
-  }
+
 
 }
 

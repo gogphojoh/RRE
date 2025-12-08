@@ -125,8 +125,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->flip = SDL_FLIP_VERTICAL;
 
       //Esta es la lógica para mover a los enemigos en la pantalla
-      e->enemies[i].x_vel = ENEMY_VEL;
-      e->enemies[i].y_vel = ENEMY_VEL;
+      // e->enemies[i].x_vel = ENEMY_VEL;
+      // e->enemies[i].y_vel = ENEMY_VEL;
 
   }
 

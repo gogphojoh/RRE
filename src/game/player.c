@@ -34,7 +34,7 @@ bool player_new (struct Player **player, SDL_Renderer *renderer) {
     // }
 
     p->src = (SDL_FRect){0,0,26,44};
-    p->rect = (SDL_FRect) {500,500,26,44};
+    p->rect = (SDL_FRect) {500,500,53,85};
 
     p->keystate = SDL_GetKeyboardState(NULL);
     p->pv = PLAYER_VEL;
