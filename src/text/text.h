@@ -18,11 +18,12 @@ struct Text {
     SDL_Renderer *renderer;
     // SDL_Texture *image;
     // SDL_FRect rect;
-  const char *text_num[64];
-  const char *text_hiscore[64];
-  const char *player[64];
-  const char *power[64];
-  const char *bomb[64];
+  //Cuando declaras char, no debes poner el "*" por que el compilador de se vuelve loco al identificarlo como un tipo no válido.
+  const char text_num[64];
+  const char text_hiscore[64];
+  const char player[64];
+  const char power[64];
+  const char bomb[64];
   struct TextEntity text[16];
   float x_vel;
   float y_vel;

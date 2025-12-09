@@ -9,6 +9,10 @@
 #include "enemy.h"
 #include "player.h"
 #include "music.h"
+#include "bomb.h"
+#include "../text/text.h"
+
+
 
 struct PowerEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
@@ -29,6 +33,7 @@ struct PowerEntity {
 };
 
 struct Power {
+  struct Player *player;
   int grab;
   int appear;
   struct Enemy *enemy;

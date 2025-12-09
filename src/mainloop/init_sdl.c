@@ -40,13 +40,13 @@ bool game_init_sdl(struct Game *g) {
         fprintf(stderr, "Error cargando el icono de la pantalla: %s\n", SDL_GetError());
         return false;
     }
-    if (!SDL_SetWindowIcon(g->window, icon_surf)) {
-        fprintf(stderr, "Error al establecer el icono de la pantalla: %s\n", SDL_GetError());
-        SDL_DestroySurface(icon_surf);
-        return false;
-    }
-
-    SDL_DestroySurface(icon_surf);
+    // if (!SDL_SetWindowIcon(g->window, icon_surf)) {
+    //     fprintf(stderr, "Error al establecer el icono de la pantalla: %s\n", SDL_GetError());
+    //     SDL_DestroySurface(icon_surf);
+    //     return false;
+    // }
+    //
+    // SDL_DestroySurface(icon_surf);
 
     return true;
 }

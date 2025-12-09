@@ -107,12 +107,13 @@ void bomb_update(struct Bomb *b, struct Enemy *e, struct Power *p, struct Music 
               //power ups se dibujen incorrectamente, aunque sus tipos funcionen perfectamente. //La activación del power debe coincidir con el del enemigo
               //Al morir varios enemigos de golpe, tengo que ser capaz de identificar una forma de que no se sobreescriban entre ellos.
               //Es necesario crear una cola de espera para cada enemigo asesinado.
+              //Tal vez ni sea necesario eso, con que se esté mandando los datos de cada enemigo podría bastar.
               e->enemies[j].health -= b->hit;// desactivar enemigo
               if (e->enemies[j].health < 1) {
                 e->enemies[j].active = false;
                 p->pows[j].active = true;
                 p->pows[j].up = true;
-                p->pows[j].type = e->enemies[j].type ; //El enemigo y el pow ya coinciden -- Solo para la generación del power up, el sonido aun sigue fuera de lugar.
+                p->pows[j].type = e->enemies[j].type; //El enemigo y el pow ya coinciden -- Solo para la generación del power up, el sonido aun sigue fuera de lugar.
                 printf("Tipo de power: %d \n", p->pows[j].type);
                 printf("Tipo de enemigo: %d \n", e->enemies[j].type);
                 p->pows[j].ascention = e->now + 500; //La activación del power debe coincidir con el del enemigo

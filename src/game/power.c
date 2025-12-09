@@ -3,6 +3,8 @@
 //
 #include "power.h"
 
+//Por fin lo he entendido. Power_spawn no hace nada, es el power_new el que hace realidad todo. Lo cual será algo jodidisimo de llevar acabo en su estado actual por que para empezar, ni siquera puede volverse dinámico.
+//Hay que usar la magia de cambiar srpites a medio vuelo entonces.
 
 //Problemas con el seguimiento al jugador y con el dibujado de posiciones distintas.
 //!La primera vez que tomas un power, sin importar el enemigo, se reproducen ambos audios. Interesante, ¿No?
@@ -24,26 +26,28 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
     //Por algún motivo este ternario lo soluciona todo???
     //Al parecer p->pows[i].type se estaba estableciendo mal y fue el culpable todo este condenado tiempo
     //LMAO, La puta bomba al ser tan rapida matando, obliga a los power ups a usar su valor base, que en este caso eran puros 1.
-    p->pows[i].type = i +1;
+    // p->pows[i].type = i + 1;
 
     //HE TENIDO UNA IDEA ADICIONAL
     //Empezar a contabilizar apartir de 0 para tomar los colores y apariencias de los power ups
 
     // p->pows[i].type = (i%2 == 0) ? 1:2;
-    switch (p->pows[i].type) {
-    case 1 :
-      p->pows[i].object = "assets/objects/power.png";
-      break;
-    case 2:
-      p->pows[i].object = "assets/objects/power.png";
-      break;
-    case 3:
-      p->pows[i].object = "assets/objects/power.png";
-      break;
-    default:
-      p->pows[i].object = "assets/objects/coin.png";
+    // switch (p->pows[i].type) {
+    // case 1 :
+    //   p->pows[i].object = "assets/objects/power.png";
+    //   break;
+    // case 2:
+    //   p->pows[i].object = "assets/objects/power.png";
+    //   break;
+    // case 3:
+    //   p->pows[i].object = "assets/objects/power.png";
+    //   break;
+    // default:
+    //   p->pows[i].object = "assets/objects/coin.png";
+    //
+    // }
 
-    }
+    p->pows[i].object = "assets/objects/power.png";
 
     //p->pows[i].object = "assets/objects/points.png";
     p->pows[i].surf= IMG_Load(p->pows[i].object);
@@ -75,11 +79,26 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
   //Conseguir que el Power suba brevemente
 
   for (int i = 0; i < e->quantity; i++) {
+    //Este digito está basandose en el tipo de enemigo que ha en pantalla. 1 = Hada roja, 2 = Hada azul, 3 = Lily white, 4 = Aki , 5 = Hina kagiyama
+    if (p->pows[i].type > 1) {
+      // if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
+      // if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
+      p->pows[i].surf= NULL;
+      p->pows[i].image = NULL;
+      p->pows[i].object = "assets/objects/coin.png";
+      p->pows[i].surf= IMG_Load(p->pows[i].object);
+      p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
+      SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
+      p->pows[i].rect.w = p->pows[i].rect.w * 2;
+      p->pows[i].rect.h = p->pows[i].rect.h * 1.93;
+    }
+
+
 
     if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->pows[i].ascention ) {
       // printf("estoy bajando. \n");
       p->pows[i].up = false;
-      spawn_power(p, e);
+      // spawn_power(p, e);
       power_draw(p,e);
       p->pows[i].pw_y += POWER_VEL;
       p->pows[i].rect.y = p->pows[i].pw_y;
@@ -88,15 +107,15 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
       // printf("Estoy levitando \n");
       //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
       //Gracias a la condicional superior.
-      spawn_power(p, e);
+      // spawn_power(p, e);
       power_draw(p,e);
       p->pows[i].pw_y -= POWER_VEL;
       p->pows[i].rect.y = p->pows[i].pw_y;
     }
     else if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h >= WINDOW_HEIGHT) {
       p->pows[i].active = false;
-    }
-    if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) || b->active == true) {
+    }//
+    if ((p->pows[i].active && (p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT) && pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5))  || b->active == true) {
       //printf("Seguimiento al jugador activado");
       p->pows[i].follow = true;
       //Hacer una transición suave
@@ -174,24 +193,24 @@ void spawn_power(struct Power *p, struct Enemy *e) {
   //El contador de bullet al registrar el impacto, identifica el tipo del enemigo, appear toma el valor y lo ejecuta para hacer aparecer un power up que coincida.
 
   //Al usar una bomba los power ups se dibujan incorrectamente y se dibujan como points, sin embargo, siguen funcionando la lógica para aumentar los power y su sonido se reproduce.
-    if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
-    if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
-
-    printf("Estoy spawneando al enemigo %d  \n", p->appear);
-
-    switch (p->pows[p->appear].type) {
-    case 1:
-      p->pows[p->appear].object = "assets/objects/power.png";
-      break;
-    case 2:
-      p->pows[p->appear].object = "assets/objects/coin.png";
-      break;
-    default:
-      p->pows[p->appear].object = "assets/objects/coin.png";
-      break;
-    }
-    p->pows[p->appear].surf= IMG_Load(p->pows[p->appear].object);
-    p->pows[p->appear].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[p->appear].surf);
+    // if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
+    // if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
+    //
+    // printf("Estoy spawneando al enemigo %d  \n", p->appear);
+    //
+    // switch (p->pows[p->appear].type) {
+    // case 1:
+    //   p->pows[p->appear].object = "assets/objects/power.png";
+    //   break;
+    // case 2:
+    //   p->pows[p->appear].object = "assets/objects/coin.png";
+    //   break;
+    // default:
+    //   p->pows[p->appear].object = "assets/objects/coin.png";
+    //   break;
+    // }
+    // p->pows[p->appear].surf= IMG_Load(p->pows[p->appear].object);
+    // p->pows[p->appear].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[p->appear].surf);
 
 
 }

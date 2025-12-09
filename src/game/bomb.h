@@ -11,6 +11,14 @@
 #include "music.h"
 
 struct Bomb{
+  //Al parecer, el codigo era capaz de imaginarse una estrutura propia, una que no tiene nada que ver con la original, por lo que el compilador daba error
+  //Aun llamando correctamente los encabezados y a las estructuras. Esto debido a que antes no se tomaba esto como algo malo, el compilado identificaba al imaginario
+  //Como el original, ahora eso ya no se hace. Y ahora debo de hacer los llamado al estilo "struct Bomb *b" en todas las situaciones donde el compilador de error en
+  //game.c o en otras referencias similares.
+  struct Enemy *enemy;
+  struct Power *power;
+  struct Bullet *bullet;
+  struct Player *player;
   MIX_Mixer *mixer;
   MIX_Audio *bomb;
   MIX_Track *track;
