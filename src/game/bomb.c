@@ -95,6 +95,12 @@ void bomb_update(struct Bomb *b, struct Enemy *e, struct Power *p, struct Music 
           b->rect.y = bu->p_y - (b->rect.h);
             if (now > b->action_time) {
                 b->active = false;
+                for (int i = 0; i < e->quantity; i++)
+                {
+                  if (e->enemies[i].active)
+                  p->pows[i].follow = false;
+                }
+                
             }
           for (int j = 0; j < e->quantity; j++) {
             //lógica de disparo del enemigo.

@@ -95,7 +95,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
 
 
 
-    if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->pows[i].ascention ) {
+    if (p->pows[i].active && p->pows[i].rect.y + p->pows[i].rect.h < WINDOW_HEIGHT && !(pl->rect.y + pl->rect.h <= ( (float) WINDOW_HEIGHT/ 5)) && e->now > p->pows[i].ascention && b->active == false ) {
       // printf("estoy bajando. \n");
       p->pows[i].up = false;
       // spawn_power(p, e);
@@ -120,7 +120,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
       p->pows[i].follow = true;
       //Hacer una transición suave
     }
-    if (p->pows[i].follow) {
+    if (p->pows[i].follow && p->pows[i].active) {
       if (p->pows[i].rect.x < pl->rect.x ) {
         p->pows[i].rect.x +=10;
       }

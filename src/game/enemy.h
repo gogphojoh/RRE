@@ -14,8 +14,14 @@ struct EnemyEntity {
   SDL_FRect rect; //Tamaño y forma de las multiples balas
   SDL_FRect src;
   float x_vel, y_vel;
+  int growing;
+  int adjust;
   SDL_Texture *image;
   SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
+  SDL_Texture *image2;
+  SDL_Surface *surf2;
+  SDL_FRect rect2;
+  SDL_FRect src2;
   float fire_rate;
   int health;
   int type;
@@ -29,8 +35,12 @@ struct EnemyEntity {
 };
 
 struct Enemy {
+  bool backwards;
+  int progressive;
   double angle;
   SDL_FlipMode flip;
+    double angle2;
+  SDL_FlipMode flip2;
   const SDL_FPoint *center;
   const SDL_FRect *dstrect;
   const SDL_FRect *srcrect;

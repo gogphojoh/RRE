@@ -77,16 +77,44 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].sprite = "assets/objects/bullet.png";
     }
 
+
     e->enemies[i].surf= IMG_Load(e->enemies[i].sprite);
     if (!e->enemies[i].surf) {
       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
       return false;
     }
+
+    e->enemies[i].surf2 = IMG_Load("assets/objects/red-circle.png");
+    if (!e->enemies[i].surf2) {
+      fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+      return false;
+    }
+
+    //SDL_SetSurfaceColorKey(e->enemies[i].surf2, true, 2000);
+
+    //Mientras más grande el número, más opaco es. Mientras más pequeño, más transparente.
+    SDL_SetSurfaceAlphaMod(e->enemies[i].surf2, 150);
+
+
     e->enemies[i].image = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf);
     if (!e->enemies[i].image) {
       fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
       return false;
     }
+
+
+    e->enemies[i].image2 = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf2);
+    if (!e->enemies[i].image2) {
+      fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
+      return false;
+    }
+
+    
+
+    //SDL_SetTextureBlendMode(e->enemies[i].image2, SDL_BLENDMODE_MUL );
+
+    SDL_GetTextureSize(e->enemies[i].image2,&e->enemies[i].rect2.w,&e->enemies[i].rect2.h);
+    e->enemies[i].src2 = (SDL_FRect) {0,0,64,64};
     //Transformar a switch
     if (e->enemies[i].type == 5 ) {
       e->enemies[i].src = (SDL_FRect){0,0,30,58};
@@ -124,9 +152,15 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->angle = 180;
       e->flip = SDL_FLIP_VERTICAL;
 
+      //Gira como loco la espiral. Me encanta
+      e->progressive = 0;
+      e->angle2 = e->progressive;
+      e->flip2 = SDL_FLIP_HORIZONTAL;
+
+
       //Esta es la lógica para mover a los enemigos en la pantalla
-      // e->enemies[i].x_vel = ENEMY_VEL;
-      // e->enemies[i].y_vel = ENEMY_VEL;
+      //e->enemies[i].x_vel = ENEMY_VEL;
+      //e->enemies[i].y_vel = ENEMY_VEL;
 
   }
 
@@ -149,7 +183,26 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
   for (int i = 0; i < e->quantity; i++) {
 
+    e->enemies[i].rect2.x = e->enemies[i].rect.x;
+    e->enemies[i].rect2.y = e->enemies[i].rect.y;
+    e->angle2 += 5;
 
+
+    
+    e->enemies[i].rect2.w += e->enemies[i].growing;
+    e->enemies[i].rect2.h += e->enemies[i].growing;
+
+    if (e->enemies[i].rect2.w > 50) {
+        e->enemies[i].growing = -1;
+    }
+    else if (e->enemies[i].rect2.w <= 30) {
+        e->enemies[i].growing = 1;
+    }
+
+    
+
+    
+    //e->enemies[i].rect2.h += 10;
     // if (!e->enemies[i].active && e->play_time < e->now) {
     //
     //   // spawn_enemy(e, p);
@@ -207,11 +260,16 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
     if (e->enemies[i].active && e->enemies[i].health > 0 && e->enemies[i].x_vel >= 0) {
+      
       SDL_RenderTexture(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect);
-      //SDL_RenderTextureRotated(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect, e->angle, e->center, e->flip);
+      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image2, &e->enemies[i].src2, &e->enemies[i].rect2, e->angle2, e->center, e->flip2);
+      //SDL_RenderTexture(e->renderer, e->enemies[i].image2, &e->enemies[i].src2, &e->enemies[i].rect2);
+      
+    
     }
     if (e->enemies[i].active && e->enemies[i].health > 0 && e->enemies[i].x_vel < 0) {
       SDL_RenderTextureRotated(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect, e->angle, e->center, e->flip);
+      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image2, &e->enemies[i].src2, &e->enemies[i].rect2, e->angle2, e->center, e->flip2);
     }
   }
 
