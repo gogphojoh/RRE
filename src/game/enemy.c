@@ -102,7 +102,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       return false;
     }
 
-
+    
     e->enemies[i].image2 = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf2);
     if (!e->enemies[i].image2) {
       fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
@@ -112,9 +112,12 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     
 
     //SDL_SetTextureBlendMode(e->enemies[i].image2, SDL_BLENDMODE_MUL );
-
+    
+    //Interesante
     SDL_GetTextureSize(e->enemies[i].image2,&e->enemies[i].rect2.w,&e->enemies[i].rect2.h);
-    e->enemies[i].src2 = (SDL_FRect) {0,0,64,64};
+    e->enemies[i].src2 = (SDL_FRect) {0,0,30,30};
+      e->enemies[i].rect2.w = 50;
+      e->enemies[i].rect2.h = 50;
     //Transformar a switch
     if (e->enemies[i].type == 5 ) {
       e->enemies[i].src = (SDL_FRect){0,0,30,58};
@@ -123,6 +126,15 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       //39 w 57 h
       e->enemies[i].src = (SDL_FRect){0,0,39,57};
       e->enemies[i].rect = (SDL_FRect) {0,0,39,57};
+    }  else if (e->enemies[i].type == 1 ) {
+      //28 w 27 h
+      //e->enemies[i].src = (SDL_FRect){0,0,39,57};
+      //e->enemies[i].rect = (SDL_FRect) {0,0,28,28};
+      SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
+      e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
+      e->enemies[i].rect.w = 28;
+      e->enemies[i].rect.h = 28;
+
     }else {
       SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
       e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
@@ -157,6 +169,11 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->angle2 = e->progressive;
       e->flip2 = SDL_FLIP_HORIZONTAL;
 
+    e->enemies[i].rect2.x = e->enemies[i].rect.x; 
+    e->enemies[i].rect2.y = e->enemies[i].rect.y;
+
+    e->enemies[i].adjusted = false;
+
 
       //Esta es la lógica para mover a los enemigos en la pantalla
       //e->enemies[i].x_vel = ENEMY_VEL;
@@ -183,23 +200,60 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
   for (int i = 0; i < e->quantity; i++) {
 
-    e->enemies[i].rect2.x = e->enemies[i].rect.x;
-    e->enemies[i].rect2.y = e->enemies[i].rect.y;
+    //printf ("Este es el valor: %f", (e->enemies[i].rect2.x + e->enemies[i].rect2.w));
+    //printf("Este es el segundo valor: %f",e->enemies[i].rect.x + e->enemies[i].rect.w*1.40 );
+    //printf ("Este es el valor: %f \n", (e->enemies[i].rect2.w ));
+    //printf("Este es el segundo valor: %f \n",e->enemies[i].rect.w);
+    //printf ("Este es el valor x: %f \n", (e->enemies[i].rect2.x));
+    //printf("Este es el segundo valor x: %f \n",e->enemies[i].rect.x);
+
+
     e->angle2 += 5;
 
+    //Ni puta idea de como lograrlo. Lo más cercano que tengo son extrañas relaciones que no parecen tener ningún sentido.
+    //Las condicionales son ahora el problema. Tengo la teoria de que si logro ajustarlo unas sola vez por cada cambo de anchura y altura debería bastar para lograr mi meta.
+    if(e->enemies[i].rect.x + e->enemies[i].rect.w < (e->enemies[i].rect2.x + e->enemies[i].rect2.w)/2) 
+    {
+      e->enemies[i].adjust =  (e->enemies[i].rect2.w - e->enemies[i].rect.w );
+      e->enemies[i].adjust = e->enemies[i].adjust/2;
+      e->enemies[i].rect2.x =  e->enemies[i].rect2.x - ((e->enemies[i].adjust));
+    }
 
-    
+    if(e->enemies[i].rect.y + e->enemies[i].rect.h < (e->enemies[i].rect2.y + e->enemies[i].rect2.h)/2) 
+    {
+      e->enemies[i].adjusty =  (e->enemies[i].rect2.h - e->enemies[i].rect.h);
+      e->enemies[i].adjusty = e->enemies[i].adjusty/2;
+      e->enemies[i].rect2.y =  e->enemies[i].rect2.y - ((e->enemies[i].adjusty));
+    }
+
+    e->enemies[i].adjust = e->enemies[i].rect2.w;
+    e->enemies[i].adjusty = e->enemies[i].rect2.h;
+
+
+    /*
     e->enemies[i].rect2.w += e->enemies[i].growing;
     e->enemies[i].rect2.h += e->enemies[i].growing;
+    e->enemies[i].rect2.x += 1;
+    e->enemies[i].rect2.y += 1;
+    
+
+    if ( e->enemies[i].rect2.x + e->enemies[i].rect2.w > e->enemies[i].rect.x + e->enemies[i].rect.x)
+   
+    e->enemies[i].rect2.y -= 2;
+
+    
+      //Deberia de comparar la anchura más posición X del enemigo, y moverla para que esté acorde al enemigo de donde está parado.
 
     if (e->enemies[i].rect2.w > 50) {
         e->enemies[i].growing = -1;
+
     }
     else if (e->enemies[i].rect2.w <= 30) {
         e->enemies[i].growing = 1;
-    }
 
-    
+  
+    }*/
+
 
     
     //e->enemies[i].rect2.h += 10;

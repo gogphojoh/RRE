@@ -15,7 +15,8 @@ struct EnemyEntity {
   SDL_FRect src;
   float x_vel, y_vel;
   int growing;
-  int adjust;
+  float adjust;
+  float adjusty;
   SDL_Texture *image;
   SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
   SDL_Texture *image2;
@@ -27,6 +28,8 @@ struct EnemyEntity {
   int type;
   int frame_count;
   int frame_time;
+  bool adjusted;
+  bool adjustedy;
   bool active; //Define si un enemigo ya fue vencido
   // MIX_Mixer *mixer;
   // MIX_Audio *kill;
