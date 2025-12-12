@@ -4,16 +4,6 @@
 
 #include "enemy.h"
 
-//Cuando muere el enemigo es cuando el consumo de memoria se dispara.
-
-//!Tareas pendientes:
-/*
- *Los enemigos ahora mismo están completamente idos. Todos mueren a la vez o ninguno muere. Sin contar que adicionalmente el efecto de sonido de estos mismos se repite en bucle,
- *creando un efecto similar al de un latido.
- *
- *Resuelto
- */
-
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
   *enemy = calloc (1, sizeof (struct Enemy));
@@ -32,18 +22,21 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   for (int i = 0; i < e->quantity; i++) {
     printf ("Es mi iteración %d", i);
     switch (i) {
-    case 6:
-      e->enemies[i].type = 5; //Jefe
-      break;
-    case 5:
-      e->enemies[i].type = 4; //Mid-jefe
-      break;
-    case 4:
-      e->enemies[i].type = 3; //Enemigo fuerte
-      break;
     case 3:
       e->enemies[i].type = 2; //hada azul
-      break;
+    break;
+    case 4:
+      e->enemies[i].type = 3; //hada verde
+    break;
+    case 5:
+      e->enemies[i].type = 4; //Hada fuerte
+    break;
+    case 6:
+      e->enemies[i].type = 5; //Mid-jefe
+    break;
+     case 7:
+      e->enemies[i].type = 6; //Jefe
+    break;
     default:
       e->enemies[i].type = 1; //hada roja
       break;
@@ -57,24 +50,43 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     // } else {
     //   e->enemies[i].type = 1;
     // }
+
+    
     switch (e->enemies[i].type) {
     case 1:
       e->enemies[i].sprite = "assets/sprites/hada.png";
-      break;
+      e->enemies[i].aura = "assets/objects/red-circle.png";
+      e->enemies[i].death = "assets/objects/red.png";
+      break;  
     case 2:
       e->enemies[i].sprite = "assets/sprites/point.png";
+      e->enemies[i].aura = "assets/objects/blue-circle.png";
+      e->enemies[i].death = "assets/objects/blue.png";
       break;
     case 3:
-      e->enemies[i].sprite = "assets/sprites/hard-fairy.png";
+      e->enemies[i].sprite = "assets/sprites/green-fairy.png";
+      e->enemies[i].aura = "assets/objects/green-aura.png";
+      e->enemies[i].death = "assets/objects/green.png";
       break;
     case 4:
-      e->enemies[i].sprite = "assets/sprites/aki_sheet.png";
+      e->enemies[i].sprite = "assets/sprites/hard-fairy.png";
+      e->enemies[i].aura = "assets/objects/red-circle.png";
+      e->enemies[i].death = "assets/objects/blue.png";
       break;
     case 5:
+      e->enemies[i].sprite = "assets/sprites/aki_sheet.png";
+      e->enemies[i].aura = "assets/objects/red-circle.png";
+      e->enemies[i].death = "assets/objects/red.png";
+      break;
+    case 6:
       e->enemies[i].sprite = "assets/sprites/hina_sheet.png";
+      e->enemies[i].aura = "assets/objects/red-circle.png";
+      e->enemies[i].death = "assets/objects/red.png";
       break;
     default:
       e->enemies[i].sprite = "assets/objects/bullet.png";
+      e->enemies[i].aura = "assets/objects/red-circle.png";
+      e->enemies[i].death = "assets/objects/red.png";
     }
 
 
@@ -84,16 +96,29 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       return false;
     }
 
-    e->enemies[i].surf2 = IMG_Load("assets/objects/red-circle.png");
-    if (!e->enemies[i].surf2) {
+    e->enemies[i].surf_aura = IMG_Load(e->enemies[i].aura);
+    if (!e->enemies[i].surf_aura) {
       fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
       return false;
     }
 
+    e->enemies[i].surf_death = IMG_Load(e->enemies[i].death);
+    if (!e->enemies[i].surf_death) {
+      fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+      return false;
+    }
+
+     e->enemies[i].surf_ring = IMG_Load(e->enemies[i].death);
+    if (!e->enemies[i].surf_ring) {
+      fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+      return false;
+    }
+
+
     //SDL_SetSurfaceColorKey(e->enemies[i].surf2, true, 2000);
 
     //Mientras más grande el número, más opaco es. Mientras más pequeño, más transparente.
-    SDL_SetSurfaceAlphaMod(e->enemies[i].surf2, 150);
+    SDL_SetSurfaceAlphaMod(e->enemies[i].surf_aura, 150);
 
 
     e->enemies[i].image = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf);
@@ -103,38 +128,81 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     }
 
     
-    e->enemies[i].image2 = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf2);
-    if (!e->enemies[i].image2) {
+    e->enemies[i].image_aura = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf_aura);
+    if (!e->enemies[i].image_aura) {
       fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
       return false;
     }
 
-    
+        
+    e->enemies[i].image_death = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf_death);
+    if (!e->enemies[i].image_death) {
+      fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
+      return false;
+    }
+
+    e->enemies[i].image_ring = SDL_CreateTextureFromSurface(e->renderer, e->enemies[i].surf_ring);
+    if (!e->enemies[i].image_ring) {
+      fprintf(stderr,"Error al crear la imagen del enemigo: %s", SDL_GetError());
+      return false;
+    }
+
+
 
     //SDL_SetTextureBlendMode(e->enemies[i].image2, SDL_BLENDMODE_MUL );
     
     //Interesante
-    SDL_GetTextureSize(e->enemies[i].image2,&e->enemies[i].rect2.w,&e->enemies[i].rect2.h);
-    e->enemies[i].src2 = (SDL_FRect) {0,0,30,30};
-      e->enemies[i].rect2.w = 50;
-      e->enemies[i].rect2.h = 50;
+    if(e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 || e->enemies[i].type == 4)
+    {
+
+      if(e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 )
+      {
+        SDL_GetTextureSize(e->enemies[i].image_aura,&e->enemies[i].rect_aura.w,&e->enemies[i].rect_aura.h);
+        e->enemies[i].src_aura = (SDL_FRect) {0,0,30,30};
+        e->enemies[i].rect_aura.w = 30;
+        e->enemies[i].rect_aura.h = 30;
+      }else{
+        SDL_GetTextureSize(e->enemies[i].image_aura,&e->enemies[i].rect_aura.w,&e->enemies[i].rect_aura.h);
+        e->enemies[i].src_aura = (SDL_FRect) {0,0,0,0};
+        e->enemies[i].rect_aura.w = 0;
+        e->enemies[i].rect_aura.h = 0;
+      }
+
+          //Medidas de la muerte
+      SDL_GetTextureSize(e->enemies[i].image_death,&e->enemies[i].rect_death.w,&e->enemies[i].rect_death.h);
+      e->enemies[i].src_death = (SDL_FRect){0,0,e->enemies[i].rect_death.w,e->enemies[i].rect_death.h};
+        e->enemies[i].rect_death.w = e->enemies[i].rect_death.w;
+        e->enemies[i].rect_death.h = e->enemies[i].rect_death.h;
+      //Medidas del anillo de la muerte
+      SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
+      e->enemies[i].src_ring = (SDL_FRect){0,0,e->enemies[i].rect_ring.w,e->enemies[i].rect_ring.h};
+        e->enemies[i].rect_ring.w = e->enemies[i].rect_ring.w/3;
+        e->enemies[i].rect_ring.h = e->enemies[i].rect_ring.h;
+    }else{
+      SDL_GetTextureSize(e->enemies[i].image_aura,&e->enemies[i].rect_aura.w,&e->enemies[i].rect_aura.h);
+      e->enemies[i].src_aura = (SDL_FRect) {0,0,0,0};
+      e->enemies[i].rect_aura.w = 0;
+      e->enemies[i].rect_aura.h = 0;
+            SDL_GetTextureSize(e->enemies[i].image_death,&e->enemies[i].rect_death.w,&e->enemies[i].rect_death.h);
+      e->enemies[i].src_death = (SDL_FRect){0,0,0,0};
+        e->enemies[i].rect_death.w = 0;
+        e->enemies[i].rect_death.h = 0;
+      //Medidas del anillo de la muerte
+      SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
+      e->enemies[i].src_ring = (SDL_FRect){0,0,0,0};
+        e->enemies[i].rect_ring.w = 0;
+        e->enemies[i].rect_ring.h = 0;
+    }
+
+
     //Transformar a switch
-    if (e->enemies[i].type == 5 ) {
+    if (e->enemies[i].type == 6 ) {
       e->enemies[i].src = (SDL_FRect){0,0,30,58};
       e->enemies[i].rect = (SDL_FRect) {0,0,30,58};
-    }   else if (e->enemies[i].type == 4 ) {
+    }   else if (e->enemies[i].type == 5 ) {
       //39 w 57 h
       e->enemies[i].src = (SDL_FRect){0,0,39,57};
       e->enemies[i].rect = (SDL_FRect) {0,0,39,57};
-    }  else if (e->enemies[i].type == 1 ) {
-      //28 w 27 h
-      //e->enemies[i].src = (SDL_FRect){0,0,39,57};
-      //e->enemies[i].rect = (SDL_FRect) {0,0,28,28};
-      SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
-      e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
-      e->enemies[i].rect.w = 28;
-      e->enemies[i].rect.h = 28;
-
     }else {
       SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
       e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
@@ -149,12 +217,12 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].active = true;
 
     //transformar en switch
-    if (e->enemies[i].type == 5) {
+    if (e->enemies[i].type == 6) {
       e->enemies[i].health = 2000;
     }
-      else if (e->enemies[i].type == 4) {
+      else if (e->enemies[i].type == 5) {
         e->enemies[i].health = 1000;
-      }else if (e->enemies[i].type == 3) {
+      }else if (e->enemies[i].type == 4) {
         e->enemies[i].health = 100;
       } else {
         e->enemies[i].health = 1;
@@ -169,15 +237,18 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->angle2 = e->progressive;
       e->flip2 = SDL_FLIP_HORIZONTAL;
 
-    e->enemies[i].rect2.x = e->enemies[i].rect.x; 
-    e->enemies[i].rect2.y = e->enemies[i].rect.y;
+      e->angle_ring = 45;
+      e->flip_ring = SDL_FLIP_HORIZONTAL;
 
-    e->enemies[i].adjusted = false;
+    e->enemies[i].rect_aura.x = e->enemies[i].rect.x; 
+    e->enemies[i].rect_aura.y = e->enemies[i].rect.y;
 
 
       //Esta es la lógica para mover a los enemigos en la pantalla
-      //e->enemies[i].x_vel = ENEMY_VEL;
-      //e->enemies[i].y_vel = ENEMY_VEL;
+      e->enemies[i].x_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;
+
+      e->enemies[i].vanishing = 255;
 
   }
 
@@ -191,101 +262,46 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
   Uint32 now = SDL_GetTicks();
 
-
-  //La solución final fue bastante parecida al del rectangulo, sin embargo, es un poco más compleja.
-
-  //!!! Estudiar !!!
+  
 
 
 
   for (int i = 0; i < e->quantity; i++) {
+    //Hacer que el giro sea al impacto y no por tiempo.
+      
+      if(e->enemies[i].vanishing > 0 && !e->enemies[i].active){
+        
+        if (e->enemies[i].vanishing >= 5){
+          e->enemies[i].vanishing -= 5;
+        }else{ e->enemies[i].vanishing = 0;}
+        SDL_SetTextureAlphaMod(e->enemies[i].image_death, e->enemies[i].vanishing);
+        SDL_SetTextureAlphaMod(e->enemies[i].image_ring, e->enemies[i].vanishing);
+        //Muerte roja
+        e->enemies[i].rect_death.w += e->enemies[i].expand;
+        e->enemies[i].rect_death.h += e->enemies[i].expand;
+        //Anillo que lo atraviesa
+        //e->enemies[i].rect_ring.w += e->enemies[i].expand;
+        e->enemies[i].rect_ring.h += e->enemies[i].expand;
+        if (e->enemies[i].rect_death.w <= 64) 
+        {
+          e->enemies[i].expand = 3;
+        }
+      }else {
+        //Cuestiones de difuminado, ambos usan el mismo.
+        SDL_SetTextureAlphaMod(e->enemies[i].image_death, 0);
+      }
+      
 
-    //printf ("Este es el valor: %f", (e->enemies[i].rect2.x + e->enemies[i].rect2.w));
-    //printf("Este es el segundo valor: %f",e->enemies[i].rect.x + e->enemies[i].rect.w*1.40 );
-    //printf ("Este es el valor: %f \n", (e->enemies[i].rect2.w ));
-    //printf("Este es el segundo valor: %f \n",e->enemies[i].rect.w);
-    //printf ("Este es el valor x: %f \n", (e->enemies[i].rect2.x));
-    //printf("Este es el segundo valor x: %f \n",e->enemies[i].rect.x);
-
-
-    e->angle2 += 5;
-
-    //Ni puta idea de como lograrlo. Lo más cercano que tengo son extrañas relaciones que no parecen tener ningún sentido.
-    //Las condicionales son ahora el problema. Tengo la teoria de que si logro ajustarlo unas sola vez por cada cambo de anchura y altura debería bastar para lograr mi meta.
-    if(e->enemies[i].rect.x + e->enemies[i].rect.w < (e->enemies[i].rect2.x + e->enemies[i].rect2.w)/2) 
-    {
-      e->enemies[i].adjust =  (e->enemies[i].rect2.w - e->enemies[i].rect.w );
-      e->enemies[i].adjust = e->enemies[i].adjust/2;
-      e->enemies[i].rect2.x =  e->enemies[i].rect2.x - ((e->enemies[i].adjust));
-    }
-
-    if(e->enemies[i].rect.y + e->enemies[i].rect.h < (e->enemies[i].rect2.y + e->enemies[i].rect2.h)/2) 
-    {
-      e->enemies[i].adjusty =  (e->enemies[i].rect2.h - e->enemies[i].rect.h);
-      e->enemies[i].adjusty = e->enemies[i].adjusty/2;
-      e->enemies[i].rect2.y =  e->enemies[i].rect2.y - ((e->enemies[i].adjusty));
-    }
-
-    e->enemies[i].adjust = e->enemies[i].rect2.w;
-    e->enemies[i].adjusty = e->enemies[i].rect2.h;
-
-
-    /*
-    e->enemies[i].rect2.w += e->enemies[i].growing;
-    e->enemies[i].rect2.h += e->enemies[i].growing;
-    e->enemies[i].rect2.x += 1;
-    e->enemies[i].rect2.y += 1;
+    //Es momento de hacer más cosas: Ajustar el aura con los colores de hadas. Agregar los sprites de hadas, y por supuesto, ajustar sus tamaños.
     
-
-    if ( e->enemies[i].rect2.x + e->enemies[i].rect2.w > e->enemies[i].rect.x + e->enemies[i].rect.x)
-   
-    e->enemies[i].rect2.y -= 2;
-
-    
-      //Deberia de comparar la anchura más posición X del enemigo, y moverla para que esté acorde al enemigo de donde está parado.
-
-    if (e->enemies[i].rect2.w > 50) {
-        e->enemies[i].growing = -1;
-
-    }
-    else if (e->enemies[i].rect2.w <= 30) {
-        e->enemies[i].growing = 1;
-
-  
-    }*/
-
-
-    
-    //e->enemies[i].rect2.h += 10;
-    // if (!e->enemies[i].active && e->play_time < e->now) {
-    //
-    //   // spawn_enemy(e, p);
-    // }
-
-    if (e->enemies[i].type == 5 && now > e->enemies[i].frame_time) {
-      e->current_enemy = i;
-      hina_update(e);
-      e->enemies[i].frame_time = now + 96;
+    if(e->enemies[i].active){
+      e->enemies[i].rect.x += e->enemies[i].x_vel;
+      e->enemies[i].rect.y += e->enemies[i].y_vel;
+    }else{
+      e->enemies[i].rect.x += 0;
+      e->enemies[i].rect.y += 0;
     }
 
-    if (e->enemies[i].type == 4 && now > e->enemies[i].frame_time && e->enemies[i].x_vel == 0) {
-      e->current_enemy = i;
-      aki_update(e);
-      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
-    } else if (e->enemies[i].type == 4 && now > e->enemies[i].frame_time && e->enemies[i].x_vel != 0) {
-      e->current_enemy = i;
-      aki_left_update(e);
-      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
-    }
-
-    if (e->enemies[i].active == true && p->pows[i].active == false) {
-      p->pows[i].pw_x = e->enemies[i].rect.x;
-      p->pows[i].pw_y = e->enemies[i].rect.y;
-    }
-
-    //Y esta es la responsable de encargarse de que vayan dando tumbos por la pantalla
-    e->enemies[i].rect.x += e->enemies[i].x_vel;
-    e->enemies[i].rect.y += e->enemies[i].y_vel;
 
     if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
         e->enemies[i].x_vel = -ENEMY_VEL;
@@ -301,6 +317,61 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
         e->enemies[i].y_vel = ENEMY_VEL;
     }
 
+    e->angle2 += 5;
+    
+    //Se supone que e->enemies[i].rect.x + e->enemies[i].rect.w/2 ajusta en el centro exacto de la figura, mientras que e->enemies[i].rect2.w/2 al obtener la mitad del rectangulo 2, lo aprovecha para ajusta en el centro geometrico. o algo así
+    e->enemies[i].rect_aura.x = e->enemies[i].rect.x + e->enemies[i].rect.w/2 - e->enemies[i].rect_aura.w/2;
+    e->enemies[i].rect_aura.y = e->enemies[i].rect.y + e->enemies[i].rect.h/2 - e->enemies[i].rect_aura.h/2; 
+    e->enemies[i].rect_death.x = e->enemies[i].rect.x + e->enemies[i].rect.w/2 - e->enemies[i].rect_death.w/2;
+    e->enemies[i].rect_death.y = e->enemies[i].rect.y + e->enemies[i].rect.h/2 - e->enemies[i].rect_death.h/2;  
+
+    e->enemies[i].rect_ring.x = e->enemies[i].rect.x + e->enemies[i].rect.w/2 - e->enemies[i].rect_ring.w/2;
+    e->enemies[i].rect_ring.y = e->enemies[i].rect.y + e->enemies[i].rect.h/2 - e->enemies[i].rect_ring.h/2;  
+
+
+
+    //Tremenda ridiculez.
+    e->enemies[i].rect_aura.w += e->enemies[i].growing;
+    e->enemies[i].rect_aura.h += e->enemies[i].growing;
+
+    if (e->enemies[i].rect_aura.w > 50) {
+        e->enemies[i].growing = -1;
+        
+
+    }
+   if (e->enemies[i].rect_aura.w <= 30) {
+        e->enemies[i].growing = 1;      
+  
+    }
+
+    //e->enemies[i].rect2.h += 10;
+    // if (!e->enemies[i].active && e->play_time < e->now) {
+    //
+    //   // spawn_enemy(e, p);
+    // }
+
+    if (e->enemies[i].type == 6 && now > e->enemies[i].frame_time) {
+      e->current_enemy = i;
+      hina_update(e);
+      e->enemies[i].frame_time = now + 96;
+    }
+
+    if (e->enemies[i].type == 5 && now > e->enemies[i].frame_time && e->enemies[i].x_vel == 0) {
+      e->current_enemy = i;
+      aki_update(e);
+      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
+    } else if (e->enemies[i].type == 4 && now > e->enemies[i].frame_time && e->enemies[i].x_vel != 0) {
+      e->current_enemy = i;
+      aki_left_update(e);
+      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
+    }
+
+    if (e->enemies[i].active == true && p->pows[i].active == false) {
+      p->pows[i].pw_x = e->enemies[i].rect.x;
+      p->pows[i].pw_y = e->enemies[i].rect.y;
+    }
+
+    //Y esta es la responsable de encargarse de que vayan dando tumbos por la pantalla
 
   }
 
@@ -315,15 +386,18 @@ void enemy_draw(struct Enemy *e) {
   for (int i = 0; i < e->quantity; i++) {
     if (e->enemies[i].active && e->enemies[i].health > 0 && e->enemies[i].x_vel >= 0) {
       
+      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image_aura, &e->enemies[i].src_aura, &e->enemies[i].rect_aura, e->angle2, e->center, e->flip2);
       SDL_RenderTexture(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect);
-      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image2, &e->enemies[i].src2, &e->enemies[i].rect2, e->angle2, e->center, e->flip2);
-      //SDL_RenderTexture(e->renderer, e->enemies[i].image2, &e->enemies[i].src2, &e->enemies[i].rect2);
       
     
     }
     if (e->enemies[i].active && e->enemies[i].health > 0 && e->enemies[i].x_vel < 0) {
+      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image_aura, &e->enemies[i].src_aura, &e->enemies[i].rect_aura, e->angle2, e->center, e->flip2);
       SDL_RenderTextureRotated(e->renderer, e->enemies[i].image, &e->enemies[i].src, &e->enemies[i].rect, e->angle, e->center, e->flip);
-      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image2, &e->enemies[i].src2, &e->enemies[i].rect2, e->angle2, e->center, e->flip2);
+    }
+    if(!e->enemies[i].active){
+      SDL_RenderTexture(e->renderer, e->enemies[i].image_death, &e->enemies[i].src_death, &e->enemies[i].rect_death);
+      SDL_RenderTextureRotated(e->renderer, e->enemies[i].image_ring, &e->enemies[i].src_ring, &e->enemies[i].rect_ring, e->enemies[i].angle_ring, e->center, e->flip_ring);
     }
   }
 
@@ -520,3 +594,29 @@ static void spawn_enemy(struct Enemy *e, struct Power *p) {
 //   e->enemies[i].rect.x += e->enemies[i].x_vel + i*3;
 //   e->enemies[i].rect.y += e->enemies[i].y_vel + i*3;
 // }
+
+      /*
+      Esto es putisima mierda. Aparentemente es incapaz de centrar como se debe, ya que esta formual primeramente compara tamaños, y desplaza, en vez de obtener el centro absoluto.
+      Lo cual llega al ridiculo por que esta formula fue pensada inicialmente para conseguir el putisimo centro absoluto. Como solo toma en cuenta el agrandemiento del circulo y no del enemigo,
+      este código hace cualquier cosa.
+      if(!(e->enemies[i].adjust == e->enemies[i].rect2.w)) 
+      {
+        e->enemies[i].adjust =  (e->enemies[i].rect2.w - e->enemies[i].rect.w );
+        e->enemies[i].adjust = e->enemies[i].adjust/2;
+        e->enemies[i].rect2.x =  e->enemies[i].rect2.x - ((e->enemies[i].adjust));
+      }
+
+      if(!(e->enemies[i].adjusty == e->enemies[i].rect2.h)) 
+      {
+        e->enemies[i].adjusty =  (e->enemies[i].rect2.h - e->enemies[i].rect.h);
+        e->enemies[i].adjusty = e->enemies[i].adjusty/2;
+        e->enemies[i].rect2.y =  e->enemies[i].rect2.y - ((e->enemies[i].adjusty));
+      }*/
+
+
+    //printf ("Este es el valor: %f", (e->enemies[i].rect2.x + e->enemies[i].rect2.w));
+    //printf("Este es el segundo valor: %f",e->enemies[i].rect.x + e->enemies[i].rect.w*1.40 );
+    //printf ("Este es el valor: %f \n", (e->enemies[i].rect2.w ));
+    //printf("Este es el segundo valor: %f \n",e->enemies[i].rect.w);
+    //printf ("Este es el valor x: %f \n", (e->enemies[i].rect2.x));
+    //printf("Este es el segundo valor x: %f \n",e->enemies[i].rect.x);

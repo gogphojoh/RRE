@@ -11,30 +11,39 @@
 #include "music.h"
 
 struct EnemyEntity {
+  int angle_ring;
   SDL_FRect rect; //Tamaño y forma de las multiples balas
   SDL_FRect src;
   float x_vel, y_vel;
   int growing;
-  float adjust;
-  float adjusty;
+  int expand;
+  int vanishing;
   SDL_Texture *image;
   SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
-  SDL_Texture *image2;
-  SDL_Surface *surf2;
-  SDL_FRect rect2;
-  SDL_FRect src2;
+  SDL_Texture *image_aura;//Imagen del aura del enemigo
+  SDL_Surface *surf_aura; 
+  SDL_FRect rect_aura;
+  SDL_FRect src_aura;
+  SDL_Texture *image_death;//Imagen de la muerte del enemigo
+  SDL_Surface *surf_death; 
+  SDL_FRect rect_death;
+  SDL_FRect src_death;
+  SDL_Texture *image_ring;//Imagen del anillo de la muerte del enemigo
+  SDL_Surface *surf_ring; 
+  SDL_FRect rect_ring;
+  SDL_FRect src_ring;
   float fire_rate;
   int health;
   int type;
   int frame_count;
   int frame_time;
-  bool adjusted;
-  bool adjustedy;
   bool active; //Define si un enemigo ya fue vencido
   // MIX_Mixer *mixer;
   // MIX_Audio *kill;
   // MIX_Track *track;
   const char *sprite; //<- Usar esta variable como forma dinámica de cambiar los sprites
+  const char *aura;
+  const char *death;
 };
 
 struct Enemy {
@@ -44,6 +53,8 @@ struct Enemy {
   SDL_FlipMode flip;
     double angle2;
   SDL_FlipMode flip2;
+  double angle_ring;
+  SDL_FlipMode flip_ring;
   const SDL_FPoint *center;
   const SDL_FRect *dstrect;
   const SDL_FRect *srcrect;

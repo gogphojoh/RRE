@@ -159,6 +159,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
               //   b->bullets[i].frame_time = now + 96;
               // }
                 // desactivar bala
+              e->enemies[j].angle_ring =  rand() %  340;
               b->bullets[i].impact = true;
               e->enemies[j].health -= 10;// desactivar enemigo
               if (e->enemies[j].health < 1) {

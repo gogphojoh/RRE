@@ -80,12 +80,21 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
 
   for (int i = 0; i < e->quantity; i++) {
     //Este digito está basandose en el tipo de enemigo que ha en pantalla. 1 = Hada roja, 2 = Hada azul, 3 = Lily white, 4 = Aki , 5 = Hina kagiyama
-    if (p->pows[i].type > 1) {
+    if (p->pows[i].type == 2 || p->pows[i].type > 3) {
       // if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
       // if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
       p->pows[i].surf= NULL;
       p->pows[i].image = NULL;
-      p->pows[i].object = "assets/objects/coin.png";
+      p->pows[i].object = "assets/objects/points.png";
+      p->pows[i].surf= IMG_Load(p->pows[i].object);
+      p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
+      SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
+      p->pows[i].rect.w = p->pows[i].rect.w * 2;
+      p->pows[i].rect.h = p->pows[i].rect.h * 1.93;
+    } else if (p->pows[i].type == 3){
+      p->pows[i].surf= NULL;
+      p->pows[i].image = NULL;
+      p->pows[i].object = "assets/objects/green-drop.png";
       p->pows[i].surf= IMG_Load(p->pows[i].object);
       p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
       SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
@@ -99,7 +108,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
       // printf("estoy bajando. \n");
       p->pows[i].up = false;
       // spawn_power(p, e);
-      power_draw(p,e);
+      //power_draw(p,e);
       p->pows[i].pw_y += POWER_VEL;
       p->pows[i].rect.y = p->pows[i].pw_y;
 
@@ -108,7 +117,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
       //La condicional inferior se estaba activando antes que esta, por lo que el movimiento continuaba, más no el dibujado. Este solo se reactivaba
       //Gracias a la condicional superior.
       // spawn_power(p, e);
-      power_draw(p,e);
+      //power_draw(p,e);
       p->pows[i].pw_y -= POWER_VEL;
       p->pows[i].rect.y = p->pows[i].pw_y;
     }
@@ -236,6 +245,11 @@ void power_sound(struct Power *p, struct Music *m, struct Enemy *e, struct Text 
     case 2:
       p->pows[p->grab].music = "music/sfx/point.mp3";
         t->score = t->score + 100;
+        score_update(t);
+      break;
+    case 3:
+      p->pows[p->grab].music = "music/sfx/item.mp3";
+        t->score = t->score + 200;
         score_update(t);
       break;
     default:
