@@ -41,15 +41,6 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].type = 1; //hada roja
       break;
     }
-    // if (i % 5 == 0) {
-    //   e->enemies[i].type = 4;
-    // }else if (i % 3 == 0) {
-    //   e->enemies[i].type = 3;
-    // } else if (i % 2 == 0 ) {
-    //   e->enemies[i].type = 2;
-    // } else {
-    //   e->enemies[i].type = 1;
-    // }
 
     
     switch (e->enemies[i].type) {
@@ -262,8 +253,6 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
   Uint32 now = SDL_GetTicks();
 
-  
-
 
 
   for (int i = 0; i < e->quantity; i++) {
@@ -293,6 +282,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       
 
     //Es momento de hacer más cosas: Ajustar el aura con los colores de hadas. Agregar los sprites de hadas, y por supuesto, ajustar sus tamaños.
+    //Hay que arreglar el bug de que la hada blanca se vuelve invisible.
     
     if(e->enemies[i].active){
       e->enemies[i].rect.x += e->enemies[i].x_vel;
@@ -360,7 +350,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       e->current_enemy = i;
       aki_update(e);
       e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
-    } else if (e->enemies[i].type == 4 && now > e->enemies[i].frame_time && e->enemies[i].x_vel != 0) {
+    } else if (e->enemies[i].type == 5 && now > e->enemies[i].frame_time && e->enemies[i].x_vel != 0) {
       e->current_enemy = i;
       aki_left_update(e);
       e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
@@ -620,3 +610,35 @@ static void spawn_enemy(struct Enemy *e, struct Power *p) {
     //printf("Este es el segundo valor: %f \n",e->enemies[i].rect.w);
     //printf ("Este es el valor x: %f \n", (e->enemies[i].rect2.x));
     //printf("Este es el segundo valor x: %f \n",e->enemies[i].rect.x);
+        /*
+      if (p->pows[p->sp_index].type == 2 || p->pows[p->sp_index].type > 3) {
+      // if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
+      // if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
+      p->pows[p->sp_index].surf= NULL;
+      p->pows[p->sp_index].image = NULL;
+      p->pows[p->sp_index].object = "assets/objects/points.png";
+      p->pows[p->sp_index].surf= IMG_Load(p->pows[p->sp_index].object);
+      p->pows[p->sp_index].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[p->sp_index].surf);
+      SDL_GetTextureSize(p->pows[p->sp_index].image,&p->pows[p->sp_index].rect.w,&p->pows[p->sp_index].rect.h);
+      p->pows[p->sp_index].rect.w = p->pows[p->sp_index].rect.w * 2;
+      p->pows[p->sp_index].rect.h = p->pows[p->sp_index].rect.h * 1.93;
+    } else if (p->pows[p->sp_index].type == 3){
+      p->pows[p->sp_index].surf= NULL;
+      p->pows[p->sp_index].image = NULL;
+      p->pows[p->sp_index].object = "assets/objects/green-drop.png";
+      p->pows[p->sp_index].surf= IMG_Load(p->pows[p->sp_index].object);
+      p->pows[p->sp_index].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[p->sp_index].surf);
+      SDL_GetTextureSize(p->pows[p->sp_index].image,&p->pows[p->sp_index].rect.w,&p->pows[p->sp_index].rect.h);
+      p->pows[p->sp_index].rect.w = p->pows[p->sp_index].rect.w * 2;
+      p->pows[p->sp_index].rect.h = p->pows[p->sp_index].rect.h * 1.93;
+    }*/
+
+        // if (i % 5 == 0) {
+    //   e->enemies[i].type = 4;
+    // }else if (i % 3 == 0) {
+    //   e->enemies[i].type = 3;
+    // } else if (i % 2 == 0 ) {
+    //   e->enemies[i].type = 2;
+    // } else {
+    //   e->enemies[i].type = 1;
+    // }

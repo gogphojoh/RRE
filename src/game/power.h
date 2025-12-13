@@ -33,6 +33,7 @@ struct PowerEntity {
 };
 
 struct Power {
+  int sp_index;
   struct Player *player;
   int grab;
   int appear;
