@@ -19,6 +19,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     return false;
   }
   e->quantity = SCREEN_ENEMIES;
+  //¿Tendré que poner a mano el spawn de los enemigos o posteriormente podré dejar esto como algo de legado?
+  //Tal vez alguna idea similar a lo que hice con los power up me permita lograr mi meta incluso.
   for (int i = 0; i < e->quantity; i++) {
     printf ("Es mi iteración %d", i);
     switch (i) {
@@ -48,36 +50,43 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].sprite = "assets/sprites/hada.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/red.png";
+      e->enemies[i].health = 1;
       break;  
     case 2:
       e->enemies[i].sprite = "assets/sprites/point.png";
       e->enemies[i].aura = "assets/objects/blue-circle.png";
       e->enemies[i].death = "assets/objects/blue.png";
+      e->enemies[i].health = 1;
       break;
     case 3:
       e->enemies[i].sprite = "assets/sprites/green-fairy.png";
       e->enemies[i].aura = "assets/objects/green-aura.png";
       e->enemies[i].death = "assets/objects/green.png";
+      e->enemies[i].health = 1;
       break;
     case 4:
       e->enemies[i].sprite = "assets/sprites/hard-fairy.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/blue.png";
+      e->enemies[i].health = 100;
       break;
     case 5:
       e->enemies[i].sprite = "assets/sprites/aki_sheet.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/red.png";
+      e->enemies[i].health = 1000;
       break;
     case 6:
       e->enemies[i].sprite = "assets/sprites/hina_sheet.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/red.png";
+      e->enemies[i].health = 2000;
       break;
     default:
       e->enemies[i].sprite = "assets/objects/bullet.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/red.png";
+      e->enemies[i].health = 1;
     }
 
 
@@ -143,6 +152,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     //SDL_SetTextureBlendMode(e->enemies[i].image2, SDL_BLENDMODE_MUL );
     
     //Interesante
+    //Esto es todo lo relacionado a la apariciónd el aura y la muerte de los enemigos.
     if(e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 || e->enemies[i].type == 4)
     {
 
@@ -187,42 +197,30 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
 
     //Transformar a switch
-    if (e->enemies[i].type == 6 ) {
-      e->enemies[i].src = (SDL_FRect){0,0,30,58};
-      e->enemies[i].rect = (SDL_FRect) {0,0,30,58};
-    }   else if (e->enemies[i].type == 5 ) {
-      //39 w 57 h
+    switch (e->enemies[i].type){
+      case 5: 
+        //39 w 57 h
       e->enemies[i].src = (SDL_FRect){0,0,39,57};
       e->enemies[i].rect = (SDL_FRect) {0,0,39,57};
-    }else {
+      break;
+      case 6:
+      e->enemies[i].src = (SDL_FRect){0,0,30,58};
+      e->enemies[i].rect = (SDL_FRect) {0,0,30,58};
+      break;
+      default:
       SDL_GetTextureSize(e->enemies[i].image,&e->enemies[i].rect.w,&e->enemies[i].rect.h);
       e->enemies[i].src = (SDL_FRect){0,0,e->enemies[i].rect.w,e->enemies[i].rect.h};
+      break;
     }
-
-
       e->spacing += 70;
       e->enemies[i].rect.x = 100 + e->spacing;
       e->enemies[i].rect.y = 100;
       e->enemies[i].rect.w = e->enemies[i].rect.w;
       e->enemies[i].rect.h = e->enemies[i].rect.h;
       e->enemies[i].active = true;
-
     //transformar en switch
-    if (e->enemies[i].type == 6) {
-      e->enemies[i].health = 2000;
-    }
-      else if (e->enemies[i].type == 5) {
-        e->enemies[i].health = 1000;
-      }else if (e->enemies[i].type == 4) {
-        e->enemies[i].health = 100;
-      } else {
-        e->enemies[i].health = 1;
-      }
-      // e->dstrect = &e->enemies[i].rect;
-      // e->srcrect = &e->enemies[i].src;
       e->angle = 180;
       e->flip = SDL_FLIP_VERTICAL;
-
       //Gira como loco la espiral. Me encanta
       e->progressive = 0;
       e->angle2 = e->progressive;
@@ -230,14 +228,14 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
       e->angle_ring = 45;
       e->flip_ring = SDL_FLIP_HORIZONTAL;
-
+      
     e->enemies[i].rect_aura.x = e->enemies[i].rect.x; 
     e->enemies[i].rect_aura.y = e->enemies[i].rect.y;
 
 
       //Esta es la lógica para mover a los enemigos en la pantalla
-      e->enemies[i].x_vel = ENEMY_VEL;
-      e->enemies[i].y_vel = ENEMY_VEL;
+      /*e->enemies[i].x_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;*/
 
       e->enemies[i].vanishing = 255;
 
@@ -282,7 +280,6 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       
 
     //Es momento de hacer más cosas: Ajustar el aura con los colores de hadas. Agregar los sprites de hadas, y por supuesto, ajustar sus tamaños.
-    //Hay que arreglar el bug de que la hada blanca se vuelve invisible.
     
     if(e->enemies[i].active){
       e->enemies[i].rect.x += e->enemies[i].x_vel;
