@@ -65,7 +65,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].health = 1;
       break;
     case 4:
-      e->enemies[i].sprite = "assets/sprites/hard-fairy.png";
+      e->enemies[i].sprite = "assets/sprites/white_fairy_sheet.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/blue.png";
       e->enemies[i].health = 100;
@@ -78,7 +78,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       break;
     case 6:
       e->enemies[i].sprite = "assets/sprites/hina_sheet.png";
-      e->enemies[i].aura = "assets/objects/red-circle.png";
+      e->enemies[i].aura = "assets/objects/boss-aura.png";
       e->enemies[i].death = "assets/objects/red.png";
       e->enemies[i].health = 2000;
       break;
@@ -162,7 +162,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
         e->enemies[i].src_aura = (SDL_FRect) {0,0,30,30};
         e->enemies[i].rect_aura.w = 30;
         e->enemies[i].rect_aura.h = 30;
-      }else{
+      }else if (e->enemies[i].type == 4) {
         SDL_GetTextureSize(e->enemies[i].image_aura,&e->enemies[i].rect_aura.w,&e->enemies[i].rect_aura.h);
         e->enemies[i].src_aura = (SDL_FRect) {0,0,0,0};
         e->enemies[i].rect_aura.w = 0;
@@ -195,6 +195,13 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
         e->enemies[i].rect_ring.h = 0;
     }
 
+    if (e->enemies[i].type == 6) {
+        SDL_GetTextureSize(e->enemies[i].image_aura,&e->enemies[i].rect_aura.w,&e->enemies[i].rect_aura.h);
+        e->enemies[i].src_aura = (SDL_FRect) {0,0,130,128};
+        e->enemies[i].rect_aura.w = e->enemies[i].rect_aura.w;
+        e->enemies[i].rect_aura.h = e->enemies[i].rect_aura.h;
+      }
+
 
     //Transformar a switch
     switch (e->enemies[i].type){
@@ -212,6 +219,11 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       //Tengo que hacer que las hadas rojas empiecen en su quinto frame, osease, en la posicion 128 x, con altura 30 y.
       e->enemies[i].src = (SDL_FRect){0,0,30,30};
       e->enemies[i].rect = (SDL_FRect) {0,0,30,30};
+      break;
+      case 4:
+      //Tengo que hacer que las hadas blancas empiecen en su quinto frame, osease, en la posicion 256 x, con altura 30 y.
+      e->enemies[i].src = (SDL_FRect){0,0,64,52};
+      e->enemies[i].rect = (SDL_FRect) {0,0,64,52};
       break;
       case 5: 
         //39 w 57 h
@@ -369,16 +381,18 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       e->enemies[i].rect_aura.h += e->enemies[i].growing;
     }
 
-    if (e->enemies[i].rect_aura.w > 50) {
+    if (e->enemies[i].rect_aura.w > 50 && e->enemies [i].type != 6) {
         e->enemies[i].growing = -1;
-        
-
     }
-   if (e->enemies[i].rect_aura.w <= 30) {
+    else if (e->enemies[i].rect_aura.w > 260 && e->enemies [i].type == 6){
+      e->enemies[i].growing = -1;
+    }
+   if (e->enemies[i].rect_aura.w <= 30 && e->enemies [i].type != 6) {
         e->enemies[i].growing = 1;      
   
+    }else if (e->enemies[i].rect_aura.w <= 130 && e->enemies [i].type == 6){
+        e->enemies[i].growing = 1; 
     }
-
     //e->enemies[i].rect2.h += 10;
     // if (!e->enemies[i].active && e->play_time < e->now) {
     //
@@ -404,6 +418,16 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
     if ((e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 ) && now > e->enemies[i].frame_time) {
       e->current_enemy = i;
       red_update(e);
+      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
+    } 
+
+    //Este es el tema, la hada blanca al ser significativamente más grande que el resto, debo usarla en codigo con sus medidas:
+    //52 de altura, 64 de anchura.
+    //Posicion x = 256  del quinto frame, el frame de movimientos.
+
+    if ((e->enemies[i].type == 4) && now > e->enemies[i].frame_time) {
+      e->current_enemy = i;
+      white_update(e);
       e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
     } 
 
@@ -556,6 +580,46 @@ void red_update(struct Enemy *e) {
     break;
   default:
       e->enemies[e->current_enemy].src = (SDL_FRect){0,0,30,30};
+    break;
+
+  }
+}
+
+void white_update(struct Enemy *e) {
+  //64 w 52 h
+  e->enemies[e->current_enemy].frame_count += 1;
+  //White = 64 de anchura. 52 de altura
+  if (e->enemies[e->current_enemy].frame_count > 8) {
+    e->enemies[e->current_enemy].frame_count = 8;
+  }
+  switch (e->enemies[e->current_enemy].frame_count) {
+  case 1:
+    e->enemies[e->current_enemy].src = (SDL_FRect){256,0,64,52};
+    break;
+  case 2:
+    e->enemies[e->current_enemy].src = (SDL_FRect){320,0,64,52};
+    break;
+  case 3:
+    e->enemies[e->current_enemy].src = (SDL_FRect){384,0,64,52};
+    break;
+  case 4:
+    e->enemies[e->current_enemy].src = (SDL_FRect){448,0,64,52};
+    break;
+    case 5:
+    e->enemies[e->current_enemy].src = (SDL_FRect){512,0,64,52};
+    break;
+    case 6:
+    e->enemies[e->current_enemy].src = (SDL_FRect){576,0,64,52};
+    break;
+    case 7:
+    e->enemies[e->current_enemy].src = (SDL_FRect){640,0,64,52};
+    break;
+    //Esta pendejada está estirada desde la imagen, no es culpa del código el que se vea así.
+    case 8:
+        e->enemies[e->current_enemy].src = (SDL_FRect){704,0,64,52};
+    break;
+  default:
+      e->enemies[e->current_enemy].src = (SDL_FRect){0,0,64,52};
     break;
 
   }
