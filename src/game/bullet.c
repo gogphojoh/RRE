@@ -75,11 +75,19 @@ void bullet_free(struct Bullet **bullet) {
         struct Bullet *b = *bullet;
       for (int i = 0; i < MAX_BULLETS; i++) {
         if (b->bullets[i].image) {
-          SDL_DestroyTexture(b->bullets[i].image);
+        SDL_DestroyTexture(b->bullets[i].image);
+        SDL_DestroySurface(b->bullets[i].surf);
+        SDL_DestroyTexture(b->ebullets[i].image);
+        SDL_DestroySurface(b->ebullets[i].surf);
           b->bullets[i].image = NULL;
+          b->bullets[i].surf = NULL;
+          b->ebullets[i].image = NULL;
+          b->ebullets[i].surf = NULL;
+          b->renderer = NULL;
         }
       }
-        b->renderer = NULL;
+      
+
         free(b);
         *bullet = NULL;
         printf("All bullets clear! \n");
@@ -163,6 +171,10 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
               b->bullets[i].impact = true;
               e->enemies[j].health -= 10;// desactivar enemigo
               if (e->enemies[j].health < 1) {
+                SDL_DestroyTexture(e->enemies[j].image);
+                SDL_DestroyTexture(e->enemies[j].image_aura);
+                e->enemies[j].image = NULL;
+                e->enemies[j].image_aura = NULL;
                 e->enemies[j].active = false;
                 p->pows[j].active = true;
                 p->pows[j].up = true;

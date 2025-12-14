@@ -253,8 +253,19 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
       e->enemies[i].y_vel = ENEMY_VEL;
 
       e->enemies[i].vanishing = 255;
+      e->enemies[i].death_done = false;
 
   }
+
+  for (int i = 0; i < e->quantity; i++) {
+    SDL_DestroySurface (e->enemies[i].surf);
+    SDL_DestroySurface (e->enemies[i].surf_aura);
+    SDL_DestroySurface (e->enemies[i].surf_death);
+    SDL_DestroySurface (e->enemies[i].surf_ring);
+  }
+
+
+
 
   // e->rect.x = 100;
   // e->rect.y = 100;
@@ -275,7 +286,14 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
         
         if (e->enemies[i].vanishing >= 5){
           e->enemies[i].vanishing -= 5;
-        }else{ e->enemies[i].vanishing = 0;}
+        }else{ 
+          e->enemies[i].vanishing = 0;
+          e->enemies[i].death_done = true;
+          e->enemies[i].image_death = NULL;
+          e->enemies[i].image_ring = NULL;
+          SDL_DestroyTexture(e->enemies[i].image_death);
+          SDL_DestroyTexture(e->enemies[i].image_ring);
+        }
         SDL_SetTextureAlphaMod(e->enemies[i].image_death, e->enemies[i].vanishing);
         SDL_SetTextureAlphaMod(e->enemies[i].image_ring, e->enemies[i].vanishing);
         //Muerte roja
@@ -291,6 +309,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       }else {
         //Cuestiones de difuminado, ambos usan el mismo.
         SDL_SetTextureAlphaMod(e->enemies[i].image_death, 0);
+        
       }
       
 
@@ -333,8 +352,14 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
 
     //Tremenda ridiculez.
-    e->enemies[i].rect_aura.w += e->enemies[i].growing;
-    e->enemies[i].rect_aura.h += e->enemies[i].growing;
+    //Encima fuga de memoria?
+
+    //XD ESTE HIJO DE PUTA ES EL RESPONSABLE (El aura y la muerte)
+
+    if(!e->enemies[i].death_done){
+      e->enemies[i].rect_aura.w += e->enemies[i].growing;
+      e->enemies[i].rect_aura.h += e->enemies[i].growing;
+    }
 
     if (e->enemies[i].rect_aura.w > 50) {
         e->enemies[i].growing = -1;
@@ -465,6 +490,7 @@ void play_sound(struct Enemy *e, struct Music *m) {
   }
 
   e->kill = MIX_LoadAudio(m->mixer, "music/sfx/kill.mp3", true);
+  //MIX_PlayAudio(m->kill_sfx, 0);
   if (!e->kill) {
     SDL_Log("Error al cargar el audio: %s", SDL_GetError());
     return ;

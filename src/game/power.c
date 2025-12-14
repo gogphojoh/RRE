@@ -73,6 +73,10 @@ bool power_new(struct Power **power, SDL_Renderer *renderer, struct Enemy *e) {
 
   }
 
+  for (int i = 0; i < e->quantity; i++) {
+    SDL_DestroySurface (p->pows[i].surf);
+  }
+
   return true;
 }
 void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bomb *b) {
@@ -83,15 +87,19 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
     if (p->pows[i].type == 2 || p->pows[i].type > 3) {
       // if (p->pows[p->appear].surf) SDL_DestroySurface(p->pows[p->appear].surf);
       // if (p->pows[p->appear].image) SDL_DestroyTexture(p->pows[p->appear].image);
+      SDL_DestroyTexture(p->pows[i].image);
+      SDL_DestroySurface(p->pows[i].surf);
       p->pows[i].surf= NULL;
       p->pows[i].image = NULL;
-      p->pows[i].object = "assets/objects/points.png";
+      p->pows[i].object = "assets/objects/pendejada.png";
       p->pows[i].surf= IMG_Load(p->pows[i].object);
       p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
       SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
       p->pows[i].rect.w = p->pows[i].rect.w * 2;
       p->pows[i].rect.h = p->pows[i].rect.h * 1.93;
     } else if (p->pows[i].type == 3){
+      SDL_DestroyTexture(p->pows[i].image);
+      SDL_DestroySurface(p->pows[i].surf);
       p->pows[i].surf= NULL;
       p->pows[i].image = NULL;
       p->pows[i].object = "assets/objects/green-drop.png";

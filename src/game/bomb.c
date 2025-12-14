@@ -116,6 +116,10 @@ void bomb_update(struct Bomb *b, struct Enemy *e, struct Power *p, struct Music 
               //Tal vez ni sea necesario eso, con que se esté mandando los datos de cada enemigo podría bastar.
               e->enemies[j].health -= b->hit;// desactivar enemigo
               if (e->enemies[j].health < 1) {
+                SDL_DestroyTexture(e->enemies[j].image);
+                SDL_DestroyTexture(e->enemies[j].image_aura);
+                e->enemies[j].image = NULL;
+                e->enemies[j].image_aura = NULL;
                 e->enemies[j].active = false;
                 p->pows[j].active = true;
                 p->pows[j].up = true;

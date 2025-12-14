@@ -113,8 +113,12 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
         power_sound(pw, m,e,t);
         pw->pows[i].active = false;// desactivar power
         pw->pows[i].follow = false;
-        // SDL_DestroyTexture(pw->image);
-        // pw->image = NULL;
+        pw->pows[i].surf= NULL;
+        pw->pows[i].image = NULL;
+        SDL_DestroyTexture(pw->pows[i].image);
+        SDL_DestroySurface(pw->pows[i].surf);
+        //SDL_DestroyTexture(pw->image);
+        //pw->image = NULL;
       }
       b->p_x = p->rect.x;
       b->p_y = p->rect.y;

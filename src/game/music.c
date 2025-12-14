@@ -28,14 +28,14 @@ bool music_new (struct Music **music) {
     SDL_free(devices); /* SDL_GetAudioPlaybackDevices devuelve memoria que hay que liberar */
   }
 
-
-
     // Create a mixer device (this opens an SDL_AudioDevice internally)
     m->mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
     if (!m->mixer) {
         SDL_Log("Error al crear el dispositivo de mezcla: %s", SDL_GetError());
         return false;
     }
+
+    //m->kill_sfx = MIX_LoadAudio(m->mixer, "music/sfx/kill.mp3", true);
 
 
     m->background = MIX_LoadAudio(m->mixer, "music/bgm/stage1.mp3", true);

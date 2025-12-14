@@ -44,6 +44,7 @@ struct EnemyEntity {
   const char *sprite; //<- Usar esta variable como forma dinámica de cambiar los sprites
   const char *aura;
   const char *death;
+  bool death_done;
 };
 
 struct Enemy {
