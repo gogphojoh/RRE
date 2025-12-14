@@ -356,6 +356,14 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
     //XD ESTE HIJO DE PUTA ES EL RESPONSABLE (El aura y la muerte)
 
+    /*!!!!!  Que esto sirva de recordatorio eterno:  !!!!!
+      1.Que la imagen ya no se dibuje, no signfica que está libre. Aun debes hacer DestroySurface y DestroyTexture en cada situación en la que se supone que muere.
+      2.Que ya no se dibuje, no implica que no sigue incrementando, y peor aún, no significa que no está agrandandose. Esto explica por que no solo con el 
+      anillo sino también con la animación de muerte crecía la memoría, por que aún se usan en la memoria las muy hijas de remil.
+      3.Que el que algo ya haya sido liberado de la memoria no implica ni de broma que la GPU no esté estresada. Algo de 1000x1000 fácilmente puede dejarla:
+      "Kaput".
+    */
+
     if(!e->enemies[i].death_done){
       e->enemies[i].rect_aura.w += e->enemies[i].growing;
       e->enemies[i].rect_aura.h += e->enemies[i].growing;

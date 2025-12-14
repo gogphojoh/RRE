@@ -91,7 +91,7 @@ void power_update(struct Power *p, struct Enemy *e, struct Player *pl, struct Bo
       SDL_DestroySurface(p->pows[i].surf);
       p->pows[i].surf= NULL;
       p->pows[i].image = NULL;
-      p->pows[i].object = "assets/objects/pendejada.png";
+      p->pows[i].object = "assets/objects/points.png";
       p->pows[i].surf= IMG_Load(p->pows[i].object);
       p->pows[i].image = SDL_CreateTextureFromSurface(p->renderer, p->pows[i].surf);
       SDL_GetTextureSize(p->pows[i].image,&p->pows[i].rect.w,&p->pows[i].rect.h);
