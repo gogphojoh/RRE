@@ -187,14 +187,7 @@ void game_draw(struct Game *g) {
   enemy_draw(g->enemy);
   bullet_draw(g->bullet);
   player_draw(g->player);
-  power_draw(g->power, g->enemy);
-  
-  
-  
-  
- 
-  
-  
+  power_draw(g->power, g->enemy);  
     // Limpia la pantalla con ese color
     // Muestra el resultado en pantalla
     SDL_RenderPresent(g->renderer);

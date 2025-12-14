@@ -45,7 +45,7 @@ bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
       }
 
       SDL_GetTextureSize(b->bullets[i].image,&b->rect.w,&b->rect.h);
-      printf("Esta es la anchura %f, y la altura: %f \n", b->rect.w,b->rect.h);
+      //printf("Esta es la anchura %f, y la altura: %f \n", b->rect.w,b->rect.h);
       b->bullets[i].src = (SDL_FRect){0,114,16,32};
       b->rect = (SDL_FRect) {0,0,16,32};
 

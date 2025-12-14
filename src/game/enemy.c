@@ -22,7 +22,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
   //¿Tendré que poner a mano el spawn de los enemigos o posteriormente podré dejar esto como algo de legado?
   //Tal vez alguna idea similar a lo que hice con los power up me permita lograr mi meta incluso.
   for (int i = 0; i < e->quantity; i++) {
-    printf ("Es mi iteración %d", i);
+    //printf ("Es mi iteración %d", i);
     switch (i) {
     case 3:
       e->enemies[i].type = 2; //hada azul
@@ -47,19 +47,19 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     
     switch (e->enemies[i].type) {
     case 1:
-      e->enemies[i].sprite = "assets/sprites/hada.png";
+      e->enemies[i].sprite = "assets/sprites/red_fairy_sheet.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/red.png";
       e->enemies[i].health = 1;
       break;  
     case 2:
-      e->enemies[i].sprite = "assets/sprites/point.png";
+      e->enemies[i].sprite = "assets/sprites/blue_fairy_sheet.png";
       e->enemies[i].aura = "assets/objects/blue-circle.png";
       e->enemies[i].death = "assets/objects/blue.png";
       e->enemies[i].health = 1;
       break;
     case 3:
-      e->enemies[i].sprite = "assets/sprites/green-fairy.png";
+      e->enemies[i].sprite = "assets/sprites/green-fairy-sheet.png";
       e->enemies[i].aura = "assets/objects/green-aura.png";
       e->enemies[i].death = "assets/objects/green.png";
       e->enemies[i].health = 1;
@@ -198,6 +198,21 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
     //Transformar a switch
     switch (e->enemies[i].type){
+      case 1:
+      //Tengo que hacer que las hadas rojas empiecen en su quinto frame, osease, en la posicion 128 x, con altura 30 y.
+      e->enemies[i].src = (SDL_FRect){0,0,30,30};
+      e->enemies[i].rect = (SDL_FRect) {0,0,30,30};
+      break;
+      case 2:
+      //Tengo que hacer que las hadas rojas empiecen en su quinto frame, osease, en la posicion 128 x, con altura 30 y.
+      e->enemies[i].src = (SDL_FRect){0,0,30,30};
+      e->enemies[i].rect = (SDL_FRect) {0,0,30,30};
+      break;
+      case 3:
+      //Tengo que hacer que las hadas rojas empiecen en su quinto frame, osease, en la posicion 128 x, con altura 30 y.
+      e->enemies[i].src = (SDL_FRect){0,0,30,30};
+      e->enemies[i].rect = (SDL_FRect) {0,0,30,30};
+      break;
       case 5: 
         //39 w 57 h
       e->enemies[i].src = (SDL_FRect){0,0,39,57};
@@ -234,8 +249,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
 
       //Esta es la lógica para mover a los enemigos en la pantalla
-      /*e->enemies[i].x_vel = ENEMY_VEL;
-      e->enemies[i].y_vel = ENEMY_VEL;*/
+      e->enemies[i].x_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;
 
       e->enemies[i].vanishing = 255;
 
@@ -353,6 +368,12 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
       e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
     }
 
+    if ((e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 ) && now > e->enemies[i].frame_time) {
+      e->current_enemy = i;
+      red_update(e);
+      e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
+    } 
+
     if (e->enemies[i].active == true && p->pows[i].active == false) {
       p->pows[i].pw_x = e->enemies[i].rect.x;
       p->pows[i].pw_y = e->enemies[i].rect.y;
@@ -395,13 +416,25 @@ void enemy_free(struct Enemy **enemy) {
     for (int i = 0; i < e->quantity; i++) {
       if (e->enemies[i].image) {
         SDL_DestroyTexture(e->enemies[i].image);
+        SDL_DestroyTexture(e->enemies[i].image_aura);
+        SDL_DestroyTexture(e->enemies[i].image_death);
+        SDL_DestroyTexture(e->enemies[i].image_ring);
         e->enemies[i].image = NULL;
+       e->enemies[i].image_aura = NULL;
+       e->enemies[i].image_death = NULL;
+       e->enemies[i].image_ring = NULL;
       }
       if (e->enemies[i].surf) {
         SDL_DestroySurface(e->enemies[i].surf);
+        SDL_DestroySurface(e->enemies[i].surf_aura);
+        SDL_DestroySurface(e->enemies[i].surf_death);
+        SDL_DestroySurface(e->enemies[i].surf_ring);
         e->enemies[i].surf = NULL;
+        e->enemies[i].surf_aura = NULL;
+        e->enemies[i].surf_death = NULL;
+        e->enemies[i].surf_ring = NULL;
       }
-      for (int i = 0; i < e->quantity; i++) {
+
         if (e->kill) {
           MIX_DestroyAudio(e->kill);
         }
@@ -409,10 +442,7 @@ void enemy_free(struct Enemy **enemy) {
           MIX_DestroyTrack(e->track);
 
         }
-      }
     }
-
-
 
     e->renderer = NULL;
     free(e);
@@ -455,7 +485,47 @@ void play_sound(struct Enemy *e, struct Music *m) {
   // }else if (e->sound_active == true && e->play_time < e->now ) {
   //   e->sound_active = false;
   // }
+}
+
+void red_update(struct Enemy *e) {
+  //39 w 57 h
+  e->enemies[e->current_enemy].frame_count += 1;
+  //Hina = 30 de anchura. 58 de altura
+  if (e->enemies[e->current_enemy].frame_count > 8) {
+    e->enemies[e->current_enemy].frame_count = 7;
   }
+  switch (e->enemies[e->current_enemy].frame_count) {
+  case 1:
+    e->enemies[e->current_enemy].src = (SDL_FRect){128,0,30,30};
+    break;
+  case 2:
+    e->enemies[e->current_enemy].src = (SDL_FRect){160,0,30,30};
+    break;
+  case 3:
+    e->enemies[e->current_enemy].src = (SDL_FRect){192,0,30,30};
+    break;
+  case 4:
+    e->enemies[e->current_enemy].src = (SDL_FRect){192,0,30,30};
+    break;
+    case 5:
+    e->enemies[e->current_enemy].src = (SDL_FRect){224,0,30,30};
+    break;
+    case 6:
+    e->enemies[e->current_enemy].src = (SDL_FRect){256,0,30,30};
+    break;
+    case 7:
+    e->enemies[e->current_enemy].src = (SDL_FRect){290,0,30,30};
+    break;
+      case 8:
+        e->enemies[e->current_enemy].src = (SDL_FRect){352,0,30,30};
+    break;
+    break;
+  default:
+      e->enemies[e->current_enemy].src = (SDL_FRect){0,0,30,30};
+    break;
+
+  }
+}
 
 void hina_update(struct Enemy *e) {
 
@@ -568,6 +638,8 @@ static void spawn_enemy(struct Enemy *e, struct Power *p) {
   // }
 
 }
+
+//Esto es un basurero  municipal. XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 
 // if (e->enemies[i].rect.x + e->enemies[i].rect.w > WINDOW_WIDTH) {
 //   e->enemies[i].x_vel = -ENEMY_VEL;

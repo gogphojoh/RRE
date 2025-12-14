@@ -86,6 +86,7 @@ void enemy_update(struct Enemy *e,struct Power *p, struct Music *m);
 void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
 static void spawn_enemy(struct Enemy *e, struct Power *p);
+void red_update(struct Enemy *e);
 void hina_update(struct Enemy *e);
 void aki_update(struct Enemy *e);
 void aki_left_update(struct Enemy *e);
