@@ -48,6 +48,25 @@ bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
       //printf("Esta es la anchura %f, y la altura: %f \n", b->rect.w,b->rect.h);
       b->bullets[i].src = (SDL_FRect){0,114,16,32};
       b->rect = (SDL_FRect) {0,0,16,32};
+      
+      //Iteración para el laser
+      b->laser[i].surf= IMG_Load("assets/objects/marisa-laser.png");
+      if (!b->laser[i].surf) {
+        fprintf(stderr,"Error al establecer el renderer: %s", SDL_GetError());
+        return false;
+      }
+      b->laser[i].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[i].surf);
+      if (!b->laser[i].image) {
+        fprintf(stderr,"Error al crear la imagen: %s", SDL_GetError());
+        return false;
+      }
+
+      SDL_GetTextureSize(b->laser[i].image,&b->laser[i].rect.w,&b->laser[i].rect.h);
+
+      b->laser[i].src = (SDL_FRect){0,0,18,1000};
+      b->laser[i].rect = (SDL_FRect) {0,0,18,1000};
+      b->laser[i].rect.x = -5000;
+      b->laser[i].rect.y = -5000;
 
       //Iteración de enemigos
 
@@ -98,7 +117,19 @@ void bullet_free(struct Bullet **bullet) {
 void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t, struct Bomb *bo) {
     Uint32 now = SDL_GetTicks();
     e->now = SDL_GetTicks();
-
+    //Desactivar laser luego de un tiempo.
+    if(now > b->time_active || !pl->active){
+      b->laser[1].active = false;
+      b->laser[1].rect.x = -5000;
+      b->laser[1].rect.y = -5000;
+      SDL_DestroyTexture(b->laser[1].image);
+      SDL_DestroySurface(b->laser[1].surf);
+      b->laser[1].surf= NULL;
+      b->laser[1].image = NULL;
+    }else{
+      b->laser[1].rect.x = (b->p_x + b->p_w/2) - 6;
+      b->laser[1].rect.y =  b->p_y - b->laser[1].rect.h;
+    }
 
 
     for (int i = 0; i < MAX_BULLETS; i++) {
@@ -106,14 +137,16 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
       if (b->bullets[i].impact && now > b->bullets[i].frame_time) {
         b->current_bullet = i;
         bullet_animation(b);
-        b->bullets[i].frame_time = now + 6;
+        b->bullets[i].frame_time = now + 7;
       }
 
-
+      //Reacomodarlo para que el laser sea constante.
       if (b->keystate[SDL_SCANCODE_Z] && now >= b->next_fire_time && pl->active) {
         b->bullets[i].btype = 1;
         player_bullets(b);
+        player_laser(b);
         b->next_fire_time = now + BULLET_DELAY;
+        b->time_active = now + LASER_TTL;
       }
 
 
@@ -200,6 +233,34 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
 
       }
 
+      for (int j = 0; j < e->quantity; j++) {
+      //lógica de disparo del enemigo.
+      if (!e->enemies[j].active) continue;
+
+      //lógica de impacto de laser en el enemigo
+      if (e->enemies[j].active && rects_collide(&b->laser[i].rect, &e->enemies[j].rect) && b->time_active > now) {
+        e->enemies[j].angle_ring =  rand() %  340;
+        e->enemies[j].health -= 10;// desactivar enemigo
+        if (e->enemies[j].health < 1) {
+          SDL_DestroyTexture(e->enemies[j].image);
+          SDL_DestroyTexture(e->enemies[j].image_aura);
+          e->enemies[j].image = NULL;
+          e->enemies[j].image_aura = NULL;
+          e->enemies[j].active = false;
+          p->pows[j].active = true;
+          p->pows[j].up = true;
+          p->pows[j].type = e->enemies[j].type; //El enemigo y el pow ya coinciden -- Solo para la generación del power up, el sonido aun sigue fuera de lugar.
+          p->pows[j].ascention = e->now + 500; //La activación del power debe coincidir con el del enemigo
+          p->appear = j;
+          play_sound(e,m);
+        }
+
+        // e->image = NULL;
+        // SDL_DestroyTexture(e->image);// destruir textura
+
+      }
+    }
+
 
     }
 }
@@ -214,12 +275,35 @@ void bullet_draw (struct Bullet *b) {
             SDL_RenderTexture(b->renderer, b->bullets[i].image, &b->bullets[i].src, &b->bullets[i].rect);
 
         }
+
+        if (b->laser[i].active) {
+            SDL_RenderTexture(b->renderer, b->laser[i].image, NULL, &b->laser[i].rect);
+
+        }
         if (b->ebullets[i].active) {
           //printf ("He sido dibujado %d veces", i);
           SDL_RenderTexture(b->renderer, b->ebullets[i].image, NULL, &b->ebullets[i].rect);
 
         }
     }
+}
+
+void player_laser (struct Bullet *b) {
+  if(b->laser[1].surf == NULL){
+    b->laser[1].surf= IMG_Load("assets/objects/marisa-laser.png");
+    b->laser[1].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[1].surf);
+    SDL_GetTextureSize(b->laser[1].image,&b->laser[1].rect.w,&b->laser[1].rect.h);
+    b->laser[1].src = (SDL_FRect){0,0,18,1000};
+    b->laser[1].rect = (SDL_FRect) {0,0,18,1000};
+  }
+
+  b->laser[1].rect.w = b->laser[1].rect.w;
+  b->laser[1].rect.h = b->laser[1].rect.h;
+  b->laser[1].rect.x = (b->p_x + b->p_w/2) - 7;
+  b->laser[1].rect.y =  b->p_y - b->laser[1].rect.h;
+  b->laser[1].active = true;
+
+
 }
 
 void player_bullets (struct Bullet *b) {
@@ -241,7 +325,7 @@ void player_bullets (struct Bullet *b) {
   if (first == -1 || second == -1) return;
 
   // Bala derecha
-  b->bullets[first].rect.x = b->p_x + 12;
+  b->bullets[first].rect.x = b->p_x + 30;
   b->bullets[first].rect.y = b->p_y;
   b->bullets[first].rect.w = b->rect.w;
   b->bullets[first].rect.h = b->rect.h;
@@ -251,7 +335,7 @@ void player_bullets (struct Bullet *b) {
 
 
   // Bala izquierda
-  b->bullets[second].rect.x = b->p_x - 6;
+  b->bullets[second].rect.x = b->p_x + 7;
   b->bullets[second].rect.y = b->p_y;
   b->bullets[second].rect.w = b->rect.w;
   b->bullets[second].rect.h = b->rect.h;

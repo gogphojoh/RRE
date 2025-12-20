@@ -153,7 +153,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     
     //Interesante
     //Esto es todo lo relacionado a la apariciónd el aura y la muerte de los enemigos.
-    if(e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 || e->enemies[i].type == 4)
+    if(e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 || e->enemies[i].type == 4 || e->enemies[i].type == 5)
     {
 
       if(e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 )
@@ -175,10 +175,20 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
         e->enemies[i].rect_death.w = e->enemies[i].rect_death.w;
         e->enemies[i].rect_death.h = e->enemies[i].rect_death.h;
       //Medidas del anillo de la muerte
-      SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
-      e->enemies[i].src_ring = (SDL_FRect){0,0,e->enemies[i].rect_ring.w,e->enemies[i].rect_ring.h};
+
+      if(!(e->enemies[i].type ==  5))
+      {
+        SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
+        e->enemies[i].src_ring = (SDL_FRect){0,0,e->enemies[i].rect_ring.w,e->enemies[i].rect_ring.h};
         e->enemies[i].rect_ring.w = e->enemies[i].rect_ring.w/3;
         e->enemies[i].rect_ring.h = e->enemies[i].rect_ring.h;
+      }else{
+                SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
+        e->enemies[i].src_ring = (SDL_FRect){0,0,e->enemies[i].rect_ring.w,e->enemies[i].rect_ring.h};
+        e->enemies[i].rect_ring.w = 0;
+        e->enemies[i].rect_ring.h = 0;
+      }
+
     }else{
       SDL_GetTextureSize(e->enemies[i].image_aura,&e->enemies[i].rect_aura.w,&e->enemies[i].rect_aura.h);
       e->enemies[i].src_aura = (SDL_FRect) {0,0,0,0};

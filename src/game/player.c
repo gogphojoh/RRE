@@ -122,8 +122,9 @@ void player_update(struct Player *p, struct Bullet *b, struct Power *pw, struct 
       }
       b->p_x = p->rect.x;
       b->p_y = p->rect.y;
-      b->p_x = p->rect.x;
-      b->p_y = p->rect.y;
+      b->p_w = p->rect.w;
+      //b->p_x = p->rect.x;
+      //b->p_y = p->rect.y;
     }
 
   }

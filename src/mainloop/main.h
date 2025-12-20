@@ -45,6 +45,7 @@
 #define MAX_ENEMIES 128
 #define SCREEN_ENEMIES 10;
 #define BULLET_DELAY 50
+#define LASER_TTL 500;
 #define BOMB_DURATION 5000
 #define ENEMY_VEL 4
 #define POWER_VEL 3
