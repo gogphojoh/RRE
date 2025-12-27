@@ -63,10 +63,10 @@ bool bullet_new (struct Bullet **bullet, SDL_Renderer *renderer) {
 
       SDL_GetTextureSize(b->laser[i].image,&b->laser[i].rect.w,&b->laser[i].rect.h);
 
-      b->laser[i].src = (SDL_FRect){0,0,18,1000};
-      b->laser[i].rect = (SDL_FRect) {0,0,18,1000};
-      b->laser[i].rect.x = -5000;
-      b->laser[i].rect.y = -5000;
+      b->laser[i].src = (SDL_FRect){0,0,18,64};
+      b->laser[i].rect = (SDL_FRect) {0,0,18,64};
+      //b->laser[i].rect.x = -5000;
+      //b->laser[i].rect.y = -5000;
 
       //Iteración de enemigos
 
@@ -119,16 +119,34 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
     e->now = SDL_GetTicks();
     //Desactivar laser luego de un tiempo.
     if(now > b->time_active || !pl->active){
-      b->laser[1].active = false;
-      b->laser[1].rect.x = -5000;
-      b->laser[1].rect.y = -5000;
-      SDL_DestroyTexture(b->laser[1].image);
-      SDL_DestroySurface(b->laser[1].surf);
-      b->laser[1].surf= NULL;
-      b->laser[1].image = NULL;
+    for (int i = 0; i < 128; i++)
+    {
+      b->laser[i].active = false;
+      b->laser[i].rect.x = -5000;
+      b->laser[i].rect.y = -5000;
+      SDL_DestroyTexture(b->laser[i].image);
+      SDL_DestroySurface(b->laser[i].surf);
+      b->laser[i].surf= NULL;
+      b->laser[i].image = NULL;
+    }
     }else{
-      b->laser[1].rect.x = (b->p_x + b->p_w/2) - 6;
+    for (int i = 0; i < 32; i++)
+    {
+      //Revisar si puedo hacer que el rayo se vea menos raro. y hacer que se mueva.
+      b->laser[0].rect.w = b->laser[0].rect.w;
+      b->laser[0].rect.h = b->laser[0].rect.h;
+      b->laser[0].rect.x = (b->p_x + b->p_w/2) - 7;
+      b->laser[0].rect.y =  b->p_y - b->laser[0].rect.h;
+      b->laser[i].rect.x = (b->p_x + b->p_w/2) - 7;
+      b->laser[i].rect.y = b->laser[0].rect.y - (i * 64);
+    }
+      /*
+      b->laser[1].rect.x = (b->p_x + b->p_w/2) - 7;
       b->laser[1].rect.y =  b->p_y - b->laser[1].rect.h;
+      b->laser[2].rect.x = (b->p_x + b->p_w/2) - 28;
+      b->laser[2].rect.y =  b->p_y - b->laser[2].rect.h;
+      b->laser[3].rect.x = (b->p_x + b->p_w/2)+ 14;
+      b->laser[3].rect.y =  b->p_y - b->laser[3].rect.h;*/
     }
 
 
@@ -144,7 +162,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
       if (b->keystate[SDL_SCANCODE_Z] && now >= b->next_fire_time && pl->active) {
         b->bullets[i].btype = 1;
         player_bullets(b);
-        player_laser(b);
+        player_laser(b, t);
         b->next_fire_time = now + BULLET_DELAY;
         b->time_active = now + LASER_TTL;
       }
@@ -238,7 +256,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
       if (!e->enemies[j].active) continue;
 
       //lógica de impacto de laser en el enemigo
-      if (e->enemies[j].active && rects_collide(&b->laser[i].rect, &e->enemies[j].rect) && b->time_active > now) {
+      if (e->enemies[j].active && rects_collide(&b->laser[i].rect, &e->enemies[j].rect) && b->time_active > now && b->laser[i].active ) {
         e->enemies[j].angle_ring =  rand() %  340;
         e->enemies[j].health -= 10;// desactivar enemigo
         if (e->enemies[j].health < 1) {
@@ -277,7 +295,7 @@ void bullet_draw (struct Bullet *b) {
         }
 
         if (b->laser[i].active) {
-            SDL_RenderTexture(b->renderer, b->laser[i].image, NULL, &b->laser[i].rect);
+            SDL_RenderTexture(b->renderer, b->laser[i].image, &b->laser[i].src, &b->laser[i].rect);
 
         }
         if (b->ebullets[i].active) {
@@ -288,20 +306,79 @@ void bullet_draw (struct Bullet *b) {
     }
 }
 
-void player_laser (struct Bullet *b) {
-  if(b->laser[1].surf == NULL){
-    b->laser[1].surf= IMG_Load("assets/objects/marisa-laser.png");
-    b->laser[1].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[1].surf);
-    SDL_GetTextureSize(b->laser[1].image,&b->laser[1].rect.w,&b->laser[1].rect.h);
-    b->laser[1].src = (SDL_FRect){0,0,18,1000};
-    b->laser[1].rect = (SDL_FRect) {0,0,18,1000};
+void player_laser (struct Bullet *b, struct Text *t) {
+  if(t->power_count >= 0){
+    if(b->laser[0].surf == NULL){
+    b->laser[0].surf= IMG_Load("assets/objects/marisa-laser.png");
+    b->laser[0].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[0].surf);
+    SDL_GetTextureSize(b->laser[0].image,&b->laser[0].rect.w,&b->laser[0].rect.h);
+    //Acá debo probar modificar los rayos de marisa.
+    b->laser[0].src = (SDL_FRect){0,0,18,64};
+    b->laser[0].rect = (SDL_FRect) {0,0,18,64};
+    }
+
+    b->laser[0].rect.w = b->laser[0].rect.w;
+    b->laser[0].rect.h = b->laser[0].rect.h;
+    b->laser[0].rect.x = (b->p_x + b->p_w/2) - 7;
+    b->laser[0].rect.y =  b->p_y - b->laser[0].rect.h;
+    b->laser[0].active = true;
+    for (int i = 1; i < 32; i++)
+    {
+      if(b->laser[i].surf == NULL){
+      b->laser[i].surf= IMG_Load("assets/objects/marisa-laser.png");
+      b->laser[i].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[i].surf);
+      SDL_GetTextureSize(b->laser[i].image,&b->laser[i].rect.w,&b->laser[i].rect.h);
+      //Acá debo probar modificar los rayos de marisa.
+      b->laser[i].src = (SDL_FRect){0,0,18,64};
+      b->laser[i].rect = (SDL_FRect) {0,0,18,64};
+      }
+
+      b->laser[i].rect.w = b->laser[i].rect.w;
+      b->laser[i].rect.h = b->laser[i].rect.h;
+      b->laser[i].rect.x = (b->p_x + b->p_w/2) - 7;
+      b->laser[i].rect.y = b->laser[0].rect.y - (i * 64);
+      b->laser[i].active = true;
+    }
+
+    
+
   }
 
-  b->laser[1].rect.w = b->laser[1].rect.w;
-  b->laser[1].rect.h = b->laser[1].rect.h;
-  b->laser[1].rect.x = (b->p_x + b->p_w/2) - 7;
-  b->laser[1].rect.y =  b->p_y - b->laser[1].rect.h;
-  b->laser[1].active = true;
+  /*
+
+    if(t->power_count >= 4){
+    if(b->laser[2].surf == NULL){
+    b->laser[2].surf= IMG_Load("assets/objects/marisa-laser.png");
+    b->laser[2].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[2].surf);
+    SDL_GetTextureSize(b->laser[2].image,&b->laser[2].rect.w,&b->laser[2].rect.h);
+    b->laser[2].src = (SDL_FRect){0,0,18,1000};
+    b->laser[2].rect = (SDL_FRect) {0,0,18,1000};
+    }
+
+    b->laser[2].rect.w = b->laser[2].rect.w;
+    b->laser[2].rect.h = b->laser[2].rect.h;
+    b->laser[2].rect.x = (b->p_x + b->p_w/2) - 28;
+    b->laser[2].rect.y =  b->p_y - b->laser[2].rect.h;
+    b->laser[2].active = true;
+
+  }
+
+  if(t->power_count >= 5){
+    if(b->laser[3].surf == NULL){
+    b->laser[3].surf= IMG_Load("assets/objects/marisa-laser.png");
+    b->laser[3].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[3].surf);
+    SDL_GetTextureSize(b->laser[3].image,&b->laser[3].rect.w,&b->laser[3].rect.h);
+    b->laser[3].src = (SDL_FRect){0,0,18,1000};
+    b->laser[3].rect = (SDL_FRect) {0,0,18,1000};
+    }
+
+    b->laser[3].rect.w = b->laser[3].rect.w;
+    b->laser[3].rect.h = b->laser[3].rect.h;
+    b->laser[3].rect.x = (b->p_x + b->p_w/2) + 14;
+    b->laser[3].rect.y =  b->p_y - b->laser[3].rect.h;
+    b->laser[3].active = true;
+
+  }*/
 
 
 }
@@ -387,3 +464,26 @@ void enemy_bullet (struct Bullet *b, struct Enemy *e) {
 
 
 }
+
+      /*
+      b->laser[1].active = false;
+      b->laser[1].rect.x = -5000;
+      b->laser[1].rect.y = -5000;
+      SDL_DestroyTexture(b->laser[1].image);
+      SDL_DestroySurface(b->laser[1].surf);
+      b->laser[1].surf= NULL;
+      b->laser[1].image = NULL;
+      b->laser[2].active = false;
+      b->laser[2].rect.x = -5000;
+      b->laser[2].rect.y = -5000;
+      SDL_DestroyTexture(b->laser[2].image);
+      SDL_DestroySurface(b->laser[2].surf);
+      b->laser[2].surf= NULL;
+      b->laser[2].image = NULL;
+      b->laser[3].active = false;
+      b->laser[3].rect.x = -5000;
+      b->laser[3].rect.y = -5000;
+      SDL_DestroyTexture(b->laser[3].image);
+      SDL_DestroySurface(b->laser[3].surf);
+      b->laser[3].surf= NULL;
+      b->laser[3].image = NULL;*/

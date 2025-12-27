@@ -47,7 +47,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     
     switch (e->enemies[i].type) {
     case 1:
-      e->enemies[i].sprite = "assets/sprites/red_fairy_sheet.png";
+      e->enemies[i].sprite = "assets/sprites/hada_pendeja.png";
       e->enemies[i].aura = "assets/objects/red-circle.png";
       e->enemies[i].death = "assets/objects/red.png";
       e->enemies[i].health = 1;
@@ -183,7 +183,7 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
         e->enemies[i].rect_ring.w = e->enemies[i].rect_ring.w/3;
         e->enemies[i].rect_ring.h = e->enemies[i].rect_ring.h;
       }else{
-                SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
+        SDL_GetTextureSize(e->enemies[i].image_ring,&e->enemies[i].rect_ring.w,&e->enemies[i].rect_ring.h);
         e->enemies[i].src_ring = (SDL_FRect){0,0,e->enemies[i].rect_ring.w,e->enemies[i].rect_ring.h};
         e->enemies[i].rect_ring.w = 0;
         e->enemies[i].rect_ring.h = 0;
@@ -217,8 +217,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
     switch (e->enemies[i].type){
       case 1:
       //Tengo que hacer que las hadas rojas empiecen en su quinto frame, osease, en la posicion 128 x, con altura 30 y.
-      e->enemies[i].src = (SDL_FRect){0,0,30,30};
-      e->enemies[i].rect = (SDL_FRect) {0,0,30,30};
+      e->enemies[i].src = (SDL_FRect){0,0,64,64};
+      e->enemies[i].rect = (SDL_FRect) {0,0,48,48};
       break;
       case 2:
       //Tengo que hacer que las hadas rojas empiecen en su quinto frame, osease, en la posicion 128 x, con altura 30 y.
@@ -271,8 +271,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
 
       //Esta es la lógica para mover a los enemigos en la pantalla
-      e->enemies[i].x_vel = ENEMY_VEL;
-      e->enemies[i].y_vel = ENEMY_VEL;
+      //e->enemies[i].x_vel = ENEMY_VEL;
+      //e->enemies[i].y_vel = ENEMY_VEL;
 
       e->enemies[i].vanishing = 255;
       e->enemies[i].death_done = false;
@@ -427,7 +427,7 @@ void enemy_update(struct Enemy *e, struct Power *p, struct Music *m) {
 
     if ((e->enemies[i].type == 1 || e->enemies[i].type == 2 || e->enemies[i].type == 3 ) && now > e->enemies[i].frame_time) {
       e->current_enemy = i;
-      red_update(e);
+      //red_update(e);
       e->enemies[i].frame_time = now + 192; //Acá se hace el doble de tiempo por motivos de frames
     } 
 

@@ -65,7 +65,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
 void bullet_draw(struct Bullet *b);
 void bullet_free(struct Bullet **bullet);
 void player_bullets (struct Bullet *b);
-void player_laser (struct Bullet *b);
+void player_laser (struct Bullet *b, struct Text *t);
 static void spawn_bullet(struct Bullet *b, struct Enemy *e);
 static void enemy_bullet(struct Bullet *b, struct Enemy *e);
 bool rects_collide(SDL_FRect *a, SDL_FRect *b);
