@@ -27,21 +27,27 @@
 #define WINDOW_TITLE "Red Republic Engine"
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 960
-#define TEXT_SIZE 80
+#define TEXT_SIZE 40
 #define WHITE_COLOR (SDL_Color) {255,255,255,255}
 #define BLUE_COLOR (SDL_Color) {137,180,250,255}
-#define BUBBLE_RADIUS 5
-#define TEXT_STR "Reimu"
-#define TEXT_LIMIT_X 1020
-#define TEXT_LIMIT_Y 880
+#define BLACK_COLOR (SDL_Color) {0,0,0,0}
+#define BUBBLE_RADIUS 2
+#define TEXT_STR "NORMAL"
+#define TEXT_AMOUNT 11
 #define TEXT_VEL 5
 #define M_PI 3.14159265358979323846
 #define PLAYER_VEL 7
 #define FOCUS_VEL 3
+#define BOMB_VEL 2
 #define BULLET_VEL 15
+#define ENEMY_BULLET_VEL 5
 #define MAX_BULLETS 128
+#define MAX_ENEMIES 128
+#define SCREEN_ENEMIES 10;
 #define BULLET_DELAY 50
+#define LASER_TTL 500;
+#define BOMB_DURATION 5000
 #define ENEMY_VEL 4
-#define POWER_VEL 6
+#define POWER_VEL 3
 
 #endif

@@ -28,8 +28,6 @@ bool music_new (struct Music **music) {
     SDL_free(devices); /* SDL_GetAudioPlaybackDevices devuelve memoria que hay que liberar */
   }
 
-
-
     // Create a mixer device (this opens an SDL_AudioDevice internally)
     m->mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
     if (!m->mixer) {
@@ -37,8 +35,10 @@ bool music_new (struct Music **music) {
         return false;
     }
 
+    //m->kill_sfx = MIX_LoadAudio(m->mixer, "music/sfx/kill.mp3", true);
 
-    m->background = MIX_LoadAudio(m->mixer, "music/bgm/china.mp3", true);
+
+    m->background = MIX_LoadAudio(m->mixer, "music/bgm/stage1.mp3", true);
     if (!m->background) {
         SDL_Log("Error al cargar el audio: %s", SDL_GetError());
         MIX_DestroyMixer(m->mixer);

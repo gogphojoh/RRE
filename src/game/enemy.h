@@ -10,33 +10,69 @@
 #include "power.h"
 #include "music.h"
 
-<<<<<<< Updated upstream
-=======
 struct EnemyEntity {
+  int angle_ring;
   SDL_FRect rect; //Tamaño y forma de las multiples balas
+  SDL_FRect src;
   float x_vel, y_vel;
-  bool active; //Define si una bala ya fue usada
+  int growing;
+  int expand;
+  int vanishing;
+  SDL_Texture *image;
+  SDL_Surface *surf; // <- Esta fue la solución, incluir la imagen por separado en cada entidad
+  SDL_Texture *image_aura;//Imagen del aura del enemigo
+  SDL_Surface *surf_aura; 
+  SDL_FRect rect_aura;
+  SDL_FRect src_aura;
+  SDL_Texture *image_death;//Imagen de la muerte del enemigo
+  SDL_Surface *surf_death; 
+  SDL_FRect rect_death;
+  SDL_FRect src_death;
+  SDL_Texture *image_ring;//Imagen del anillo de la muerte del enemigo
+  SDL_Surface *surf_ring; 
+  SDL_FRect rect_ring;
+  SDL_FRect src_ring;
+  float fire_rate;
+  int health;
+  int type;
+  int frame_count;
+  int frame_time;
+  bool active; //Define si un enemigo ya fue vencido
+  // MIX_Mixer *mixer;
+  // MIX_Audio *kill;
+  // MIX_Track *track;
+  const char *sprite; //<- Usar esta variable como forma dinámica de cambiar los sprites
+  const char *aura;
+  const char *death;
+  bool death_done;
 };
 
->>>>>>> Stashed changes
 struct Enemy {
-  struct Power *power;
-  SDL_Renderer *renderer;
-  SDL_Texture *image;
-  SDL_Surface *surf;
-  SDL_FRect rect;
+  bool backwards;
+  int progressive;
+  double angle;
+  SDL_FlipMode flip;
+    double angle2;
+  SDL_FlipMode flip2;
+  double angle_ring;
+  SDL_FlipMode flip_ring;
+  const SDL_FPoint *center;
+  const SDL_FRect *dstrect;
+  const SDL_FRect *srcrect;
+  int current_enemy;
   MIX_Mixer *mixer;
   MIX_Audio *kill;
   MIX_Track *track;
-<<<<<<< Updated upstream
-=======
+  // <- Y usar esto como switch
+  // SDL_FRect rect;
+  struct Power *power; // <- no es necesario tocar apartir de esto pues es universal
   struct EnemyEntity enemies[MAX_ENEMIES];
+  SDL_Renderer *renderer;
   int spacing;
   int quantity;
   Uint32 next_enemy;
->>>>>>> Stashed changes
-  float x_vel, y_vel;
-  bool active;
+  //float x_vel, y_vel;
+  //bool active;
   bool sound_active;
   float play_time;
   Uint32 now;
@@ -45,12 +81,16 @@ struct Enemy {
 
 };
 
-void play_sound(struct Enemy *e, struct Music *m, int index);
+void play_sound(struct Enemy *e, struct Music *m);
 bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer);
 void enemy_update(struct Enemy *e,struct Power *p, struct Music *m);
 void enemy_draw(struct Enemy *e);
 void enemy_free(struct Enemy **enemy);
-void spawn_enemy(struct Enemy *e, int index);
-
+static void spawn_enemy(struct Enemy *e, struct Power *p);
+void red_update(struct Enemy *e);
+void white_update(struct Enemy *e);
+void hina_update(struct Enemy *e);
+void aki_update(struct Enemy *e);
+void aki_left_update(struct Enemy *e);
 #endif // RRE_ENEMY_H
 

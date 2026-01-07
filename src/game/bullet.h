@@ -7,29 +7,72 @@
 
 #include "../mainloop/main.h"
 #include "enemy.h"
-#include "music.h"
+#include "bomb.h"
 
 struct BulletEntity {
     SDL_FRect rect; //Tamaño y forma de las multiples balas
-    bool active; //Define si una bala ya fue usada
-};
-
-struct Bullet {
-    struct Enemy *enemy;
-    SDL_Renderer *renderer;
+    SDL_FRect src;
+    int hit;
     SDL_Texture *image;
     SDL_Surface *surf;
+    int btype;
+    int frame_count;
+    int frame_time;
+    bool active; //Define si una bala ya fue usada
+    bool impact;
+};
+
+struct EnemyBulletEntity {
+  SDL_FRect rect; //Tamaño y forma de las multiples balas
+  int hit;
+  SDL_Texture *image;
+  SDL_Surface *surf;
+  int btype;
+  bool active; //Define si una bala ya fue usada
+};
+
+struct LaserEntity {
+  SDL_FRect rect; //Tamaño y forma de las multiples balas
+  int hit;
+  SDL_FRect src;
+  SDL_Texture *image;
+  SDL_Surface *surf;
+  int ltype;
+  bool active; //Define si una bala ya fue usada
+  int frame_count;
+  int frame_time;
+};
+
+
+struct Bullet {
+
+    struct Enemy *enemy;
+    SDL_Renderer *renderer;
     SDL_FRect rect; // for width/height reference
     const bool *keystate;
-    float p_x, p_y;
+    float p_x, p_y, p_w;
+    int index;
+    int bcount;
+    int current_bullet;
+    int onscreen;
+    int imp_bullets[MAX_BULLETS];
     struct BulletEntity bullets[MAX_BULLETS]; //piscina de balas
+    struct EnemyBulletEntity ebullets[MAX_BULLETS];
+    struct LaserEntity laser[MAX_BULLETS];
     Uint32 next_fire_time;
+    Uint32 time_active;
+    int current_laser;
 };
 bool bullet_new(struct Bullet **bullet, SDL_Renderer *renderer);
-void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m);
+void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t, struct Bomb *bo);
 void bullet_draw(struct Bullet *b);
 void bullet_free(struct Bullet **bullet);
-static void spawn_bullet(struct Bullet *b, struct Enemy *e);
+void player_bullets (struct Bullet *b);
+void player_laser (struct Bullet *b, struct Text *t);
+void spawn_bullet(struct Bullet *b, struct Enemy *e);
+void enemy_bullet(struct Bullet *b, struct Enemy *e);
 bool rects_collide(SDL_FRect *a, SDL_FRect *b);
+void bullet_animation (struct Bullet *b);
+void laser_animation (struct Bullet *b);
 
 #endif //MUSIC_BULLET_H

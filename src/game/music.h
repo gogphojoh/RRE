@@ -10,10 +10,12 @@
 struct Music {
     MIX_Mixer *mixer;
     MIX_Audio *background;
+    MIX_Audio *kill_sfx;
     MIX_Track *track;
     SDL_AudioSpec *spec;
     const bool *keystate;
     int *device;
+
 };
 
 
