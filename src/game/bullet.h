@@ -39,6 +39,8 @@ struct LaserEntity {
   SDL_Surface *surf;
   int ltype;
   bool active; //Define si una bala ya fue usada
+  int frame_count;
+  int frame_time;
 };
 
 
@@ -59,6 +61,7 @@ struct Bullet {
     struct LaserEntity laser[MAX_BULLETS];
     Uint32 next_fire_time;
     Uint32 time_active;
+    int current_laser;
 };
 bool bullet_new(struct Bullet **bullet, SDL_Renderer *renderer);
 void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Music *m, struct Player *pl, struct Text *t, struct Bomb *bo);
@@ -66,9 +69,10 @@ void bullet_draw(struct Bullet *b);
 void bullet_free(struct Bullet **bullet);
 void player_bullets (struct Bullet *b);
 void player_laser (struct Bullet *b, struct Text *t);
-static void spawn_bullet(struct Bullet *b, struct Enemy *e);
-static void enemy_bullet(struct Bullet *b, struct Enemy *e);
+void spawn_bullet(struct Bullet *b, struct Enemy *e);
+void enemy_bullet(struct Bullet *b, struct Enemy *e);
 bool rects_collide(SDL_FRect *a, SDL_FRect *b);
 void bullet_animation (struct Bullet *b);
+void laser_animation (struct Bullet *b);
 
 #endif //MUSIC_BULLET_H

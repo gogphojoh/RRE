@@ -130,7 +130,7 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
       b->laser[i].image = NULL;
     }
     }else{
-    for (int i = 0; i < 32; i++)
+    for (int i = 0; i < 16; i++)
     {
       //Revisar si puedo hacer que el rayo se vea menos raro. y hacer que se mueva.
       b->laser[0].rect.w = b->laser[0].rect.w;
@@ -157,6 +157,13 @@ void bullet_update(struct Bullet *b, struct Enemy *e, struct Power *p, struct Mu
         bullet_animation(b);
         b->bullets[i].frame_time = now + 7;
       }
+
+    if (now > b->laser[i].frame_time) {
+      b->current_laser = i;
+      laser_animation(b);
+      b->laser[i].frame_time = now + 32;
+    }
+
 
       //Reacomodarlo para que el laser sea constante.
       if (b->keystate[SDL_SCANCODE_Z] && now >= b->next_fire_time && pl->active) {
@@ -307,7 +314,7 @@ void bullet_draw (struct Bullet *b) {
 }
 
 void player_laser (struct Bullet *b, struct Text *t) {
-  if(t->power_count >= 0){
+  if(t->power_count >= 2){
     if(b->laser[0].surf == NULL){
     b->laser[0].surf= IMG_Load("assets/objects/marisa-laser.png");
     b->laser[0].image = SDL_CreateTextureFromSurface(b->renderer, b->laser[0].surf);
@@ -453,6 +460,35 @@ void bullet_animation (struct Bullet *b) {
 
 
 }
+
+void laser_animation (struct Bullet *b) {
+   b->laser[b->current_laser].frame_count += 1;
+   if (b->laser[b->current_laser].frame_count > 4) {
+     b->laser[b->current_laser].frame_count = 1;
+   }
+  //Hina = 30 de anchura. 58 de altura
+    switch (b->laser[b->current_laser].frame_count) {
+      //48 pixeles de altura.
+    case 1:
+      b->laser[b->current_laser].src = (SDL_FRect){0,192,18,64};
+      break;
+    case 2:
+      b->laser[b->current_laser].src = (SDL_FRect){0,128,18,64};
+      break;
+    case 3:
+      b->laser[b->current_laser].src = (SDL_FRect){0,64,18,64};
+      break;
+    case 4:
+      b->laser[b->current_laser].src = (SDL_FRect){0,0,18,64};
+      break;
+    default:
+      b->laser[b->current_laser].src = (SDL_FRect){0,0,18,64};
+      break;
+    }
+
+
+}
+
 
 void enemy_bullet (struct Bullet *b, struct Enemy *e) {
   //printf("Disparo del enemigo %d registrado! \n", b->index);

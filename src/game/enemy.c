@@ -271,8 +271,8 @@ bool enemy_new(struct Enemy **enemy, SDL_Renderer *renderer) {
 
 
       //Esta es la lógica para mover a los enemigos en la pantalla
-      //e->enemies[i].x_vel = ENEMY_VEL;
-      //e->enemies[i].y_vel = ENEMY_VEL;
+      e->enemies[i].x_vel = ENEMY_VEL;
+      e->enemies[i].y_vel = ENEMY_VEL;
 
       e->enemies[i].vanishing = 255;
       e->enemies[i].death_done = false;

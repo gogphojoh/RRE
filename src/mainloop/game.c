@@ -44,10 +44,13 @@ bool game_new (struct Game **game) {
   if (!bomb_new(&g->bomb, g->renderer)) {
     return false;
   }
-    g->is_running = true;
-    srand((unsigned)time(NULL));
+  if (!scroll_new(&g->scroll, g->renderer)) {
+  return false;
+  }
+  g->is_running = true;
+  srand((unsigned)time(NULL));
 
-    return true;
+  return true;
 }
 
 // Esta función cierra todo lo que se abrió
@@ -167,6 +170,7 @@ void game_events(struct Game *g) {
 }
 
 void game_update(struct Game *g) {
+  scroll_update(g->scroll);
   player_update(g->player,g->bullet, g->power, g->music, g->enemy, g->text, g->bomb);
   bullet_update(g->bullet, g->enemy, g->power, g->music, g->player, g->text,g->bomb);
   bomb_update(g->bomb, g->enemy, g->power, g->music, g->bullet, g->player, g->text);
@@ -181,7 +185,9 @@ void game_draw(struct Game *g) {
   SDL_RenderClear(g->renderer);
   // Color de la pantalla (Rojo, Verde, Azul, Opacidad)
   SDL_RenderTexture(g->renderer,g->background,&g->src,&g->dst);
-  SDL_RenderTexture(g->renderer,g->playzone,&g->src2,&g->dst2);
+  scroll_draw(g->scroll);
+  SDL_RenderTexture(g->renderer,g->background2,&g->src3,&g->dst3);
+  SDL_RenderTexture(g->renderer,g->background3,&g->src4,&g->dst4);
   text_draw(g->text);
   bomb_draw(g->bomb);
   enemy_draw(g->enemy);
